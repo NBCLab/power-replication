@@ -1,17 +1,9 @@
 """
 Generate plots.
 """
-import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
-import nibabel as nib
-import pandas as pd
-import statsmodels.api as sm
 from nilearn import input_data, datasets
-from scipy import stats
 from scipy.spatial.distance import pdist, squareform
-
-sns.set_style('whitegrid')
 
 
 def fast_pearson(X, y):
