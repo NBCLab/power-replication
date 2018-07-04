@@ -31,8 +31,8 @@ def preprocess(dset, in_dir='/scratch/tsalo006/power-replication/'):
         fp_subj_dir = op.join(fp_dir, subject)
         fs_subj_dir = op.join(fs_dir, subject)
         out_subj_dir = op.join(out_dir, subject)
-        if not op.isdir(out_dir):
-            os.mkdir(out_dir)
+        if not op.isdir(out_subj_dir):
+            os.mkdir(out_subj_dir)
 
         # Create GM, WM, and CSF masks
         func_file = op.join(fp_subj_dir, 'func/MNI152_blahblah.nii.gz')
