@@ -58,20 +58,20 @@ def preprocess(dset, in_dir='/scratch/tsalo006/power-replication/'):
         # Subtract WM mask
         wm_ero02 = wm_ero0 - wm_ero2
         wm_ero24 = wm_ero2 - wm_ero4
-        wm_ero0 = wm_mask  # just for readability
-        wm_ero02 = nib.Nifti1Image(wm_ero02, aff)
-        wm_ero24 = nib.Nifti1Image(wm_ero24, aff)
+        wm_ero02 = nib.Nifti1Image(wm_ero02, aff)  # aka Superficial WM
+        wm_ero24 = nib.Nifti1Image(wm_ero24, aff)  # aka Deeper WM
+        wm_ero4 = nib.Nifti1Image(wm_ero4, aff)  # aka Deepest WM
 
         # Resample WM masks to 3mm (functional) resolution with NN interp
-        res_wm_ero0 = resample_to_img(wm_ero0, func_img,
-                                      interpolation='nearest')
         res_wm_ero02 = resample_to_img(wm_ero02, func_img,
                                        interpolation='nearest')
         res_wm_ero24 = resample_to_img(wm_ero24, func_img,
                                        interpolation='nearest')
-        # res_wm_ero0.to_filename(op.join(out_subj_dir, 'wm_ero0.nii.gz'))
+        res_wm_ero4 = resample_to_img(wm_ero4, func_img,
+                                      interpolation='nearest')
         # res_wm_ero02.to_filename(op.join(out_subj_dir, 'wm_ero02.nii.gz'))
         # res_wm_ero24.to_filename(op.join(out_subj_dir, 'wm_ero24.nii.gz'))
+        # res_wm_ero4.to_filename(op.join(out_subj_dir, 'wm_ero4.nii.gz'))
 
         # Erode CSF masks
         csf_ero0 = csf_mask.get_data()
@@ -79,14 +79,14 @@ def preprocess(dset, in_dir='/scratch/tsalo006/power-replication/'):
 
         # Subtract CSF masks
         csf_ero02 = csf_ero0 - csf_ero2
-        csf_ero0 = csf_mask  # just for readability
-        csf_ero02 = nib.Nifti1Image(csf_ero02, aff)
+        csf_ero02 = nib.Nifti1Image(csf_ero02, aff)  # aka Superficial CSF
+        csf_ero2 = nib.Nifti1Image(csf_ero2, aff)  # aka Deeper CSF
 
         # Resample CSF masks to 3mm (functional) resolution with NN interp
-        res_csf_ero0 = resample_to_img(csf_ero0, func_img,
-                                       interpolation='nearest')
         res_csf_ero02 = resample_to_img(csf_ero02, func_img,
                                         interpolation='nearest')
+        res_csf_ero2 = resample_to_img(csf_ero2, func_img,
+                                       interpolation='nearest')
         # res_csf_ero0.to_filename(op.join(out_subj_dir, 'csf_ero0.nii.gz'))
         # res_csf_ero02.to_filename(op.join(out_subj_dir, 'csf_ero02.nii.gz'))
 
