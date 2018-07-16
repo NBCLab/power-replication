@@ -14,7 +14,7 @@ Methods:
 
 def run_gsr():
     """
-    Run global signal regression on input image using GM mask.
+    Run global signal regression on input image using GM mask for v2.5.
     """
     pass
 

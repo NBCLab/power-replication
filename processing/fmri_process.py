@@ -35,7 +35,11 @@ def preprocess(dset, in_dir='/scratch/tsalo006/power-replication/'):
             os.mkdir(out_subj_dir)
 
         # Create GM, WM, and CSF masks
-        func_file = op.join(fp_subj_dir, 'func/MNI152_blahblah.nii.gz')
+        # Use preprocessed data from first echo for func resolution
+        func_file = op.join(fp_subj_dir, 'func',
+                            ('sub-{0}_task-rest_run-01_echo-1_bold_'
+                             'space-MNI152NLin2009cAsym_preproc'
+                             '.nii.gz').format(subject))
         gm_mask_files = []
         wm_mask_files = []
         csf_mask_files = []
