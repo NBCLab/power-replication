@@ -17,6 +17,14 @@ def preprocess(dset, in_dir='/scratch/tsalo006/power-replication/'):
     1) Create GM, WM, and CSF masks and resample to 3mm (functional) resolution
     2) Remove first four volumes from each fMRI image
     """
+    # LUT values from
+    # https://surfer.nmr.mgh.harvard.edu/fswiki/FsTutorial/AnatomicalROI/FreeSurferColorLUT
+    cort_labels = [3, 17, 18, 19, 20, 42, 53, 54, 55, 56]
+    subcort_labels = [9, 10, 11, 12, 13, 26, 48, 49, 50, 52, 58]
+    wm_labels = [2, 7, 41, 46, 192]
+    csf_labels = [4, 5, 14, 15, 24, 43, 44, 72]
+    cereb_labels = [8, 47]
+
     dset_dir = op.join(in_dir, dset)
     layout = BIDSLayout(dset_dir)
     subjects = layout.get_subjects()
@@ -40,18 +48,36 @@ def preprocess(dset, in_dir='/scratch/tsalo006/power-replication/'):
                             ('sub-{0}_task-rest_run-01_echo-1_bold_'
                              'space-MNI152NLin2009cAsym_preproc'
                              '.nii.gz').format(subject))
-        gm_mask_files = []
-        wm_mask_files = []
-        csf_mask_files = []
+        warp_file = op.join(fp_subj_dir, 'anat',
+                            'sub-{0}_run-01_T1w_target-'
+                            'MNI152NLin2009cAsym_warp.h5'.format(subject))
+        aparc_file = op.join(fs_subj_dir, 'mri/aparc+aseg.mgz')
+
+        # warp T1w-space aparc file to MNI-space
+        # how??
+        res_aparc_file = op.join(out_subj_dir, 'res_aparc.nii.gz')
+
+        # select labels for each compartment
+        aparc_img = nib.load(res_aparc_file)
+        aparc_dat = aparc_img.get_data()
+        cort_mask = np.isin(aparc_dat, cort_labels).astype(int)
+        subcort_mask = np.isin(aparc_dat, subcort_labels).astype(int)
+        wm_mask = np.isin(aparc_dat, wm_labels).astype(int)
+        csf_mask = np.isin(aparc_dat, csf_labels).astype(int)
+        cereb_mask = np.isin(aparc_dat, cereb_labels).astype(int)
+
+        cort_img = nib.Nifti1Image(cort_mask, aparc_img.affine)
+        subcort_img = nib.Nifti1Image(subcort_mask, aparc_img.affine)
+        wm_img = nib.Nifti1Image(wm_mask, aparc_img.affine)
+        csf_img = nib.Nifti1Image(csf_mask, aparc_img.affine)
+        cereb_img = nib.Nifti1Image(cereb_mask, aparc_img.affine)
+
         func_img = nib.load(func_file)
-        gm_mask = nib.load(gm_mask_files)
-        wm_mask = nib.load(wm_mask_files)
-        csf_mask = nib.load(csf_mask_files)
         aff = wm_mask.affine
 
         # Resample GM mask to 3mm (functional) resolution with NN interp
-        res_gm_mask = resample_to_img(gm_mask, func_img,
-                                      interpolation='nearest')
+        res_cort_img = resample_to_img(cort_img, func_img,
+                                       interpolation='nearest')
         # res_gm_mask.to_filename(op.join(out_subj_dir, 'gm_mask.nii.gz'))
 
         # Erode WM mask
