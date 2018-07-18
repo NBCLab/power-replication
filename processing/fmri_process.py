@@ -4,6 +4,7 @@ Additional, post-fMRIPrep preprocessing.
 import os
 import os.path as op
 
+import numpy as np
 import nibabel as nib
 from bids.grabbids import BIDSLayout
 from nilearn.image import resample_to_img
@@ -73,15 +74,28 @@ def preprocess(dset, in_dir='/scratch/tsalo006/power-replication/'):
         cereb_img = nib.Nifti1Image(cereb_mask, aparc_img.affine)
 
         func_img = nib.load(func_file)
-        aff = wm_mask.affine
+        aff = wm_img.affine
 
-        # Resample GM mask to 3mm (functional) resolution with NN interp
+        # Resample cortical mask to 3mm (functional) resolution with NN interp
         res_cort_img = resample_to_img(cort_img, func_img,
                                        interpolation='nearest')
-        # res_gm_mask.to_filename(op.join(out_subj_dir, 'gm_mask.nii.gz'))
+        res_cort_img.to_filename(op.join(out_subj_dir,
+                                         'cortical_mask.nii.gz'))
+
+        # Resample cortical mask to 3mm (functional) resolution with NN interp
+        res_subcort_img = resample_to_img(subcort_img, func_img,
+                                          interpolation='nearest')
+        res_subcort_img.to_filename(op.join(out_subj_dir,
+                                            'subcortical_mask.nii.gz'))
+
+        # Resample cortical mask to 3mm (functional) resolution with NN interp
+        res_cereb_img = resample_to_img(cereb_img, func_img,
+                                        interpolation='nearest')
+        res_cereb_img.to_filename(op.join(out_subj_dir,
+                                  'cerebellum_mask.nii.gz'))
 
         # Erode WM mask
-        wm_ero0 = wm_mask.get_data()
+        wm_ero0 = wm_img.get_data()
         wm_ero2 = binary_erosion(wm_ero0, iterations=2)
         wm_ero4 = binary_erosion(wm_ero0, iterations=4)
 
@@ -99,12 +113,12 @@ def preprocess(dset, in_dir='/scratch/tsalo006/power-replication/'):
                                        interpolation='nearest')
         res_wm_ero4 = resample_to_img(wm_ero4, func_img,
                                       interpolation='nearest')
-        # res_wm_ero02.to_filename(op.join(out_subj_dir, 'wm_ero02.nii.gz'))
-        # res_wm_ero24.to_filename(op.join(out_subj_dir, 'wm_ero24.nii.gz'))
-        # res_wm_ero4.to_filename(op.join(out_subj_dir, 'wm_ero4.nii.gz'))
+        res_wm_ero02.to_filename(op.join(out_subj_dir, 'wm_ero02.nii.gz'))
+        res_wm_ero24.to_filename(op.join(out_subj_dir, 'wm_ero24.nii.gz'))
+        res_wm_ero4.to_filename(op.join(out_subj_dir, 'wm_ero4.nii.gz'))
 
         # Erode CSF masks
-        csf_ero0 = csf_mask.get_data()
+        csf_ero0 = csf_img.get_data()
         csf_ero2 = binary_erosion(csf_ero0, iterations=2)
 
         # Subtract CSF masks
@@ -117,8 +131,12 @@ def preprocess(dset, in_dir='/scratch/tsalo006/power-replication/'):
                                         interpolation='nearest')
         res_csf_ero2 = resample_to_img(csf_ero2, func_img,
                                        interpolation='nearest')
-        # res_csf_ero0.to_filename(op.join(out_subj_dir, 'csf_ero0.nii.gz'))
-        # res_csf_ero02.to_filename(op.join(out_subj_dir, 'csf_ero02.nii.gz'))
+        res_csf_ero0.to_filename(op.join(out_subj_dir, 'csf_ero0.nii.gz'))
+        res_csf_ero02.to_filename(op.join(out_subj_dir, 'csf_ero02.nii.gz'))
 
         # Remove first four volumes from fMRI volumes
+        func_data = func_img.get_data()
+        func_data = func_data[:, :, :, 4:]
+        func_img = nib.Nifti1Image(func_data, func_img.affine)
+        func_img.to_filename(op.join(out_subj_dir, 'func_preproc.nii.gz'))
     return None

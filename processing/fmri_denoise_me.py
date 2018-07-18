@@ -59,7 +59,8 @@ def run_tedana(dset, in_dir='/scratch/tsalo006/power-replication/'):
             in_files.append(func_file)
 
         # FIT denoised
-        tedana.workflows.t2smap(in_files, echo_times, fitmode='ts')
+        tedana.workflows.t2smap(in_files, echo_times, fitmode='ts',
+                                combmode='t2s')
 
         # TEDANA v3.2 without GSR
         tedana.workflows.tedana(in_files, echo_times, gscontrol=False,
