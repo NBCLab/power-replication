@@ -28,10 +28,9 @@ def run_tedana(dset, in_dir='/scratch/tsalo006/power-replication/'):
         os.mkdir(out_dir)
 
     for subject in subjects:
-        fp_subj_dir = op.join(fp_dir, subject)
-        out_subj_dir = op.join(out_dir, subject)
-        if not op.isdir(out_subj_dir):
-            os.mkdir(out_subj_dir)
+        power_subj_dir = op.join(out_dir, subject)
+        preproc_dir = op.join(power_subj_dir, 'preprocessed')
+        denoise_dir = op.join(power_subj_dir, 'denoised')
 
         # Get echo times in ms as numpy array or list
         echos = layout.get_echoes(subject=subject, modality='func',
@@ -52,28 +51,46 @@ def run_tedana(dset, in_dir='/scratch/tsalo006/power-replication/'):
             echo_times.append(echo_time)
 
             # Get preprocessed file associated with echo
-            func_file = op.join(fp_subj_dir, 'func',
-                                ('sub-{0}_task-rest_run-01_echo-{1}_bold_'
-                                 'space-MNI152NLin2009cAsym_preproc'
+            func_file = op.join(preproc_dir, 'func',
+                                ('sub-{0}_task-rest_run-01_echo-{1}'
+                                 '_bold_space-MNI152NLin2009cAsym_'
+                                 'powerpreproc'
                                  '.nii.gz').format(subject, echo))
             in_files.append(func_file)
 
         # FIT denoised
         tedana.workflows.t2smap(in_files, echo_times, fitmode='ts',
-                                combmode='t2s')
+                                combmode='t2s', label='fit_denoised')
 
         # TEDANA v3.2 without GSR
         tedana.workflows.tedana(in_files, echo_times, gscontrol=False,
-                                label='test', wvpca=False)
+                                wvpca=False, out_dir=denoise_dir,
+                                label='v3_2_no_gsr',
+                                selection='kundu_v3_2')
 
         # TEDANA v3.2 with wavelet denoising
         tedana.workflows.tedana(in_files, echo_times, gscontrol=False,
-                                label='test', wvpca=True)
+                                wvpca=True, out_dir=denoise_dir,
+                                label='v3_2_wavelet',
+                                selection='kundu_v3_2')
 
         # TEDANA v3.2 with GSR
         tedana.workflows.tedana(in_files, echo_times, gscontrol=True,
-                                label='test', wvpca=False)
+                                wvpca=False, out_dir=denoise_dir,
+                                label='v3_2_gsr',
+                                selection='kundu_v3_2')
 
         # TEDANA v2.5 without GSR
+        tedana.workflows.tedana(in_files, echo_times, gscontrol=False,
+                                wvpca=False, out_dir=denoise_dir,
+                                label='v2_5_no_gsr',
+                                selection='kundu_v2_5')
+
         # TEDANA v2.5 with wavelet denoising
+        tedana.workflows.tedana(in_files, echo_times, gscontrol=False,
+                                wvpca=True, out_dir=denoise_dir,
+                                label='v2_5_wavelet',
+                                selection='kundu_v2_5')
+
         # TEDANA v2.5 with GSR --> Done in fmri_denoise.py
+        # Uses the v2_5_no_gsr results and does more processing on them.

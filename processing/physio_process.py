@@ -27,18 +27,27 @@ def generate_physio_regs(dset, in_dir='/scratch/tsalo006/power-replication/'):
     layout = BIDSLayout(dset_dir)
     subjects = layout.get_subjects()
 
-    out_dir = op.join(dset_dir, 'derivatives/power')
-    if not op.isdir(out_dir):
-        os.mkdir(out_dir)
+    power_dir = op.join(dset_dir, 'derivatives/power')
+    if not op.isdir(power_dir):
+        os.mkdir(power_dir)
 
     for subj in subjects:
-        out_subj_dir = op.join(out_dir, subj)
-        if not op.isdir(out_subj_dir):
-            os.mkdir(out_subj_dir)
+        power_subj_dir = op.join(power_dir, subj)
+        if not op.isdir(power_subj_dir):
+            os.mkdir(power_subj_dir)
+
+        preproc_dir = op.join(power_subj_dir, 'preprocessed')
+        if not op.isdir(preproc_dir):
+            os.mkdir(preproc_dir)
+
+        physio_dir = op.join(preproc_dir, 'physio')
+        if not op.isdir(physio_dir):
+            os.mkdir(physio_dir)
 
         func_dir = op.join(dset_dir, subj, 'func')
         physio_tsv = op.join(func_dir,
-                             '{0}_task-rest_run-01_physio.tsv.gz'.format(subj))
+                             'sub-{0}_task-rest_run-01_physio'
+                             '.tsv.gz'.format(subj))
         df = pd.read_csv(physio_tsv, sep='\t', header=None,
                          names=['cardiac', 'respiratory'])
         card = df['cardiac'].values
@@ -46,22 +55,29 @@ def generate_physio_regs(dset, in_dir='/scratch/tsalo006/power-replication/'):
 
         # RV
         rv_regs, rv_x_rrf_regs = compute_rv(df, tr, samplerate)
-        rv_file = op.join(out_subj_dir, 'rv.txt')
-        rv_x_rrf_file = op.join(out_subj_dir, 'rv_x_rrf.txt')
+        rv_file = op.join(physio_dir,
+                          'sub-{0}_task-rest_run-01_rv.txt'.format(subj))
+        rv_x_rrf_file = op.join(physio_dir,
+                                'sub-{0}_task-rest_run-01_rvXrrf'
+                                '.txt'.format(subj))
         np.savetxt(rv_file, rv_regs)
         np.savetxt(rv_x_rrf_file, rv_x_rrf_regs)
 
         # RVT
-        rvt_regs, rvt_x_rrf_regs = compute_rvt(df, out_subj_dir, tr,
+        rvt_regs, rvt_x_rrf_regs = compute_rvt(df, physio_dir, subj, tr,
                                                samplerate)
-        rvt_file = op.join(out_subj_dir, 'rvt.txt')
-        rvt_x_rrf_file = op.join(out_subj_dir, 'rvt_x_rrf.txt')
+        rvt_file = op.join(physio_dir,
+                           'sub-{0}_task-rest_run-01_rvt.txt'.format(subj))
+        rvt_x_rrf_file = op.join(physio_dir,
+                                 'sub-{0}_task-rest_run-01_rvtXrrf'
+                                 '.txt'.format(subj))
         np.savetxt(rvt_file, rvt_regs)
         np.savetxt(rvt_x_rrf_file, rvt_x_rrf_regs)
 
         # RPV
         rpv = compute_rpv(df)
-        rpv_file = op.join(out_subj_dir, 'rpv.txt')
+        rpv_file = op.join(physio_dir,
+                           'sub-{0}_task-rest_run-01_rpv.txt'.format(subj))
         np.savetxt(rpv_file, rpv)
 
 
@@ -78,7 +94,7 @@ def compute_rpv(df):
     return rpv
 
 
-def compute_rvt(df, out_subj_dir, tr=3., samplerate=50):
+def compute_rvt(df, physio_dir, subject, tr=3., samplerate=50):
     """
     Compute respiratory-volume-per-time (RVT) regressors
     """
@@ -89,7 +105,9 @@ def compute_rvt(df, out_subj_dir, tr=3., samplerate=50):
     # Get respiratory response function (RRF)
     rrf = physio.rrf(tr=tr)
 
-    resp_1d_file = op.join(out_subj_dir, 'respiratory.1d')
+    resp_1d_file = op.join(physio_dir,
+                           'sub-{0}_task-rest_run-01_respiratory'
+                           '.1d'.format(subject))
     np.savetxt(resp_1d_file, resp)
     rvt = physio.rvt(resp_1d_file, samplerate=samplerate, tr=tr)
 
