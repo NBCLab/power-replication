@@ -33,14 +33,14 @@ def run_godec():
     pass
 
 
-def run_rvtreg(dset, method, in_dir='/scratch/tsalo006/power-replication/'):
+def run_rvtreg(dset, method, suffix, in_dir='/scratch/tsalo006/power-replication/'):
     """
     Generate ICA denoised data after regressing out RVT and RVT convolved with
     RRF (including lags)
 
     Used for:
-    -   Scatter plots with fitted lines and correlations between STD of
-        ventilatory envelope and STD of global signal for ICA-denoised data
+    -   Scatter plots with fitted lines and correlations between SD of
+        ventilatory envelope and SD of global signal for ICA-denoised data
         after regression of RVT + RVT*RRF regressors (from S5d’s approach)
     -   RPV correlated with SD of global fMRI signal from
         MEICA-denoised+RVT + RVT*RRF data
@@ -57,10 +57,14 @@ def run_rvtreg(dset, method, in_dir='/scratch/tsalo006/power-replication/'):
         physio_dir = op.join(preproc_dir, 'physio')
         anat_dir = op.join(preproc_dir, 'anat')
 
-        func_file = op.join(power_subj_dir, 'denoised', method)
+        func_file = op.join(power_subj_dir, 'denoised', method,
+                            'sub-{0}_task-rest_run-01_{1}'
+                            '.nii.gz'.format(subj, suffix))
         mask_file = op.join(anat_dir, 'cortical_mask.nii.gz')
         func_img = nib.load(func_file)
         mask_img = nib.load(mask_file)
+        if subj == subjects[0]:
+            resid_sds = np.empty((len(subjects), func_img.shape[-1]))
 
         rvt_file = op.join(physio_dir,
                            'sub-{0}_task-rest_run-01_rvt.txt'.format(subj))
@@ -75,7 +79,11 @@ def run_rvtreg(dset, method, in_dir='/scratch/tsalo006/power-replication/'):
         lstsq_res = np.linalg.lstsq(rvt, func_data, rcond=None)
         pred = np.dot(rvt, lstsq_res[0])
         residuals = func_data - pred
-        resid_img = unmask(residuals, mask_img)
+
+        # Get volume-wise standard deviation
+        resid_sd = np.std(residuals, axis=0)
+        resid_sds[subj, :] = resid_sd
+        return resid_sds
 
 
 def run_rvreg():
