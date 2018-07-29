@@ -86,7 +86,7 @@ class fMRIPlot(object):
         nrows = 3
 
         # Create grid
-        grid = mgs.GridSpec(nrows, 1, wspace=0.0, hspace=0.05,
+        grid = mgs.GridSpec(nrows, 1, wspace=0.0, hspace=0.1,
                             height_ratios=[1] * (nrows - 1) + [5])
 
         grid_id = 0
@@ -107,7 +107,7 @@ class fMRIPlot(object):
             # grid_id += 1
 
         if self.confounds:
-            palette = color_palette("husl", nconfounds)
+            palette = color_palette('husl', nconfounds)
 
         for i, (name, kwargs) in enumerate(self.confounds.items()):
             tseries = kwargs.pop('values')
@@ -122,10 +122,14 @@ class fMRIPlot(object):
                     name=name, **kwargs)
             # grid_id += 1
 
-        ax_cf.set_ylim(-.25, .25)
-        ax_cf.set_yticklabels([-.25, .25])
-        ax_fd.set_ylim(-.25, .25)
-        ax_fd.set_yticklabels([-.25, .25])
+        cf_min, cf_max = -.25, .25
+        ax_cf.set_ylim(cf_min, cf_max)
+        ax_cf.set_yticks([cf_min, cf_max])
+        ax_cf.set_yticklabels([cf_min, cf_max], fontsize=10)
+        fd_min, fd_max = 0, .25
+        ax_fd.set_ylim(fd_min, fd_max)
+        ax_fd.set_yticks([fd_min, fd_max])
+        ax_fd.set_yticklabels([fd_min, fd_max], fontsize=10)
 
         legend = ax_cf.legend(frameon=True, ncol=3, fontsize=10,
                               loc='upper right')
@@ -487,6 +491,7 @@ def confoundplot(tseries, ax_ts, gs_dist=None, name=None,
         #    bbox={'boxstyle': 'round', 'fc': 'w', 'ec': 'none',
         #          'color': 'none', 'lw': 0, 'alpha': 0.8})
 
+    '''
     for side in ["top", "right"]:
         ax_ts.spines[side].set_color('none')
         ax_ts.spines[side].set_visible(False)
@@ -497,10 +502,10 @@ def confoundplot(tseries, ax_ts, gs_dist=None, name=None,
     else:
         ax_ts.spines["bottom"].set_color('none')
         ax_ts.spines["bottom"].set_visible(False)
-
-    ax_ts.spines["left"].set_position(('outward', 30))
-    ax_ts.spines["left"].set_color('none')
-    ax_ts.spines["left"].set_visible(False)
+    '''
+    #ax_ts.spines["left"].set_position(('outward', 30))
+    #ax_ts.spines["left"].set_color('none')
+    #ax_ts.spines["left"].set_visible(False)
     ax_ts.yaxis.set_ticks_position('left')
 
     # Calculate Y limits
