@@ -17,7 +17,7 @@ from matplotlib.colors import ListedColormap, Normalize
 from matplotlib.colorbar import ColorbarBase
 
 from nilearn.plotting import plot_img
-from nilearn.signal import clean
+from nilearn import signal
 from nilearn._utils import check_niimg_4d
 from nilearn._utils.niimg import _safe_get_data
 
@@ -31,22 +31,21 @@ class fMRIPlot(object):
     """
     Generates the fMRI Summary Plot
     """
-    __slots__ = ['func_file', 'mask_data',
+    __slots__ = ['func_nii', 'mask_data',
                  'tr', 'seg_data', 'confounds', 'spikes']
 
-    def __init__(self, func_file, mask_file=None, data=None, conf_file=None, seg_file=None,
-                 tr=None, usecols=None, units=None, vlines=None, spikes_files=None):
-        self.func_file = func_file
-        func_nii = nb.load(func_file)
+    def __init__(self, func_nii, mask_nii=None, data=None, conf_df=None, seg_nii=None,
+                 tr=None, units=None, vlines=None, spikes_files=None):
+        self.func_nii = func_nii
         self.tr = tr if tr is not None else func_nii.header.get_zooms()[-1]
 
         self.mask_data = np.ones_like(func_nii.get_data(), dtype='uint8')
-        if mask_file:
-            self.mask_data = nb.load(mask_file).get_data().astype('uint8')
+        if mask_nii:
+            self.mask_data = mask_nii.get_data().astype('uint8')
 
         self.seg_data = None
-        if seg_file:
-            self.seg_data = nb.load(seg_file).get_data()
+        if seg_nii:
+            self.seg_data = seg_nii.get_data()
 
         if units is None:
             units = {}
@@ -55,9 +54,8 @@ class fMRIPlot(object):
             vlines = {}
 
         self.confounds = {}
-        if data is None and conf_file:
-            data = pd.read_csv(conf_file, sep=r'[\t\s]+',
-                               usecols=usecols, index_col=False)
+        if data is None and conf_df is not None:
+            data = conf_df
 
         if data is not None:
             for name in data.columns.ravel():
@@ -90,6 +88,7 @@ class fMRIPlot(object):
                             height_ratios=[1] * (nrows - 1) + [5])
 
         grid_id = 0
+
         # Define nested GridSpec
         gs = mgs.GridSpecFromSubplotSpec(1, 2, subplot_spec=grid[0],
                                          width_ratios=[1, 100], wspace=0.0)
@@ -122,11 +121,14 @@ class fMRIPlot(object):
                     name=name, **kwargs)
             # grid_id += 1
 
-        cf_min, cf_max = -.25, .25
+        cf_min, cf_max = -1, 1  # For analyses
+        cf_min, cf_max = -.25, .25  # For pretty tests
         ax_cf.set_ylim(cf_min, cf_max)
         ax_cf.set_yticks([cf_min, cf_max])
         ax_cf.set_yticklabels([cf_min, cf_max], fontsize=10)
-        fd_min, fd_max = 0, .25
+
+        fd_min, fd_max = 0, 2  # For analyses
+        fd_min, fd_max = 0, .25  # For pretty tests
         ax_fd.set_ylim(fd_min, fd_max)
         ax_fd.set_yticks([fd_min, fd_max])
         ax_fd.set_yticklabels([fd_min, fd_max], fontsize=10)
@@ -142,7 +144,7 @@ class fMRIPlot(object):
         frame.set_facecolor('white')
         frame.set_edgecolor('black')
 
-        plot_carpet(self.func_file, self.seg_data, subplot=grid[-1])
+        plot_carpet(self.func_nii, self.seg_data, subplot=grid[-1])
         # spikesplot_cb([0.7, 0.78, 0.2, 0.008])
         return figure
 
@@ -157,31 +159,30 @@ def plot_carpet(img, atlaslabels, detrend=True, nskip=0, size=(950, 800),
 
     Parameters
     ----------
-
-        img : Niimg-like object
-            See http://nilearn.github.io/manipulating_images/input_output.html
-            4D input image
-        atlaslabels: ndarray
-            A 3D array of integer labels from an atlas, resampled into ``img`` space.
-        detrend : boolean, optional
-            Detrend and standardize the data prior to plotting.
-        nskip : int
-            Number of volumes at the beginning of the scan marked as nonsteady state.
-        long_cutoff : int
-            Number of TRs to consider img too long (and decimate the time direction
-            to save memory)
-        axes : matplotlib axes, optional
-            The axes used to display the plot. If None, the complete
-            figure is used.
-        title : string, optional
-            The title displayed on the figure.
-        output_file : string, or None, optional
-            The name of an image file to export the plot to. Valid extensions
-            are .png, .pdf, .svg. If output_file is not None, the plot
-            is saved to a file, and the display is closed.
-        legend : bool
-            Whether to render the average functional series with ``atlaslabels`` as
-            overlay.
+    img : Niimg-like object
+        See http://nilearn.github.io/manipulating_images/input_output.html
+        4D input image
+    atlaslabels: ndarray
+        A 3D array of integer labels from an atlas, resampled into ``img`` space.
+    detrend : boolean, optional
+        Standardize and detrend the data prior to plotting.
+    nskip : int
+        Number of volumes at the beginning of the scan marked as nonsteady state.
+    long_cutoff : int
+        Number of TRs to consider img too long (and decimate the time direction
+        to save memory)
+    axes : matplotlib axes, optional
+        The axes used to display the plot. If None, the complete
+        figure is used.
+    title : string, optional
+        The title displayed on the figure.
+    output_file : string, or None, optional
+        The name of an image file to export the plot to. Valid extensions
+        are .png, .pdf, .svg. If output_file is not None, the plot
+        is saved to a file, and the display is closed.
+    legend : bool
+        Whether to render the average functional series with ``atlaslabels`` as
+        overlay.
     """
     img_nii = check_niimg_4d(img, dtype='auto')
     func_data = _safe_get_data(img_nii, ensure_finite=True)
@@ -212,11 +213,11 @@ def plot_carpet(img, atlaslabels, detrend=True, nskip=0, size=(950, 800),
     # Detrend data
     v = (None, None)
     if detrend:
-        data = clean(data.T, t_r=tr).T
+        data = signal.clean(data.T, detrend=True, standardize=True, t_r=tr).T
         v = (-2, 2)
 
     # Order following segmentation labels
-    order = np.argsort(newsegm)[::-1]
+    order = np.argsort(newsegm)  # [::-1]
 
     # If subplot is not defined
     if subplot is None:
@@ -230,7 +231,7 @@ def plot_carpet(img, atlaslabels, detrend=True, nskip=0, size=(950, 800),
 
     mycolors = sns.color_palette('Blues_r', 4)[:3] +\
         sns.color_palette('Greens', 3) +\
-        sns.color_palette('YlOrBr', 4)[:2]
+        sns.color_palette('YlOrBr', 4)[:2][::-1]
     mycolors = ListedColormap(mycolors)
 
     # Segmentation colorbar

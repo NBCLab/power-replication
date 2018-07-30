@@ -100,13 +100,13 @@ def preprocess(dset, in_dir='/scratch/tsalo006/power-replication/'):
         # Resample cortical mask to 3mm (functional) resolution with NN interp
         res_subcort_img = resample_to_img(subcort_img, func_img,
                                           interpolation='nearest')
-        res_subcort_img.to_filename(op.join(anat_dir,
-                                            'subcortical_mask.nii.gz'))
+        # res_subcort_img.to_filename(op.join(anat_dir,
+        #                                     'subcortical_mask.nii.gz'))
 
         # Resample cortical mask to 3mm (functional) resolution with NN interp
         res_cereb_img = resample_to_img(cereb_img, func_img,
                                         interpolation='nearest')
-        res_cereb_img.to_filename(op.join(anat_dir, 'cerebellum_mask.nii.gz'))
+        # res_cereb_img.to_filename(op.join(anat_dir, 'cerebellum_mask.nii.gz'))
 
         # Erode WM mask
         wm_ero0 = wm_img.get_data()
@@ -127,9 +127,9 @@ def preprocess(dset, in_dir='/scratch/tsalo006/power-replication/'):
                                        interpolation='nearest')
         res_wm_ero4 = resample_to_img(wm_ero4, func_img,
                                       interpolation='nearest')
-        res_wm_ero02.to_filename(op.join(anat_dir, 'wm_ero02.nii.gz'))
-        res_wm_ero24.to_filename(op.join(anat_dir, 'wm_ero24.nii.gz'))
-        res_wm_ero4.to_filename(op.join(anat_dir, 'wm_ero4.nii.gz'))
+        # res_wm_ero02.to_filename(op.join(anat_dir, 'wm_ero02.nii.gz'))
+        # res_wm_ero24.to_filename(op.join(anat_dir, 'wm_ero24.nii.gz'))
+        # res_wm_ero4.to_filename(op.join(anat_dir, 'wm_ero4.nii.gz'))
 
         # Erode CSF masks
         csf_ero0 = csf_img.get_data()
@@ -145,8 +145,43 @@ def preprocess(dset, in_dir='/scratch/tsalo006/power-replication/'):
                                         interpolation='nearest')
         res_csf_ero2 = resample_to_img(csf_ero2, func_img,
                                        interpolation='nearest')
-        res_csf_ero0.to_filename(op.join(anat_dir, 'csf_ero0.nii.gz'))
-        res_csf_ero02.to_filename(op.join(anat_dir, 'csf_ero02.nii.gz'))
+        # res_csf_ero02.to_filename(op.join(anat_dir, 'csf_ero02.nii.gz'))
+        # res_csf_ero2.to_filename(op.join(anat_dir, 'csf_ero2.nii.gz'))
+
+        # Combine masks with different values for carpet pltos
+        seg_arr = np.zeros(res_cort_img.shape)
+        cort_arr = res_cort_img.get_data()
+        seg_arr[cort_arr == 1] = 1
+        subcort_arr = res_subcort_img.get_data()
+        seg_arr[subcort_arr == 1] = 2
+        cereb_arr = res_cereb_img.get_data()
+        seg_arr[cereb_arr == 1] = 3
+        wm_ero02_arr = res_wm_ero02.get_data()
+        seg_arr[wm_ero02_arr == 1] = 4
+        wm_ero24_arr = res_wm_ero24.get_data()
+        seg_arr[wm_ero24_arr == 1] = 5
+        wm_ero4_arr = res_wm_ero4.get_data()
+
+        # For carpet plots
+        seg_arr[wm_ero4_arr == 1] = 6
+        seg_img = nib.Nifti1Image(seg_arr, func_img.affine)
+        seg_img.to_filename(op.join(anat_dir,
+                                    'total_mask_segmentation_no_csf.nii.gz'))
+        mask_arr = (seg_arr > 0).astype(int)
+        mask_img = nib.Nifti1Image(mask_arr, func_img.affine)
+        mask_img.to_filename(op.join(anat_dir, 'total_mask_no_csf.nii.gz'))
+
+        # For brain images *under* carpet plots
+        csf_ero02_arr = res_csf_ero02.get_data()
+        seg_arr[csf_ero02_arr == 1] = 7
+        csf_ero2_arr = res_csf_ero2.get_data()
+        seg_arr[csf_ero2_arr == 1] = 8
+        seg_img = nib.Nifti1Image(seg_arr, func_img.affine)
+        seg_img.to_filename(op.join(anat_dir,
+                                    'total_mask_segmentation_with_csf.nii.gz'))
+        mask_arr = (seg_arr > 0).astype(int)
+        mask_img = nib.Nifti1Image(mask_arr, func_img.affine)
+        mask_img.to_filename(op.join(anat_dir, 'total_mask_with_csf.nii.gz'))
 
         # Remove first four volumes from fMRI volumes
         for i_echo in range(1, n_echos+1):
