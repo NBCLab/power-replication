@@ -89,8 +89,7 @@ def compute_rpv(df):
     # First, z-score respiratory traces
     resp_z = zscore(resp)
     rpv_lower_env, rpv_upper_env = envelope(resp_z)
-    rpv_env = np.hstack((rpv_lower_env[:, None], rpv_upper_env[:, None]))
-    rpv = np.std(rpv_env, axis=1)
+    rpv = np.std(rpv_upper_env)
     return rpv
 
 
