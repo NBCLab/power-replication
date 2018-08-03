@@ -46,7 +46,8 @@ def make_plots(dset, pathstr, method,
         anat_dir = op.join(preproc_dir, 'anat')
 
         # Get TR
-        func_file = layout.get(subjects=[subj], task='rest', run='01', suffix='.nii.gz')[0]
+        func_file = layout.get(subjects=[subj], task='rest', run='01',
+                               suffix='.nii.gz')[0]
         metadata = layout.get_metadata(func_file.filename)
         tr = metadata['RepetitionTime']
 
@@ -72,11 +73,27 @@ def make_plots(dset, pathstr, method,
         func_img = nib.load(func_file)
         mask_img = nib.load(mask_file)
         seg_img = nib.load(seg_file)
-        plot = fMRIPlot(func_img, mask_img, tr=tr,
-                        conf_df=conf_df, seg_nii=seg_img)
+        plot = fMRIPlot(func_img, mask_img, tr=tr, conf_df=conf_df,
+                        seg_nii=seg_img)
 
         fig = plt.figure(figsize=(16, 8))
         fig = plot.plot(figure=fig)
         fig.tight_layout()
-        fig.savefig('carpet_{s}_{m}.png'.format(s=subj, m=method),
+        fig.savefig('../figures/{m}/{s}_carpet.png'.format(s=subj, m=method),
                     dpi=400)
+
+
+def run(in_dir='/scratch/tsalo006/power-replication/'):
+    dsets = ['ds0', 'ds1']
+    methods = ['fit_denoised', 'v3_2_no_gsr', 'v3_2_wavelet', 'v3_2_gsr',
+               'v2_5_no_gsr', 'v2_5_wavelet', 'v2_5_gsr']
+    pathstrs = ['denoised/fit_denoised/sub-{subj}_task-rest_run-01_t2smap.nii.gz',
+                'denoised/v3_2_no_gsr/sub-{subj}_task-rest_run-01_dn_ts_OC.nii.gz',
+                'denoised/v3_2_wavelet/sub-{subj}_task-rest_run-01_dn_ts_OC.nii.gz',
+                'denoised/v3_2_gsr/sub-{subj}_task-rest_run-01_dn_ts_OC_T1c.nii.gz',
+                'denoised/v2_5_no_gsr/sub-{subj}_task-rest_run-01_dn_ts_OC.nii.gz',
+                'denoised/v2_5_wavelet/sub-{subj}_task-rest_run-01_dn_ts_OC.nii.gz',
+                'denoised/v2_5_gsr/sub-{subj}_task-rest_run-01_dn_ts_OC_T1c.nii.gz',]
+    for dset in dsets:
+        for j, method in enumerate(methods):
+            make_plots(dset, pathstrs[j], method, in_dir=in_dir)

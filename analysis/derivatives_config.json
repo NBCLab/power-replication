@@ -1,0 +1,30 @@
+{
+    "OC": {
+        "None": "denoised/v3_2_no_gsr/sub-{subj}_task-rest_run-01_ts_OC.nii.gz",
+        "Motion-Residuals": "regressions/motion/OC/sub-{subj}_task-rest_run-01_residuals.nii.gz",
+        "GODEC-Sparse": "regressions/godec/OC/sub-{subj}_task-rest_run-01_sparse.nii.gz",
+        "GODEC-LowRank": "regressions/godec/OC/sub-{subj}_task-rest_run-01_lowrank.nii.gz",
+        "GSR-Residuals": "regressions/gsr/OC/sub-{subj}_task-rest_run-01_residuals.nii.gz",
+        "GSR-Removed": "regressions/gsr/OC/sub-{subj}_task-rest_run-01_removed.nii.gz",
+        "aCompCor-Residuals": "regressions/acompcor/OC/sub-{subj}_task-rest_run-01_residuals.nii.gz",
+        "aCompCor-Removed": "regressions/acompcor/OC/sub-{subj}_task-rest_run-01_removed.nii.gz",
+        "RVT-Residuals": "regressions/rvt/OC/sub-{subj}_task-rest_run-01_residuals.nii.gz",
+        "RV-Residuals": "regressions/rv/OC/sub-{subj}_task-rest_run-01_residuals.nii.gz",
+        "dGSR-Residuals": "regressions/dgsr/OC/sub-{subj}_task-rest_run-01_residuals.nii.gz",
+        "dGSR-Removed": "regressions/dgsr/OC/sub-{subj}_task-rest_run-01_removed.nii.gz"
+    },
+    "FIT-OC": {
+        "None": "denoised/fit/sub-{subj}_task-rest_run-01_ts_OC.nii.gz",
+        "Motion-Res": "regressions/motion/FIT-OC/sub-{subj}_task-rest_run-01_residuals.nii.gz",
+        "GODEC-Sparse": "regressions/godec/FIT-OC/sub-{subj}_task-rest_run-01_sparse.nii.gz",
+        "GODEC-LowRank": "regressions/godec/FIT-OC/sub-{subj}_task-rest_run-01_lowrank.nii.gz",
+        "GSR-Residuals": "regressions/gsr/FIT-OC/sub-{subj}_task-rest_run-01_residuals.nii.gz",
+        "GSR-Removed": "regressions/gsr/FIT-OC/sub-{subj}_task-rest_run-01_removed.nii.gz",
+        "aCompCor-Residuals": "regressions/acompcor/FIT-OC/sub-{subj}_task-rest_run-01_residuals.nii.gz",
+        "aCompCor-Removed": "regressions/acompcor/FIT-OC/sub-{subj}_task-rest_run-01_removed.nii.gz",
+        "RVT-Residuals": "regressions/rvt/FIT-OC/sub-{subj}_task-rest_run-01_residuals.nii.gz",
+        "RV-Residuals": "regressions/rv/FIT-OC/sub-{subj}_task-rest_run-01_residuals.nii.gz",
+        "dGSR-Residuals": "regressions/dgsr/FIT-OC/sub-{subj}_task-rest_run-01_residuals.nii.gz",
+        "dGSR-Removed": "regressions/dgsr/FIT-OC/sub-{subj}_task-rest_run-01_removed.nii.gz"
+    }
+}
