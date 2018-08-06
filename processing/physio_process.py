@@ -16,6 +16,7 @@ from scipy.signal import convolve, resample, detrend
 
 # Local install of metco2, adapted to make RVT more flexible
 from metco2.utils import physio
+import utils
 
 
 def generate_physio_regs(dset, in_dir='/scratch/tsalo006/power-replication/'):
@@ -84,11 +85,14 @@ def generate_physio_regs(dset, in_dir='/scratch/tsalo006/power-replication/'):
 def compute_rpv(df):
     """
     Compute respiratory pattern variability (RPV)
+
+    We will use a window equivalent to 10 seconds
+    (500 timepoints for 50Hz data, 4000 for 400Hz data).
     """
     resp = df['respiratory'].values
     # First, z-score respiratory traces
     resp_z = zscore(resp)
-    rpv_lower_env, rpv_upper_env = envelope(resp_z)
+    rpv_upper_env = utils.rms_envelope_1d(resp_z, window=500)
     rpv = np.std(rpv_upper_env)
     return rpv
 
@@ -197,49 +201,3 @@ def compute_rv(df, tr=3., samplerate=50):
     rv_x_rrf_all = detrend(rv_x_rrf_all, axis=0)
     rv_x_rrf_all = zscore(rv_x_rrf_all, axis=0)
     return rv_all, rv_x_rrf_all
-
-
-def envelope(arr):
-    """
-    Compute envelope of timeseries.
-
-    From https://stackoverflow.com/a/34245942/2589328
-    With some adjustments by Taylor Salo
-    """
-    # Prepend the first value of (s) to the interpolating values.
-    # This forces the model to use the same starting point for
-    # both the upper and lower envelope models.
-    u_x = [0]
-    u_y = [arr[0]]
-
-    l_x = [0]
-    l_y = [arr[0]]
-
-    # Detect peaks and troughs and mark their location in u_x,u_y,l_x,l_y
-    # respectively.
-    for k in range(1, len(arr)-1):
-        if (np.sign(arr[k]-arr[k-1]) == 1) and (np.sign(arr[k]-arr[k+1]) == 1):
-            u_x.append(k)
-            u_y.append(arr[k])
-
-        if (np.sign(arr[k]-arr[k-1]) == -1) and ((np.sign(arr[k]-arr[k+1])) == -1):
-            l_x.append(k)
-            l_y.append(arr[k])
-
-    # Append the last value of (s) to the interpolating values.
-    # This forces the model to use the same ending point for both the upper and
-    # lower envelope models.
-    u_x.append(len(arr)-1)
-    u_y.append(arr[-1])
-
-    l_x.append(len(arr)-1)
-    l_y.append(arr[-1])
-
-    # Fit suitable models to the data.
-    u_p = interp1d(u_x, u_y, kind='linear', bounds_error=False, fill_value=0.0)
-    l_p = interp1d(l_x, l_y, kind='linear', bounds_error=False, fill_value=0.0)
-
-    upper_env = u_p(range(0, len(arr)))
-    lower_env = l_p(range(0, len(arr)))
-
-    return lower_env, upper_env
