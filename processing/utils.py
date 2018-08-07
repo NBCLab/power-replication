@@ -34,7 +34,7 @@ def rms_envelope_1d(arr, window=500):
     buf = int(window / 2)
 
     # Pad array at both ends
-    arr = np.copy(arr)
+    arr = np.copy(arr).astype(float)
     mean = np.mean(arr)
     arr -= mean
     arr = mirrorpad_1d(arr, buffer=buf)
