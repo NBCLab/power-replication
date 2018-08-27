@@ -100,13 +100,10 @@ def preprocess(dset, in_dir='/scratch/tsalo006/power-replication/'):
         # Resample cortical mask to 3mm (functional) resolution with NN interp
         res_subcort_img = resample_to_img(subcort_img, func_img,
                                           interpolation='nearest')
-        # res_subcort_img.to_filename(op.join(anat_dir,
-        #                                     'subcortical_mask.nii.gz'))
 
         # Resample cortical mask to 3mm (functional) resolution with NN interp
         res_cereb_img = resample_to_img(cereb_img, func_img,
                                         interpolation='nearest')
-        # res_cereb_img.to_filename(op.join(anat_dir, 'cerebellum_mask.nii.gz'))
 
         # Erode WM mask
         wm_ero0 = wm_img.get_data()
@@ -127,9 +124,6 @@ def preprocess(dset, in_dir='/scratch/tsalo006/power-replication/'):
                                        interpolation='nearest')
         res_wm_ero4 = resample_to_img(wm_ero4, func_img,
                                       interpolation='nearest')
-        # res_wm_ero02.to_filename(op.join(anat_dir, 'wm_ero02.nii.gz'))
-        # res_wm_ero24.to_filename(op.join(anat_dir, 'wm_ero24.nii.gz'))
-        # res_wm_ero4.to_filename(op.join(anat_dir, 'wm_ero4.nii.gz'))
 
         # Erode CSF masks
         csf_ero0 = csf_img.get_data()
@@ -145,8 +139,6 @@ def preprocess(dset, in_dir='/scratch/tsalo006/power-replication/'):
                                         interpolation='nearest')
         res_csf_ero2 = resample_to_img(csf_ero2, func_img,
                                        interpolation='nearest')
-        # res_csf_ero02.to_filename(op.join(anat_dir, 'csf_ero02.nii.gz'))
-        # res_csf_ero2.to_filename(op.join(anat_dir, 'csf_ero2.nii.gz'))
 
         # Combine masks with different values for carpet pltos
         seg_arr = np.zeros(res_cort_img.shape)
