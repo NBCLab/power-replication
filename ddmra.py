@@ -56,8 +56,8 @@ def rank_p(test_value, null_array, tail='two'):
 
 def fast_pearson(X, y):
     """
-    Fast correlations between y and each row of X. For QC-RSFC.
-    From http://qr.ae/TU1B9C
+    Fast correlations between y and each row of X. For QC-RSFC. Checked for
+    accuracy. From http://qr.ae/TU1B9C
     """
     assert len(X.shape) == 2
     assert len(y.shape) == 1
@@ -93,8 +93,7 @@ def moving_average(values, window):
     return sma
 
 
-def scrubbing_analysis(group_timeseries, qcs, n_rois, qc_thresh=0.2,
-                       perm=True):
+def scrubbing_analysis(group_timeseries, qcs, n_rois, qc_thresh=0.2, perm=True):
     """
     Perform Power scrubbing analysis. Note that correlations from scrubbed
     timeseries are subtracted from correlations from unscrubbed timeseries,
@@ -184,15 +183,12 @@ def run(imgs, qcs, n_iters=10000, qc_thresh=0.2, window=1000):
 
     t_r = imgs[0].header.get_zooms()[-1]
     spheres_masker = input_data.NiftiSpheresMasker(
-        seeds=coords, radius=5., t_r=t_r,
-        smoothing_fwhm=4, detrend=False, standardize=False,
-        low_pass=None, high_pass=None)
+        seeds=coords, radius=5., t_r=t_r, smoothing_fwhm=None, detrend=False,
+        standardize=False, low_pass=None, high_pass=None)
 
     # prep for qcrsfc and high-low motion analyses
     mean_qcs = np.array([np.mean(qc) for qc in qcs])
     raw_corr_mats = np.zeros((n_subjects, len(mat_idx[0])))
-    high_motion_idx = mean_qcs >= np.median(mean_qcs)
-    low_motion_idx = mean_qcs < np.median(mean_qcs)
 
     # Get correlation matrices
     ts_all = []
@@ -205,20 +201,28 @@ def run(imgs, qcs, n_iters=10000, qc_thresh=0.2, window=1000):
     z_corr_mats = np.arctanh(raw_corr_mats)
 
     # QC:RSFC r analysis
+    # For each pair of ROIs, correlate the z-transformed correlation
+    # coefficients across subjects with the subjects' mean QC (generally FD)
+    # values.
     qcrsfc_rs = fast_pearson(z_corr_mats.T, mean_qcs)
     qcrsfc_rs = qcrsfc_rs[sort_idx]
     qcrsfc_smc = moving_average(qcrsfc_rs, window)
 
     # High-low motion analysis
-    high_motion_corr = np.mean(raw_corr_mats[high_motion_idx, :], axis=0)
-    low_motion_corr = np.mean(raw_corr_mats[low_motion_idx, :], axis=0)
-    hl_corr_diff = high_motion_corr - low_motion_corr
+    # Split the sample using a median split of the QC metric (generally mean
+    # FD). Then, for each pair of ROIs, calculate the difference between the
+    # mean across correlation coefficients for the high motion minus the low
+    # motion groups.
+    hm_idx = mean_qcs >= np.median(mean_qcs)
+    lm_idx = mean_qcs < np.median(mean_qcs)
+    hm_mean_corr = np.mean(raw_corr_mats[hm_idx, :], axis=0)
+    lm_mean_corr = np.mean(raw_corr_mats[lm_idx, :], axis=0)
+    hl_corr_diff = hm_mean_corr - lm_mean_corr
     hl_corr_diff = hl_corr_diff[sort_idx]
     hl_smc = moving_average(hl_corr_diff, window)
 
     # Scrubbing analysis
-    mean_delta_r = scrubbing_analysis(ts_all, qcs, n_rois, qc_thresh,
-                                      perm=False)
+    mean_delta_r = scrubbing_analysis(ts_all, qcs, n_rois, qc_thresh, perm=False)
     mean_delta_r = mean_delta_r[sort_idx]
     scrub_smc = moving_average(mean_delta_r, window)
 
@@ -228,15 +232,10 @@ def run(imgs, qcs, n_iters=10000, qc_thresh=0.2, window=1000):
     perm_qcrsfc_smc = np.zeros((n_iters, len(dists)))
     perm_hl_smc = np.zeros((n_iters, len(dists)))
     for i in range(n_iters):
-        # Scrubbing analysis
-        perm_qcs = [np.random.permutation(perm_qc) for perm_qc in qcs_copy]
-        perm_mean_delta_r = scrubbing_analysis(ts_all, perm_qcs, n_rois,
-                                               qc_thresh, perm=True)
-        perm_mean_delta_r = perm_mean_delta_r[sort_idx]
-        perm_scrub_smc[i, :] = moving_average(perm_mean_delta_r, window)
+        # Prep for QC:RSFC and high-low motion analyses
+        perm_mean_qcs = np.random.permutation(mean_qcs)
 
         # QC:RSFC analysis
-        perm_mean_qcs = np.random.permutation(mean_qcs)
         perm_qcrsfc_rs = fast_pearson(z_corr_mats.T, perm_mean_qcs)
         perm_qcrsfc_rs = perm_qcrsfc_rs[sort_idx]
         perm_qcrsfc_smc[i, :] = moving_average(perm_qcrsfc_rs, window)
@@ -249,6 +248,13 @@ def run(imgs, qcs, n_iters=10000, qc_thresh=0.2, window=1000):
         perm_hl_diff = perm_hm_corr - perm_lm_corr
         perm_hl_diff = perm_hl_diff[sort_idx]
         perm_hl_smc[i, :] = moving_average(perm_hl_diff, window)
+
+        # Scrubbing analysis
+        perm_qcs = [np.random.permutation(perm_qc) for perm_qc in qcs_copy]
+        perm_mean_delta_r = scrubbing_analysis(ts_all, perm_qcs, n_rois,
+                                               qc_thresh, perm=True)
+        perm_mean_delta_r = perm_mean_delta_r[sort_idx]
+        perm_scrub_smc[i, :] = moving_average(perm_mean_delta_r, window)
 
     results = {'sorted_dists': sorted_dists,
                'qcrsfc_y': qcrsfc_rs,
