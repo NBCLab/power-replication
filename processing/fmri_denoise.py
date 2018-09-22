@@ -142,6 +142,39 @@ def run_nuisance():
 
 
 def run_dgsr():
+    """
+    Run dynamic global signal regression with rapidtide.
+
+    Parameters
+    ----------
+    dset : {'ds000210', 'ds000254', 'ds000258'}
+    task : {'rest', 'fingertapping'}
+    method : {'meica_v2_5'}
+    suffix : {'dn_ts_OC', 'hik_ts_OC', 't2s'}
+    in_dir : str
+        Path to analysis folder
+
+    Used for:
+    -   Carpet plots of ME-DN after dGSR (3, S12)
+    -   Carpet plots of ME-HK after dGSR (not in paper)
+    -   QC:RSFC plot of ME-DN after dGSR with motion as QC (4, 5, S10, S13)
+        - S10 involves censoring FD>0.2mm
+    -   QC:RSFC plot of ME-HK after dGSR with motion as QC (not in paper)
+    -   QC:RSFC plot of ME-DN after dGSR with RPV as QC (5)
+    -   QC:RSFC plot of ME-HK after dGSR with RPV as QC (not in paper)
+    -   High-low motion plot of ME-DN after dGSR (4, S10)
+        - S10 involves censoring FD>0.2mm
+    -   High-low motion plot of ME-HK after dGSR (not in paper)
+    -   Scrubbing plot of ME-DN after dGSR (4)
+    -   Scrubbing plot of ME-HK after dGSR (not in paper)
+    -   Mean correlation matrix and histogram of ME-DN after dGSR (S13)
+    -   Correlation scatterplot of ME-DN after dGSR against other ME-DN
+        outputs (S13)
+    -   Scatter plot of ME-DN-dGSR SD of global signal against
+        SD of ventilatory envelope (RPV) (not in paper).
+    -   Scatter plot of ME-HK-dGSR SD of global signal against
+        SD of ventilatory envelope (RPV) (not in paper).
+    """
     pass
 
 
@@ -161,11 +194,11 @@ def run_gsr():
     Used for:
     -   Carpet plots of ME-DN after GSR (3, S12)
     -   Carpet plots of ME-HK after GSR (not in paper)
-    -   QC:RSFC plot of ME-DN after GODEC with motion as QC (4, 5, S10, S13)
+    -   QC:RSFC plot of ME-DN after GSR with motion as QC (4, 5, S10, S13)
         - S10 involves censoring FD>0.2mm
-    -   QC:RSFC plot of ME-HK after GODEC with motion as QC (not in paper)
-    -   QC:RSFC plot of ME-DN after GODEC with RPV as QC (5)
-    -   QC:RSFC plot of ME-HK after GODEC with RPV as QC (not in paper)
+    -   QC:RSFC plot of ME-HK after GSR with motion as QC (not in paper)
+    -   QC:RSFC plot of ME-DN after GSR with RPV as QC (5)
+    -   QC:RSFC plot of ME-HK after GSR with RPV as QC (not in paper)
     -   High-low motion plot of ME-DN after GSR (4, S10)
         - S10 involves censoring FD>0.2mm
     -   High-low motion plot of ME-HK after GSR (not in paper)
@@ -220,4 +253,37 @@ def run_godec():
 
 
 def run_compcor():
+    """
+    Run anatomical compCor.
+
+    Parameters
+    ----------
+    dset : {'ds000210', 'ds000254', 'ds000258'}
+    task : {'rest', 'fingertapping'}
+    method : {'meica_v2_5'}
+    suffix : {'dn_ts_OC', 'hik_ts_OC', 't2s'}
+    in_dir : str
+        Path to analysis folder
+
+    Used for:
+    -   Carpet plots of ME-DN after aCompCor (3, S9, S12)
+    -   Carpet plots of ME-HK after aCompCor (not in paper)
+    -   QC:RSFC plot of ME-DN after aCompCor with motion as QC (4, 5, S10, S13)
+        - S10 involves censoring FD>0.2mm
+    -   QC:RSFC plot of ME-HK after aCompCor with motion as QC (not in paper)
+    -   QC:RSFC plot of ME-DN after aCompCor with RPV as QC (5)
+    -   QC:RSFC plot of ME-HK after aCompCor with RPV as QC (not in paper)
+    -   High-low motion plot of ME-DN after aCompCor (4, S10)
+        - S10 involves censoring FD>0.2mm
+    -   High-low motion plot of ME-HK after aCompCor (not in paper)
+    -   Scrubbing plot of ME-DN after aCompCor (4)
+    -   Scrubbing plot of ME-HK after aCompCor (not in paper)
+    -   Mean correlation matrix and histogram of ME-DN after aCompCor (S13)
+    -   Correlation scatterplot of ME-DN after aCompCor against other ME-DN
+        outputs (S13)
+    -   Scatter plot of ME-DN-aCompCor SD of global signal against
+        SD of ventilatory envelope (RPV) (2).
+    -   Scatter plot of ME-HK-aCompCor SD of global signal against
+        SD of ventilatory envelope (RPV) (not in paper).
+    """
     pass

@@ -27,7 +27,6 @@ def run_tedana(dset, task, in_dir='/scratch/tsalo006/power-replication/'):
     layout = BIDSLayout(dset_dir)
     subjects = layout.get_subjects()
 
-    fp_dir = op.join(dset_dir, 'derivatives/fmriprep')
     out_dir = op.join(dset_dir, 'derivatives/power')
     if not op.isdir(out_dir):
         os.mkdir(out_dir)
@@ -66,17 +65,17 @@ def run_tedana(dset, task, in_dir='/scratch/tsalo006/power-replication/'):
         # FIT denoised
         # We retain t2s and s0 timeseries from this method, but do not use
         # optcom or any MEICA derivatives.
-        tedana.workflows.t2smap(in_files, echo_times, fitmode='ts',
-                                out_dir=denoise_dir,
-                                combmode='t2s', label='fit')
+        tedana.workflows.t2smap_workflow(in_files, echo_times, fitmode='ts',
+                                         out_dir=denoise_dir,
+                                         combmode='t2s', label='fit')
 
         # TEDANA v2.5 with GODEC
         # We use MEDN+GODEC and MEHK+GODEC for GODEC
         # We use MEDN, reconstructed MEDN-noise, MEHK,
         # reconstructed MEHK-noise, optcom, mmix (component timeseries), and
         # comptable (classifications of components) without GODEC
-        tedana.workflows.tedana(in_files, echo_times, gscontrol=False,
-                                ws_denoise='godec',
-                                wvpca=False, out_dir=denoise_dir,
-                                label='meica_v2_5',
-                                selection='kundu_v2_5')
+        tedana.workflows.tedana_workflow(in_files, echo_times, gscontrol=False,
+                                         ws_denoise='godec',
+                                         wvpca=False, out_dir=denoise_dir,
+                                         label='meica_v2_5',
+                                         selection='kundu_v2_5')

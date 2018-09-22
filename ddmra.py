@@ -1,5 +1,5 @@
 """
-Generate plots.
+Perform distance-dependent motion-related artifact analyses.
 """
 import numpy as np
 from nilearn import input_data, datasets
@@ -96,14 +96,24 @@ def moving_average(values, window):
 def scrubbing_analysis(group_timeseries, qcs, n_rois, qc_thresh=0.2,
                        perm=True):
     """
+    Perform Power scrubbing analysis. Note that correlations from scrubbed
+    timeseries are subtracted from correlations from unscrubbed timeseries,
+    which is the opposite to the original Power method. This reverses the
+    signs of the results, but makes inference similar to that of the
+    QCRSFC and high-low motion analyses.
+
+    Parameters
+    ----------
     group_timeseries : list
-        List of n_roisXn_timepoints arrays
+        List of (R, T) arrays
+    qcs : list
+        List of (T,) arrays
     """
     mat_idx = np.triu_indices(n_rois, k=1)
     n_pairs = len(mat_idx[0])
     n_subjects = len(group_timeseries)
     delta_rs = np.zeros((n_subjects, n_pairs))
-    c = 0
+    c = 0  # included subject counter
     for subj in range(n_subjects):
         ts_arr = group_timeseries[subj]
         qc_arr = qcs[subj]
@@ -129,6 +139,38 @@ def scrubbing_analysis(group_timeseries, qcs, n_rois, qc_thresh=0.2,
 
 
 def run(imgs, qcs, n_iters=10000, qc_thresh=0.2, window=1000):
+    """
+    Run scrubbing, high-low motion, and QCRSFC analyses.
+
+    Parameters
+    ----------
+    imgs : list of img-like
+        List of 4D (X x Y x Z x T) images in MNI space.
+    qcs : list of array-like
+        List of 1D (T) numpy arrays with QC metric values per img (e.g., FD or
+        respiration).
+    n_iters : int
+        Number of iterations to run to generate null distributions.
+    qc_thresh : float
+        Threshold for QC metric used in scrubbing analysis. Default is 0.2
+        (for FD).
+    window : int
+        Number of units (pairs of ROIs) to include when averaging to generate
+        smoothing curve.
+
+    Returns
+    -------
+    results : dict
+        Dictionary of results arrays:
+        - sorted_dists: Sorted distances between ROIs
+        - [name]_y: Measure value for each pair of ROIs.
+            Same order as sorted_dists.
+        - [name]_smc: Smoothing curve for analysis. Same size as other
+            arrays, but contains NaNs for ROI pairs outside of window.
+            Same order as sorted_dists.
+        - [name]_null: Null distribution smoothing curves. Contains NaNs for
+            ROI pairs outside of window. Same order as sorted_dists.
+    """
     assert len(imgs) == len(qcs)
     n_subjects = len(imgs)
     atlas = datasets.fetch_coords_power_2011()
