@@ -34,13 +34,12 @@ def main():
     window = 1000
     v1, v2 = 35, 100  # distances to evaluate
     data = datasets.fetch_adhd(n_subjects=n_subjects)
-    n_iters = 1000
+    n_iters = 10000
     n_lines = min((n_iters, 50))
 
     # Prepare data
     imgs = []
     fd_all = []
-
     for i in range(n_subjects):
         func = data.func[i]
         imgs.append(nib.load(func))
@@ -65,6 +64,7 @@ def main():
     ax.plot(results['sorted_dists'], results['qcrsfc_smc'], color='white')
     ax.set_xlabel('Distance (mm)', fontsize=20)
     ax.set_ylabel('QC:RSFC r\n(QC = mean FD)', fontsize=20)
+    ax.set_ylim(-0.5, 0.5)
     fig.savefig('sandbox/qcrsfc_analysis.png', dpi=400)
 
     # Assess significance
@@ -93,6 +93,7 @@ def main():
     ax.plot(results['sorted_dists'], results['hl_smc'], color='white')
     ax.set_xlabel('Distance (mm)', fontsize=20)
     ax.set_ylabel(r'High-low motion $\Delta$r', fontsize=20)
+    ax.set_ylim(-0.5, 0.5)
     fig.savefig('sandbox/hilow_analysis.png', dpi=400)
 
     # Assess significance
@@ -122,6 +123,7 @@ def main():
             color='white')
     ax.set_xlabel('Distance (mm)', fontsize=20)
     ax.set_ylabel(r'Scrubbing $\Delta$r', fontsize=20)
+    ax.set_ylim(-0.05, 0.05)
     fig.savefig('sandbox/scrubbing_analysis.png', dpi=400)
 
     # Assess significance
