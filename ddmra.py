@@ -183,7 +183,7 @@ def run(imgs, qcs, n_iters=10000, qc_thresh=0.2, window=1000):
 
     t_r = imgs[0].header.get_zooms()[-1]
     spheres_masker = input_data.NiftiSpheresMasker(
-        seeds=coords, radius=5., t_r=t_r, smoothing_fwhm=None, detrend=False,
+        seeds=coords, radius=5., t_r=t_r, smoothing_fwhm=4., detrend=False,
         standardize=False, low_pass=None, high_pass=None)
 
     # prep for qcrsfc and high-low motion analyses
