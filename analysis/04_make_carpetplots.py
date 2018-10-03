@@ -1,5 +1,67 @@
 """
+Generate carpet plots with associated line plots for visual inspection of
+individual subjects' processed data. Vertical bands in the carpet plot
+(especially ones that line up with motion or respiration shown in the line
+plot) indicate changes in global signal, probably caused by noise.
 
+Example subjects' (2) carpet plot of OC, ME-DN S0, and ME-DN data
+- Line plot: motion parameters and FD
+- Figure 1
+
+Example subjects' (4) carpet plot of FIT R2 data
+- Line plots: (1) motion parameters and FD and (2) respiratory belt and heart
+rate
+-  Figure 2
+
+Example subjects' (1) carpet plot of ME-DN, ME-DN+GODEC low-rank (removed),
+ME-DN+GODEC sparse (retained), ME-DN+GSR betas (removed), and ME-DN+GSR
+residuals (retained) data
+- Line plots: motion parameters and FD
+- Figure 3
+- Figure S9: ME-DN, ME-DN+GODEC low-rank, and ME-DN+GODEC sparse for two
+additional subjects
+
+Example subjects' (2) carpet plot of OC data and ICA component timeseries
+- Line plots: motion parameters and FD
+- Figure S2
+
+Example subjects' (1) carpet plot of OC, ME-DN S0, ME-DN R2, TE2, FIT S0, and
+FIT R2 data
+- Line plots: motion parameters and FD
+- Figure S3
+
+Example subjects' (2) carpet plot of FIT R2 data
+- Line plots: (1) motion parameters and FD and (2) respiratory belt and heart
+rate
+- Deep breaths are identified with vertical arrows through line plots and
+carpet plots
+- Figure S4
+
+Example subjects' (2) carpet plot of ME-DN, ME-DN+RVT, ME-DN+RV data
+- Line plots: (1) motion parameters and FD and (2) respiratory belt and heart
+rate
+- Figure S5
+
+Example subjects' (4) carpet plot of FIT R2 and FIT R2+Nuis data
+- Line plots: (1) motion parameters and FD and (2) respiratory belt and heart
+rate
+- Figure S6
+
+Example subjects' (4) carpet plot of ME-DN and ME-DN+Nuis data
+- Line plots: motion parameters and FD
+- Figure S7
+
+Example subjects' (1) carpet plot of ME-DN, ME-DN+RPCA low-rank, ME-DN+RPCA
+sparse, ME-DN+GODEC low-rank, ME-DN+GODEC sparse, ME-DN+GSR betas, ME-DN+GSR
+residuals, ME-DN+CompCor betas, and ME-DN+CompCor residuals data
+- No line plots
+- Figure S12
+
+Example subjects' (1) carpet plot of ME-DN, ME-DN+RPCA low-rank, and
+ME-DN+RPCA sparse data for ascending ranks
+- No line plots
+- Not to be done
+- Figure S14
 """
 import sys
 import os.path as op
