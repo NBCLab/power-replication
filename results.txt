@@ -1,9 +1,0 @@
-QCRSFC analysis results:
-	Intercept = -0.1040, p = 0.8771
-	Slope = -0.0339, p = 0.0251
-High-low motion analysis results:
-	Intercept = -0.0248, p = 0.7217
-	Slope = -0.0130, p = 0.0630
-Scrubbing analysis results:
-	Intercept = 0.0021, p = 0.0155
-	Slope = -0.0019, p = 0.0000
