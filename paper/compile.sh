@@ -1,1 +1,0 @@
-lualatex formulae.tex
