@@ -119,6 +119,7 @@ class fMRIPlot(object):
                 confoundplot(
                     tseries, ax_fd, tr=self.tr, color=palette[i],
                     name=name, **kwargs)
+                fd = tseries
             # grid_id += 1
 
         cf_min, cf_max = -1, 1  # For analyses
@@ -129,9 +130,12 @@ class fMRIPlot(object):
 
         fd_min, fd_max = 0, 2  # For analyses
         fd_min, fd_max = 0, .25  # For pretty tests
-        ax_fd.set_ylim(fd_min, fd_max)
-        ax_fd.set_yticks([fd_min, fd_max])
-        ax_fd.set_yticklabels([fd_min, fd_max], fontsize=10)
+        #ax_fd.set_ylim(fd_min, fd_max)
+        #ax_fd.set_yticks([fd_min, fd_max])
+        #ax_fd.set_yticklabels([fd_min, fd_max], fontsize=10)
+        vert_idx = np.where(np.array(fd) > 1.)[0]
+        for temp_ in vert_idx:
+            ax_fd.axvline(temp_, alpha=0.4, color='red')
 
         legend = ax_cf.legend(frameon=True, ncol=3, fontsize=10,
                               loc='upper right')

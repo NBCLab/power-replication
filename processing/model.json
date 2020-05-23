@@ -14,15 +14,6 @@
                         "trial_type",
                     ]
                 },
-                {
-                    "name": "and",
-                    "input": [
-                        "trial_type.Finger",
-                    ],
-                    "output": [
-                        "accept"
-                    ]
-                },
             ],
             "model": {
                 "HRF_variables":[
