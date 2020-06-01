@@ -63,7 +63,7 @@ def make_image_file():
     copyfile(op.join(out_dir, 'visual_power_analysis_design.fsf'),
              'visual_power_analysis_design.fsf')
 
-    
+
 def make_fingertapping_files():
     design_file = 'design.fsf'
 
@@ -76,7 +76,7 @@ def make_fingertapping_files():
     n_fls = '# Number of first-level analyses\nset fmri(multiple) {0}\n'
     out = '# Output directory\nset fmri(outputdir) "{0}"\n'
     n_vols = '# Total volumes\nset fmri(npts) {0}\n'
-    
+
     # Get files
     in_dir = '/home/data/hcp/'
     subdir = 'MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat'
@@ -92,7 +92,7 @@ def make_fingertapping_files():
         if op.isdir(feat_dir):
             feat_dirs.append(feat_dir)
     n = len(feat_dirs)
-    
+
     # Left hand
     cope_files = [op.join(fd, 'cope10.feat/stats/cope1.nii.gz') for fd in feat_dirs]
 
@@ -122,7 +122,7 @@ def make_fingertapping_files():
 
     copyfile(op.join(out_dir, 'motor_lh_power_analysis_design.fsf'),
              'motor_lh_power_analysis_design.fsf')
-    
+
     # Right hand
     cope_files = [op.join(fd, 'cope12.feat/stats/cope1.nii.gz') for fd in feat_dirs]
 
