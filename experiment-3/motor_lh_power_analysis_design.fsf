@@ -1,0 +1,4773 @@
+
+# FEAT version number
+set fmri(version) 6.00
+
+# Are we in MELODIC?
+set fmri(inmelodic) 0
+
+# Analysis level
+# 1 : First-level analysis
+# 2 : Higher-level analysis
+set fmri(level) 2
+
+# Which stages to run
+# 0 : No first-level analysis (registration and/or group stats only)
+# 7 : Full first-level analysis
+# 1 : Pre-processing
+# 2 : Statistics
+set fmri(analysis) 2
+
+# Use relative filenames
+set fmri(relative_yn) 0
+
+# Balloon help
+set fmri(help_yn) 1
+
+# Run Featwatcher
+set fmri(featwatcher_yn) 1
+
+# Cleanup first-level standard-space images
+set fmri(sscleanup_yn) 0
+
+# TR(s)
+set fmri(tr) 3
+
+# Delete volumes
+set fmri(ndelete) 0
+
+# Perfusion tag/control order
+set fmri(tagfirst) 1
+
+# Higher-level input type
+# 1 : Inputs are lower-level FEAT directories
+# 2 : Inputs are cope images from FEAT directories
+set fmri(inputtype) 2
+
+# Carry out pre-stats processing?
+set fmri(filtering_yn) 0
+
+# Brain/background threshold, %
+set fmri(brain_thresh) 10
+
+# Critical z for design efficiency calculation
+set fmri(critical_z) 5.3
+
+# Noise level
+set fmri(noise) 0.66
+
+# Noise AR(1)
+set fmri(noisear) 0.34
+
+# Motion correction
+# 0 : None
+# 1 : MCFLIRT
+set fmri(mc) 1
+
+# Spin-history (currently obsolete)
+set fmri(sh_yn) 0
+
+# B0 fieldmap unwarping?
+set fmri(regunwarp_yn) 0
+
+# EPI dwell time (ms)
+set fmri(dwell) 0.7
+
+# EPI TE (ms)
+set fmri(te) 35
+
+# % Signal loss threshold
+set fmri(signallossthresh) 10
+
+# Unwarp direction
+set fmri(unwarp_dir) y-
+
+# Slice timing correction
+# 0 : None
+# 1 : Regular up (0, 1, 2, 3, ...)
+# 2 : Regular down
+# 3 : Use slice order file
+# 4 : Use slice timings file
+# 5 : Interleaved (0, 2, 4 ... 1, 3, 5 ... )
+set fmri(st) 0
+
+# Slice timings file
+set fmri(st_file) ""
+
+# BET brain extraction
+set fmri(bet_yn) 1
+
+# Spatial smoothing FWHM (mm)
+set fmri(smooth) 5
+
+# Intensity normalization
+set fmri(norm_yn) 0
+
+# Perfusion subtraction
+set fmri(perfsub_yn) 0
+
+# Highpass temporal filtering
+set fmri(temphp_yn) 1
+
+# Lowpass temporal filtering
+set fmri(templp_yn) 0
+
+# MELODIC ICA data exploration
+set fmri(melodic_yn) 0
+
+# Carry out main stats?
+set fmri(stats_yn) 1
+
+# Carry out prewhitening?
+set fmri(prewhiten_yn) 1
+
+# Add motion parameters to model
+# 0 : No
+# 1 : Yes
+set fmri(motionevs) 0
+set fmri(motionevsbeta) ""
+set fmri(scriptevsbeta) ""
+
+# Robust outlier detection in FLAME?
+set fmri(robust_yn) 0
+
+# Higher-level modelling
+# 3 : Fixed effects
+# 0 : Mixed Effects: Simple OLS
+# 2 : Mixed Effects: FLAME 1
+# 1 : Mixed Effects: FLAME 1+2
+set fmri(mixed_yn) 2
+
+# Number of EVs
+set fmri(evs_orig) 1
+set fmri(evs_real) 1
+set fmri(evs_vox) 0
+
+# Number of contrasts
+set fmri(ncon_orig) 1
+set fmri(ncon_real) 1
+
+# Number of F-tests
+set fmri(nftests_orig) 0
+set fmri(nftests_real) 0
+
+# Add constant column to design matrix? (obsolete)
+set fmri(constcol) 0
+
+# Carry out post-stats steps?
+set fmri(poststats_yn) 0
+
+# Pre-threshold masking?
+set fmri(threshmask) ""
+
+# Thresholding
+# 0 : None
+# 1 : Uncorrected
+# 2 : Voxel
+# 3 : Cluster
+set fmri(thresh) 3
+
+# P threshold
+set fmri(prob_thresh) 0.05
+
+# Z threshold
+set fmri(z_thresh) 2.3
+
+# Z min/max for colour rendering
+# 0 : Use actual Z min/max
+# 1 : Use preset Z min/max
+set fmri(zdisplay) 0
+
+# Z min in colour rendering
+set fmri(zmin) 2
+
+# Z max in colour rendering
+set fmri(zmax) 8
+
+# Colour rendering type
+# 0 : Solid blobs
+# 1 : Transparent blobs
+set fmri(rendertype) 1
+
+# Background image for higher-level stats overlays
+# 1 : Mean highres
+# 2 : First highres
+# 3 : Mean functional
+# 4 : First functional
+# 5 : Standard space template
+set fmri(bgimage) 1
+
+# Create time series plots
+set fmri(tsplot_yn) 1
+
+# Registration to initial structural
+set fmri(reginitial_highres_yn) 0
+
+# Search space for registration to initial structural
+# 0   : No search
+# 90  : Normal search
+# 180 : Full search
+set fmri(reginitial_highres_search) 90
+
+# Degrees of Freedom for registration to initial structural
+set fmri(reginitial_highres_dof) 3
+
+# Registration to main structural
+set fmri(reghighres_yn) 0
+
+# Search space for registration to main structural
+# 0   : No search
+# 90  : Normal search
+# 180 : Full search
+set fmri(reghighres_search) 90
+
+# Degrees of Freedom for registration to main structural
+set fmri(reghighres_dof) BBR
+
+# Registration to standard image?
+set fmri(regstandard_yn) 1
+
+# Use alternate reference images?
+set fmri(alternateReference_yn) 0
+
+# Standard image
+set fmri(regstandard) "/home/applications/fsl/5.0.8/data/standard/MNI152_T1_2mm_brain"
+
+# Search space for registration to standard space
+# 0   : No search
+# 90  : Normal search
+# 180 : Full search
+set fmri(regstandard_search) 90
+
+# Degrees of Freedom for registration to standard space
+set fmri(regstandard_dof) 12
+
+# Do nonlinear registration from structural to standard space?
+set fmri(regstandard_nonlinear_yn) 0
+
+# Control nonlinear warp field resolution
+set fmri(regstandard_nonlinear_warpres) 10 
+
+# High pass filter cutoff
+set fmri(paradigm_hp) 100
+
+# Number of lower-level copes feeding into higher-level analysis
+set fmri(ncopeinputs) 0
+
+# Add confound EVs text file
+set fmri(confoundevs) 0
+
+# EV 1 title
+set fmri(evtitle1) ""
+
+# Basic waveform shape (EV 1)
+# 0 : Square
+# 1 : Sinusoid
+# 2 : Custom (1 entry per volume)
+# 3 : Custom (3 column format)
+# 4 : Interaction
+# 10 : Empty (all zeros)
+set fmri(shape1) 2
+
+# Convolution (EV 1)
+# 0 : None
+# 1 : Gaussian
+# 2 : Gamma
+# 3 : Double-Gamma HRF
+# 4 : Gamma basis functions
+# 5 : Sine basis functions
+# 6 : FIR basis functions
+set fmri(convolve1) 0
+
+# Convolve phase (EV 1)
+set fmri(convolve_phase1) 0
+
+# Apply temporal filtering (EV 1)
+set fmri(tempfilt_yn1) 0
+
+# Add temporal derivative (EV 1)
+set fmri(deriv_yn1) 0
+
+# Custom EV file (EV 1)
+set fmri(custom1) "dummy"
+
+# Orthogonalise EV 1 wrt EV 0
+set fmri(ortho1.0) 0
+
+# Orthogonalise EV 1 wrt EV 1
+set fmri(ortho1.1) 0
+
+# Contrast & F-tests mode
+# real : control real EVs
+# orig : control original EVs
+set fmri(con_mode_old) real
+set fmri(con_mode) real
+
+# Display images for contrast_real 1
+set fmri(conpic_real.1) 1
+
+# Title for contrast_real 1
+set fmri(conname_real.1) "group mean"
+
+# Real contrast_real vector 1 element 1
+set fmri(con_real1.1) 1
+
+# Contrast masking - use >0 instead of thresholding?
+set fmri(conmask_zerothresh_yn) 0
+
+# Do contrast masking at all?
+set fmri(conmask1_1) 0
+
+##########################################################
+# Now options that don't appear in the GUI
+
+# Alternative (to BETting) mask image
+set fmri(alternative_mask) ""
+
+# Initial structural space registration initialisation transform
+set fmri(init_initial_highres) ""
+
+# Structural space registration initialisation transform
+set fmri(init_highres) ""
+
+# Standard space registration initialisation transform
+set fmri(init_standard) ""
+
+# For full FEAT analysis: overwrite existing .feat output dir?
+set fmri(overwrite_yn) 0
+# Number of first-level analyses
+set fmri(multiple) 492
+
+# Output directory
+set fmri(outputdir) "/home/tsalo006/Desktop/hcp-motor/lh-avg.gfeat/"
+
+# Total volumes
+set fmri(npts) 492
+
+# Group membership for input 1
+set fmri(groupmem.1) 1
+
+# Higher-level EV value for EV 1 and input 1
+set fmri(evg1.1) 1
+
+# 4D AVW data or FEAT directory (1)
+set feat_files(1) "/home/data/hcp/100307/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 2
+set fmri(groupmem.2) 1
+
+# Higher-level EV value for EV 1 and input 2
+set fmri(evg2.1) 1
+
+# 4D AVW data or FEAT directory (2)
+set feat_files(2) "/home/data/hcp/100408/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 3
+set fmri(groupmem.3) 1
+
+# Higher-level EV value for EV 1 and input 3
+set fmri(evg3.1) 1
+
+# 4D AVW data or FEAT directory (3)
+set feat_files(3) "/home/data/hcp/101006/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 4
+set fmri(groupmem.4) 1
+
+# Higher-level EV value for EV 1 and input 4
+set fmri(evg4.1) 1
+
+# 4D AVW data or FEAT directory (4)
+set feat_files(4) "/home/data/hcp/101107/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 5
+set fmri(groupmem.5) 1
+
+# Higher-level EV value for EV 1 and input 5
+set fmri(evg5.1) 1
+
+# 4D AVW data or FEAT directory (5)
+set feat_files(5) "/home/data/hcp/101309/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 6
+set fmri(groupmem.6) 1
+
+# Higher-level EV value for EV 1 and input 6
+set fmri(evg6.1) 1
+
+# 4D AVW data or FEAT directory (6)
+set feat_files(6) "/home/data/hcp/101410/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 7
+set fmri(groupmem.7) 1
+
+# Higher-level EV value for EV 1 and input 7
+set fmri(evg7.1) 1
+
+# 4D AVW data or FEAT directory (7)
+set feat_files(7) "/home/data/hcp/101915/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 8
+set fmri(groupmem.8) 1
+
+# Higher-level EV value for EV 1 and input 8
+set fmri(evg8.1) 1
+
+# 4D AVW data or FEAT directory (8)
+set feat_files(8) "/home/data/hcp/102008/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 9
+set fmri(groupmem.9) 1
+
+# Higher-level EV value for EV 1 and input 9
+set fmri(evg9.1) 1
+
+# 4D AVW data or FEAT directory (9)
+set feat_files(9) "/home/data/hcp/102311/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 10
+set fmri(groupmem.10) 1
+
+# Higher-level EV value for EV 1 and input 10
+set fmri(evg10.1) 1
+
+# 4D AVW data or FEAT directory (10)
+set feat_files(10) "/home/data/hcp/102816/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 11
+set fmri(groupmem.11) 1
+
+# Higher-level EV value for EV 1 and input 11
+set fmri(evg11.1) 1
+
+# 4D AVW data or FEAT directory (11)
+set feat_files(11) "/home/data/hcp/103111/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 12
+set fmri(groupmem.12) 1
+
+# Higher-level EV value for EV 1 and input 12
+set fmri(evg12.1) 1
+
+# 4D AVW data or FEAT directory (12)
+set feat_files(12) "/home/data/hcp/103414/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 13
+set fmri(groupmem.13) 1
+
+# Higher-level EV value for EV 1 and input 13
+set fmri(evg13.1) 1
+
+# 4D AVW data or FEAT directory (13)
+set feat_files(13) "/home/data/hcp/103515/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 14
+set fmri(groupmem.14) 1
+
+# Higher-level EV value for EV 1 and input 14
+set fmri(evg14.1) 1
+
+# 4D AVW data or FEAT directory (14)
+set feat_files(14) "/home/data/hcp/103818/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 15
+set fmri(groupmem.15) 1
+
+# Higher-level EV value for EV 1 and input 15
+set fmri(evg15.1) 1
+
+# 4D AVW data or FEAT directory (15)
+set feat_files(15) "/home/data/hcp/104820/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 16
+set fmri(groupmem.16) 1
+
+# Higher-level EV value for EV 1 and input 16
+set fmri(evg16.1) 1
+
+# 4D AVW data or FEAT directory (16)
+set feat_files(16) "/home/data/hcp/105014/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 17
+set fmri(groupmem.17) 1
+
+# Higher-level EV value for EV 1 and input 17
+set fmri(evg17.1) 1
+
+# 4D AVW data or FEAT directory (17)
+set feat_files(17) "/home/data/hcp/105115/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 18
+set fmri(groupmem.18) 1
+
+# Higher-level EV value for EV 1 and input 18
+set fmri(evg18.1) 1
+
+# 4D AVW data or FEAT directory (18)
+set feat_files(18) "/home/data/hcp/105216/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 19
+set fmri(groupmem.19) 1
+
+# Higher-level EV value for EV 1 and input 19
+set fmri(evg19.1) 1
+
+# 4D AVW data or FEAT directory (19)
+set feat_files(19) "/home/data/hcp/106016/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 20
+set fmri(groupmem.20) 1
+
+# Higher-level EV value for EV 1 and input 20
+set fmri(evg20.1) 1
+
+# 4D AVW data or FEAT directory (20)
+set feat_files(20) "/home/data/hcp/106319/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 21
+set fmri(groupmem.21) 1
+
+# Higher-level EV value for EV 1 and input 21
+set fmri(evg21.1) 1
+
+# 4D AVW data or FEAT directory (21)
+set feat_files(21) "/home/data/hcp/106521/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 22
+set fmri(groupmem.22) 1
+
+# Higher-level EV value for EV 1 and input 22
+set fmri(evg22.1) 1
+
+# 4D AVW data or FEAT directory (22)
+set feat_files(22) "/home/data/hcp/107321/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 23
+set fmri(groupmem.23) 1
+
+# Higher-level EV value for EV 1 and input 23
+set fmri(evg23.1) 1
+
+# 4D AVW data or FEAT directory (23)
+set feat_files(23) "/home/data/hcp/107422/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 24
+set fmri(groupmem.24) 1
+
+# Higher-level EV value for EV 1 and input 24
+set fmri(evg24.1) 1
+
+# 4D AVW data or FEAT directory (24)
+set feat_files(24) "/home/data/hcp/108121/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 25
+set fmri(groupmem.25) 1
+
+# Higher-level EV value for EV 1 and input 25
+set fmri(evg25.1) 1
+
+# 4D AVW data or FEAT directory (25)
+set feat_files(25) "/home/data/hcp/108323/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 26
+set fmri(groupmem.26) 1
+
+# Higher-level EV value for EV 1 and input 26
+set fmri(evg26.1) 1
+
+# 4D AVW data or FEAT directory (26)
+set feat_files(26) "/home/data/hcp/108525/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 27
+set fmri(groupmem.27) 1
+
+# Higher-level EV value for EV 1 and input 27
+set fmri(evg27.1) 1
+
+# 4D AVW data or FEAT directory (27)
+set feat_files(27) "/home/data/hcp/108828/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 28
+set fmri(groupmem.28) 1
+
+# Higher-level EV value for EV 1 and input 28
+set fmri(evg28.1) 1
+
+# 4D AVW data or FEAT directory (28)
+set feat_files(28) "/home/data/hcp/109123/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 29
+set fmri(groupmem.29) 1
+
+# Higher-level EV value for EV 1 and input 29
+set fmri(evg29.1) 1
+
+# 4D AVW data or FEAT directory (29)
+set feat_files(29) "/home/data/hcp/109325/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 30
+set fmri(groupmem.30) 1
+
+# Higher-level EV value for EV 1 and input 30
+set fmri(evg30.1) 1
+
+# 4D AVW data or FEAT directory (30)
+set feat_files(30) "/home/data/hcp/110411/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 31
+set fmri(groupmem.31) 1
+
+# Higher-level EV value for EV 1 and input 31
+set fmri(evg31.1) 1
+
+# 4D AVW data or FEAT directory (31)
+set feat_files(31) "/home/data/hcp/111312/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 32
+set fmri(groupmem.32) 1
+
+# Higher-level EV value for EV 1 and input 32
+set fmri(evg32.1) 1
+
+# 4D AVW data or FEAT directory (32)
+set feat_files(32) "/home/data/hcp/111413/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 33
+set fmri(groupmem.33) 1
+
+# Higher-level EV value for EV 1 and input 33
+set fmri(evg33.1) 1
+
+# 4D AVW data or FEAT directory (33)
+set feat_files(33) "/home/data/hcp/111716/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 34
+set fmri(groupmem.34) 1
+
+# Higher-level EV value for EV 1 and input 34
+set fmri(evg34.1) 1
+
+# 4D AVW data or FEAT directory (34)
+set feat_files(34) "/home/data/hcp/112819/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 35
+set fmri(groupmem.35) 1
+
+# Higher-level EV value for EV 1 and input 35
+set fmri(evg35.1) 1
+
+# 4D AVW data or FEAT directory (35)
+set feat_files(35) "/home/data/hcp/113215/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 36
+set fmri(groupmem.36) 1
+
+# Higher-level EV value for EV 1 and input 36
+set fmri(evg36.1) 1
+
+# 4D AVW data or FEAT directory (36)
+set feat_files(36) "/home/data/hcp/113619/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 37
+set fmri(groupmem.37) 1
+
+# Higher-level EV value for EV 1 and input 37
+set fmri(evg37.1) 1
+
+# 4D AVW data or FEAT directory (37)
+set feat_files(37) "/home/data/hcp/113821/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 38
+set fmri(groupmem.38) 1
+
+# Higher-level EV value for EV 1 and input 38
+set fmri(evg38.1) 1
+
+# 4D AVW data or FEAT directory (38)
+set feat_files(38) "/home/data/hcp/113922/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 39
+set fmri(groupmem.39) 1
+
+# Higher-level EV value for EV 1 and input 39
+set fmri(evg39.1) 1
+
+# 4D AVW data or FEAT directory (39)
+set feat_files(39) "/home/data/hcp/114419/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 40
+set fmri(groupmem.40) 1
+
+# Higher-level EV value for EV 1 and input 40
+set fmri(evg40.1) 1
+
+# 4D AVW data or FEAT directory (40)
+set feat_files(40) "/home/data/hcp/114924/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 41
+set fmri(groupmem.41) 1
+
+# Higher-level EV value for EV 1 and input 41
+set fmri(evg41.1) 1
+
+# 4D AVW data or FEAT directory (41)
+set feat_files(41) "/home/data/hcp/115320/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 42
+set fmri(groupmem.42) 1
+
+# Higher-level EV value for EV 1 and input 42
+set fmri(evg42.1) 1
+
+# 4D AVW data or FEAT directory (42)
+set feat_files(42) "/home/data/hcp/116524/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 43
+set fmri(groupmem.43) 1
+
+# Higher-level EV value for EV 1 and input 43
+set fmri(evg43.1) 1
+
+# 4D AVW data or FEAT directory (43)
+set feat_files(43) "/home/data/hcp/117122/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 44
+set fmri(groupmem.44) 1
+
+# Higher-level EV value for EV 1 and input 44
+set fmri(evg44.1) 1
+
+# 4D AVW data or FEAT directory (44)
+set feat_files(44) "/home/data/hcp/117324/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 45
+set fmri(groupmem.45) 1
+
+# Higher-level EV value for EV 1 and input 45
+set fmri(evg45.1) 1
+
+# 4D AVW data or FEAT directory (45)
+set feat_files(45) "/home/data/hcp/118528/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 46
+set fmri(groupmem.46) 1
+
+# Higher-level EV value for EV 1 and input 46
+set fmri(evg46.1) 1
+
+# 4D AVW data or FEAT directory (46)
+set feat_files(46) "/home/data/hcp/118730/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 47
+set fmri(groupmem.47) 1
+
+# Higher-level EV value for EV 1 and input 47
+set fmri(evg47.1) 1
+
+# 4D AVW data or FEAT directory (47)
+set feat_files(47) "/home/data/hcp/118932/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 48
+set fmri(groupmem.48) 1
+
+# Higher-level EV value for EV 1 and input 48
+set fmri(evg48.1) 1
+
+# 4D AVW data or FEAT directory (48)
+set feat_files(48) "/home/data/hcp/119833/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 49
+set fmri(groupmem.49) 1
+
+# Higher-level EV value for EV 1 and input 49
+set fmri(evg49.1) 1
+
+# 4D AVW data or FEAT directory (49)
+set feat_files(49) "/home/data/hcp/120111/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 50
+set fmri(groupmem.50) 1
+
+# Higher-level EV value for EV 1 and input 50
+set fmri(evg50.1) 1
+
+# 4D AVW data or FEAT directory (50)
+set feat_files(50) "/home/data/hcp/120212/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 51
+set fmri(groupmem.51) 1
+
+# Higher-level EV value for EV 1 and input 51
+set fmri(evg51.1) 1
+
+# 4D AVW data or FEAT directory (51)
+set feat_files(51) "/home/data/hcp/120515/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 52
+set fmri(groupmem.52) 1
+
+# Higher-level EV value for EV 1 and input 52
+set fmri(evg52.1) 1
+
+# 4D AVW data or FEAT directory (52)
+set feat_files(52) "/home/data/hcp/121315/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 53
+set fmri(groupmem.53) 1
+
+# Higher-level EV value for EV 1 and input 53
+set fmri(evg53.1) 1
+
+# 4D AVW data or FEAT directory (53)
+set feat_files(53) "/home/data/hcp/121618/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 54
+set fmri(groupmem.54) 1
+
+# Higher-level EV value for EV 1 and input 54
+set fmri(evg54.1) 1
+
+# 4D AVW data or FEAT directory (54)
+set feat_files(54) "/home/data/hcp/122317/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 55
+set fmri(groupmem.55) 1
+
+# Higher-level EV value for EV 1 and input 55
+set fmri(evg55.1) 1
+
+# 4D AVW data or FEAT directory (55)
+set feat_files(55) "/home/data/hcp/122620/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 56
+set fmri(groupmem.56) 1
+
+# Higher-level EV value for EV 1 and input 56
+set fmri(evg56.1) 1
+
+# 4D AVW data or FEAT directory (56)
+set feat_files(56) "/home/data/hcp/123117/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 57
+set fmri(groupmem.57) 1
+
+# Higher-level EV value for EV 1 and input 57
+set fmri(evg57.1) 1
+
+# 4D AVW data or FEAT directory (57)
+set feat_files(57) "/home/data/hcp/123420/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 58
+set fmri(groupmem.58) 1
+
+# Higher-level EV value for EV 1 and input 58
+set fmri(evg58.1) 1
+
+# 4D AVW data or FEAT directory (58)
+set feat_files(58) "/home/data/hcp/123925/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 59
+set fmri(groupmem.59) 1
+
+# Higher-level EV value for EV 1 and input 59
+set fmri(evg59.1) 1
+
+# 4D AVW data or FEAT directory (59)
+set feat_files(59) "/home/data/hcp/124220/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 60
+set fmri(groupmem.60) 1
+
+# Higher-level EV value for EV 1 and input 60
+set fmri(evg60.1) 1
+
+# 4D AVW data or FEAT directory (60)
+set feat_files(60) "/home/data/hcp/124422/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 61
+set fmri(groupmem.61) 1
+
+# Higher-level EV value for EV 1 and input 61
+set fmri(evg61.1) 1
+
+# 4D AVW data or FEAT directory (61)
+set feat_files(61) "/home/data/hcp/124826/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 62
+set fmri(groupmem.62) 1
+
+# Higher-level EV value for EV 1 and input 62
+set fmri(evg62.1) 1
+
+# 4D AVW data or FEAT directory (62)
+set feat_files(62) "/home/data/hcp/125525/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 63
+set fmri(groupmem.63) 1
+
+# Higher-level EV value for EV 1 and input 63
+set fmri(evg63.1) 1
+
+# 4D AVW data or FEAT directory (63)
+set feat_files(63) "/home/data/hcp/126325/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 64
+set fmri(groupmem.64) 1
+
+# Higher-level EV value for EV 1 and input 64
+set fmri(evg64.1) 1
+
+# 4D AVW data or FEAT directory (64)
+set feat_files(64) "/home/data/hcp/126628/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 65
+set fmri(groupmem.65) 1
+
+# Higher-level EV value for EV 1 and input 65
+set fmri(evg65.1) 1
+
+# 4D AVW data or FEAT directory (65)
+set feat_files(65) "/home/data/hcp/127630/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 66
+set fmri(groupmem.66) 1
+
+# Higher-level EV value for EV 1 and input 66
+set fmri(evg66.1) 1
+
+# 4D AVW data or FEAT directory (66)
+set feat_files(66) "/home/data/hcp/127933/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 67
+set fmri(groupmem.67) 1
+
+# Higher-level EV value for EV 1 and input 67
+set fmri(evg67.1) 1
+
+# 4D AVW data or FEAT directory (67)
+set feat_files(67) "/home/data/hcp/128127/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 68
+set fmri(groupmem.68) 1
+
+# Higher-level EV value for EV 1 and input 68
+set fmri(evg68.1) 1
+
+# 4D AVW data or FEAT directory (68)
+set feat_files(68) "/home/data/hcp/128632/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 69
+set fmri(groupmem.69) 1
+
+# Higher-level EV value for EV 1 and input 69
+set fmri(evg69.1) 1
+
+# 4D AVW data or FEAT directory (69)
+set feat_files(69) "/home/data/hcp/129028/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 70
+set fmri(groupmem.70) 1
+
+# Higher-level EV value for EV 1 and input 70
+set fmri(evg70.1) 1
+
+# 4D AVW data or FEAT directory (70)
+set feat_files(70) "/home/data/hcp/130013/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 71
+set fmri(groupmem.71) 1
+
+# Higher-level EV value for EV 1 and input 71
+set fmri(evg71.1) 1
+
+# 4D AVW data or FEAT directory (71)
+set feat_files(71) "/home/data/hcp/130316/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 72
+set fmri(groupmem.72) 1
+
+# Higher-level EV value for EV 1 and input 72
+set fmri(evg72.1) 1
+
+# 4D AVW data or FEAT directory (72)
+set feat_files(72) "/home/data/hcp/130922/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 73
+set fmri(groupmem.73) 1
+
+# Higher-level EV value for EV 1 and input 73
+set fmri(evg73.1) 1
+
+# 4D AVW data or FEAT directory (73)
+set feat_files(73) "/home/data/hcp/131217/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 74
+set fmri(groupmem.74) 1
+
+# Higher-level EV value for EV 1 and input 74
+set fmri(evg74.1) 1
+
+# 4D AVW data or FEAT directory (74)
+set feat_files(74) "/home/data/hcp/131722/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 75
+set fmri(groupmem.75) 1
+
+# Higher-level EV value for EV 1 and input 75
+set fmri(evg75.1) 1
+
+# 4D AVW data or FEAT directory (75)
+set feat_files(75) "/home/data/hcp/131924/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 76
+set fmri(groupmem.76) 1
+
+# Higher-level EV value for EV 1 and input 76
+set fmri(evg76.1) 1
+
+# 4D AVW data or FEAT directory (76)
+set feat_files(76) "/home/data/hcp/132118/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 77
+set fmri(groupmem.77) 1
+
+# Higher-level EV value for EV 1 and input 77
+set fmri(evg77.1) 1
+
+# 4D AVW data or FEAT directory (77)
+set feat_files(77) "/home/data/hcp/133019/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 78
+set fmri(groupmem.78) 1
+
+# Higher-level EV value for EV 1 and input 78
+set fmri(evg78.1) 1
+
+# 4D AVW data or FEAT directory (78)
+set feat_files(78) "/home/data/hcp/133625/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 79
+set fmri(groupmem.79) 1
+
+# Higher-level EV value for EV 1 and input 79
+set fmri(evg79.1) 1
+
+# 4D AVW data or FEAT directory (79)
+set feat_files(79) "/home/data/hcp/133827/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 80
+set fmri(groupmem.80) 1
+
+# Higher-level EV value for EV 1 and input 80
+set fmri(evg80.1) 1
+
+# 4D AVW data or FEAT directory (80)
+set feat_files(80) "/home/data/hcp/133928/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 81
+set fmri(groupmem.81) 1
+
+# Higher-level EV value for EV 1 and input 81
+set fmri(evg81.1) 1
+
+# 4D AVW data or FEAT directory (81)
+set feat_files(81) "/home/data/hcp/134324/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 82
+set fmri(groupmem.82) 1
+
+# Higher-level EV value for EV 1 and input 82
+set fmri(evg82.1) 1
+
+# 4D AVW data or FEAT directory (82)
+set feat_files(82) "/home/data/hcp/135225/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 83
+set fmri(groupmem.83) 1
+
+# Higher-level EV value for EV 1 and input 83
+set fmri(evg83.1) 1
+
+# 4D AVW data or FEAT directory (83)
+set feat_files(83) "/home/data/hcp/135528/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 84
+set fmri(groupmem.84) 1
+
+# Higher-level EV value for EV 1 and input 84
+set fmri(evg84.1) 1
+
+# 4D AVW data or FEAT directory (84)
+set feat_files(84) "/home/data/hcp/135932/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 85
+set fmri(groupmem.85) 1
+
+# Higher-level EV value for EV 1 and input 85
+set fmri(evg85.1) 1
+
+# 4D AVW data or FEAT directory (85)
+set feat_files(85) "/home/data/hcp/136227/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 86
+set fmri(groupmem.86) 1
+
+# Higher-level EV value for EV 1 and input 86
+set fmri(evg86.1) 1
+
+# 4D AVW data or FEAT directory (86)
+set feat_files(86) "/home/data/hcp/136833/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 87
+set fmri(groupmem.87) 1
+
+# Higher-level EV value for EV 1 and input 87
+set fmri(evg87.1) 1
+
+# 4D AVW data or FEAT directory (87)
+set feat_files(87) "/home/data/hcp/137027/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 88
+set fmri(groupmem.88) 1
+
+# Higher-level EV value for EV 1 and input 88
+set fmri(evg88.1) 1
+
+# 4D AVW data or FEAT directory (88)
+set feat_files(88) "/home/data/hcp/137128/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 89
+set fmri(groupmem.89) 1
+
+# Higher-level EV value for EV 1 and input 89
+set fmri(evg89.1) 1
+
+# 4D AVW data or FEAT directory (89)
+set feat_files(89) "/home/data/hcp/137633/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 90
+set fmri(groupmem.90) 1
+
+# Higher-level EV value for EV 1 and input 90
+set fmri(evg90.1) 1
+
+# 4D AVW data or FEAT directory (90)
+set feat_files(90) "/home/data/hcp/137936/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 91
+set fmri(groupmem.91) 1
+
+# Higher-level EV value for EV 1 and input 91
+set fmri(evg91.1) 1
+
+# 4D AVW data or FEAT directory (91)
+set feat_files(91) "/home/data/hcp/138231/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 92
+set fmri(groupmem.92) 1
+
+# Higher-level EV value for EV 1 and input 92
+set fmri(evg92.1) 1
+
+# 4D AVW data or FEAT directory (92)
+set feat_files(92) "/home/data/hcp/138534/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 93
+set fmri(groupmem.93) 1
+
+# Higher-level EV value for EV 1 and input 93
+set fmri(evg93.1) 1
+
+# 4D AVW data or FEAT directory (93)
+set feat_files(93) "/home/data/hcp/139233/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 94
+set fmri(groupmem.94) 1
+
+# Higher-level EV value for EV 1 and input 94
+set fmri(evg94.1) 1
+
+# 4D AVW data or FEAT directory (94)
+set feat_files(94) "/home/data/hcp/139637/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 95
+set fmri(groupmem.95) 1
+
+# Higher-level EV value for EV 1 and input 95
+set fmri(evg95.1) 1
+
+# 4D AVW data or FEAT directory (95)
+set feat_files(95) "/home/data/hcp/140117/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 96
+set fmri(groupmem.96) 1
+
+# Higher-level EV value for EV 1 and input 96
+set fmri(evg96.1) 1
+
+# 4D AVW data or FEAT directory (96)
+set feat_files(96) "/home/data/hcp/140824/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 97
+set fmri(groupmem.97) 1
+
+# Higher-level EV value for EV 1 and input 97
+set fmri(evg97.1) 1
+
+# 4D AVW data or FEAT directory (97)
+set feat_files(97) "/home/data/hcp/140925/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 98
+set fmri(groupmem.98) 1
+
+# Higher-level EV value for EV 1 and input 98
+set fmri(evg98.1) 1
+
+# 4D AVW data or FEAT directory (98)
+set feat_files(98) "/home/data/hcp/141422/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 99
+set fmri(groupmem.99) 1
+
+# Higher-level EV value for EV 1 and input 99
+set fmri(evg99.1) 1
+
+# 4D AVW data or FEAT directory (99)
+set feat_files(99) "/home/data/hcp/141826/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 100
+set fmri(groupmem.100) 1
+
+# Higher-level EV value for EV 1 and input 100
+set fmri(evg100.1) 1
+
+# 4D AVW data or FEAT directory (100)
+set feat_files(100) "/home/data/hcp/142424/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 101
+set fmri(groupmem.101) 1
+
+# Higher-level EV value for EV 1 and input 101
+set fmri(evg101.1) 1
+
+# 4D AVW data or FEAT directory (101)
+set feat_files(101) "/home/data/hcp/142626/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 102
+set fmri(groupmem.102) 1
+
+# Higher-level EV value for EV 1 and input 102
+set fmri(evg102.1) 1
+
+# 4D AVW data or FEAT directory (102)
+set feat_files(102) "/home/data/hcp/142828/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 103
+set fmri(groupmem.103) 1
+
+# Higher-level EV value for EV 1 and input 103
+set fmri(evg103.1) 1
+
+# 4D AVW data or FEAT directory (103)
+set feat_files(103) "/home/data/hcp/143325/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 104
+set fmri(groupmem.104) 1
+
+# Higher-level EV value for EV 1 and input 104
+set fmri(evg104.1) 1
+
+# 4D AVW data or FEAT directory (104)
+set feat_files(104) "/home/data/hcp/144226/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 105
+set fmri(groupmem.105) 1
+
+# Higher-level EV value for EV 1 and input 105
+set fmri(evg105.1) 1
+
+# 4D AVW data or FEAT directory (105)
+set feat_files(105) "/home/data/hcp/144832/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 106
+set fmri(groupmem.106) 1
+
+# Higher-level EV value for EV 1 and input 106
+set fmri(evg106.1) 1
+
+# 4D AVW data or FEAT directory (106)
+set feat_files(106) "/home/data/hcp/145531/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 107
+set fmri(groupmem.107) 1
+
+# Higher-level EV value for EV 1 and input 107
+set fmri(evg107.1) 1
+
+# 4D AVW data or FEAT directory (107)
+set feat_files(107) "/home/data/hcp/145834/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 108
+set fmri(groupmem.108) 1
+
+# Higher-level EV value for EV 1 and input 108
+set fmri(evg108.1) 1
+
+# 4D AVW data or FEAT directory (108)
+set feat_files(108) "/home/data/hcp/146331/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 109
+set fmri(groupmem.109) 1
+
+# Higher-level EV value for EV 1 and input 109
+set fmri(evg109.1) 1
+
+# 4D AVW data or FEAT directory (109)
+set feat_files(109) "/home/data/hcp/146432/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 110
+set fmri(groupmem.110) 1
+
+# Higher-level EV value for EV 1 and input 110
+set fmri(evg110.1) 1
+
+# 4D AVW data or FEAT directory (110)
+set feat_files(110) "/home/data/hcp/147030/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 111
+set fmri(groupmem.111) 1
+
+# Higher-level EV value for EV 1 and input 111
+set fmri(evg111.1) 1
+
+# 4D AVW data or FEAT directory (111)
+set feat_files(111) "/home/data/hcp/147737/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 112
+set fmri(groupmem.112) 1
+
+# Higher-level EV value for EV 1 and input 112
+set fmri(evg112.1) 1
+
+# 4D AVW data or FEAT directory (112)
+set feat_files(112) "/home/data/hcp/148032/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 113
+set fmri(groupmem.113) 1
+
+# Higher-level EV value for EV 1 and input 113
+set fmri(evg113.1) 1
+
+# 4D AVW data or FEAT directory (113)
+set feat_files(113) "/home/data/hcp/148335/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 114
+set fmri(groupmem.114) 1
+
+# Higher-level EV value for EV 1 and input 114
+set fmri(evg114.1) 1
+
+# 4D AVW data or FEAT directory (114)
+set feat_files(114) "/home/data/hcp/148840/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 115
+set fmri(groupmem.115) 1
+
+# Higher-level EV value for EV 1 and input 115
+set fmri(evg115.1) 1
+
+# 4D AVW data or FEAT directory (115)
+set feat_files(115) "/home/data/hcp/148941/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 116
+set fmri(groupmem.116) 1
+
+# Higher-level EV value for EV 1 and input 116
+set fmri(evg116.1) 1
+
+# 4D AVW data or FEAT directory (116)
+set feat_files(116) "/home/data/hcp/149337/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 117
+set fmri(groupmem.117) 1
+
+# Higher-level EV value for EV 1 and input 117
+set fmri(evg117.1) 1
+
+# 4D AVW data or FEAT directory (117)
+set feat_files(117) "/home/data/hcp/149539/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 118
+set fmri(groupmem.118) 1
+
+# Higher-level EV value for EV 1 and input 118
+set fmri(evg118.1) 1
+
+# 4D AVW data or FEAT directory (118)
+set feat_files(118) "/home/data/hcp/149741/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 119
+set fmri(groupmem.119) 1
+
+# Higher-level EV value for EV 1 and input 119
+set fmri(evg119.1) 1
+
+# 4D AVW data or FEAT directory (119)
+set feat_files(119) "/home/data/hcp/150423/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 120
+set fmri(groupmem.120) 1
+
+# Higher-level EV value for EV 1 and input 120
+set fmri(evg120.1) 1
+
+# 4D AVW data or FEAT directory (120)
+set feat_files(120) "/home/data/hcp/150524/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 121
+set fmri(groupmem.121) 1
+
+# Higher-level EV value for EV 1 and input 121
+set fmri(evg121.1) 1
+
+# 4D AVW data or FEAT directory (121)
+set feat_files(121) "/home/data/hcp/150625/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 122
+set fmri(groupmem.122) 1
+
+# Higher-level EV value for EV 1 and input 122
+set fmri(evg122.1) 1
+
+# 4D AVW data or FEAT directory (122)
+set feat_files(122) "/home/data/hcp/150726/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 123
+set fmri(groupmem.123) 1
+
+# Higher-level EV value for EV 1 and input 123
+set fmri(evg123.1) 1
+
+# 4D AVW data or FEAT directory (123)
+set feat_files(123) "/home/data/hcp/151223/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 124
+set fmri(groupmem.124) 1
+
+# Higher-level EV value for EV 1 and input 124
+set fmri(evg124.1) 1
+
+# 4D AVW data or FEAT directory (124)
+set feat_files(124) "/home/data/hcp/151526/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 125
+set fmri(groupmem.125) 1
+
+# Higher-level EV value for EV 1 and input 125
+set fmri(evg125.1) 1
+
+# 4D AVW data or FEAT directory (125)
+set feat_files(125) "/home/data/hcp/151627/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 126
+set fmri(groupmem.126) 1
+
+# Higher-level EV value for EV 1 and input 126
+set fmri(evg126.1) 1
+
+# 4D AVW data or FEAT directory (126)
+set feat_files(126) "/home/data/hcp/151728/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 127
+set fmri(groupmem.127) 1
+
+# Higher-level EV value for EV 1 and input 127
+set fmri(evg127.1) 1
+
+# 4D AVW data or FEAT directory (127)
+set feat_files(127) "/home/data/hcp/152831/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 128
+set fmri(groupmem.128) 1
+
+# Higher-level EV value for EV 1 and input 128
+set fmri(evg128.1) 1
+
+# 4D AVW data or FEAT directory (128)
+set feat_files(128) "/home/data/hcp/153025/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 129
+set fmri(groupmem.129) 1
+
+# Higher-level EV value for EV 1 and input 129
+set fmri(evg129.1) 1
+
+# 4D AVW data or FEAT directory (129)
+set feat_files(129) "/home/data/hcp/153429/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 130
+set fmri(groupmem.130) 1
+
+# Higher-level EV value for EV 1 and input 130
+set fmri(evg130.1) 1
+
+# 4D AVW data or FEAT directory (130)
+set feat_files(130) "/home/data/hcp/153833/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 131
+set fmri(groupmem.131) 1
+
+# Higher-level EV value for EV 1 and input 131
+set fmri(evg131.1) 1
+
+# 4D AVW data or FEAT directory (131)
+set feat_files(131) "/home/data/hcp/154431/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 132
+set fmri(groupmem.132) 1
+
+# Higher-level EV value for EV 1 and input 132
+set fmri(evg132.1) 1
+
+# 4D AVW data or FEAT directory (132)
+set feat_files(132) "/home/data/hcp/154734/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 133
+set fmri(groupmem.133) 1
+
+# Higher-level EV value for EV 1 and input 133
+set fmri(evg133.1) 1
+
+# 4D AVW data or FEAT directory (133)
+set feat_files(133) "/home/data/hcp/154835/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 134
+set fmri(groupmem.134) 1
+
+# Higher-level EV value for EV 1 and input 134
+set fmri(evg134.1) 1
+
+# 4D AVW data or FEAT directory (134)
+set feat_files(134) "/home/data/hcp/154936/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 135
+set fmri(groupmem.135) 1
+
+# Higher-level EV value for EV 1 and input 135
+set fmri(evg135.1) 1
+
+# 4D AVW data or FEAT directory (135)
+set feat_files(135) "/home/data/hcp/155231/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 136
+set fmri(groupmem.136) 1
+
+# Higher-level EV value for EV 1 and input 136
+set fmri(evg136.1) 1
+
+# 4D AVW data or FEAT directory (136)
+set feat_files(136) "/home/data/hcp/155635/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 137
+set fmri(groupmem.137) 1
+
+# Higher-level EV value for EV 1 and input 137
+set fmri(evg137.1) 1
+
+# 4D AVW data or FEAT directory (137)
+set feat_files(137) "/home/data/hcp/156233/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 138
+set fmri(groupmem.138) 1
+
+# Higher-level EV value for EV 1 and input 138
+set fmri(evg138.1) 1
+
+# 4D AVW data or FEAT directory (138)
+set feat_files(138) "/home/data/hcp/156637/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 139
+set fmri(groupmem.139) 1
+
+# Higher-level EV value for EV 1 and input 139
+set fmri(evg139.1) 1
+
+# 4D AVW data or FEAT directory (139)
+set feat_files(139) "/home/data/hcp/157336/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 140
+set fmri(groupmem.140) 1
+
+# Higher-level EV value for EV 1 and input 140
+set fmri(evg140.1) 1
+
+# 4D AVW data or FEAT directory (140)
+set feat_files(140) "/home/data/hcp/157437/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 141
+set fmri(groupmem.141) 1
+
+# Higher-level EV value for EV 1 and input 141
+set fmri(evg141.1) 1
+
+# 4D AVW data or FEAT directory (141)
+set feat_files(141) "/home/data/hcp/158035/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 142
+set fmri(groupmem.142) 1
+
+# Higher-level EV value for EV 1 and input 142
+set fmri(evg142.1) 1
+
+# 4D AVW data or FEAT directory (142)
+set feat_files(142) "/home/data/hcp/158136/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 143
+set fmri(groupmem.143) 1
+
+# Higher-level EV value for EV 1 and input 143
+set fmri(evg143.1) 1
+
+# 4D AVW data or FEAT directory (143)
+set feat_files(143) "/home/data/hcp/158540/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 144
+set fmri(groupmem.144) 1
+
+# Higher-level EV value for EV 1 and input 144
+set fmri(evg144.1) 1
+
+# 4D AVW data or FEAT directory (144)
+set feat_files(144) "/home/data/hcp/159138/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 145
+set fmri(groupmem.145) 1
+
+# Higher-level EV value for EV 1 and input 145
+set fmri(evg145.1) 1
+
+# 4D AVW data or FEAT directory (145)
+set feat_files(145) "/home/data/hcp/159239/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 146
+set fmri(groupmem.146) 1
+
+# Higher-level EV value for EV 1 and input 146
+set fmri(evg146.1) 1
+
+# 4D AVW data or FEAT directory (146)
+set feat_files(146) "/home/data/hcp/159340/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 147
+set fmri(groupmem.147) 1
+
+# Higher-level EV value for EV 1 and input 147
+set fmri(evg147.1) 1
+
+# 4D AVW data or FEAT directory (147)
+set feat_files(147) "/home/data/hcp/159441/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 148
+set fmri(groupmem.148) 1
+
+# Higher-level EV value for EV 1 and input 148
+set fmri(evg148.1) 1
+
+# 4D AVW data or FEAT directory (148)
+set feat_files(148) "/home/data/hcp/160123/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 149
+set fmri(groupmem.149) 1
+
+# Higher-level EV value for EV 1 and input 149
+set fmri(evg149.1) 1
+
+# 4D AVW data or FEAT directory (149)
+set feat_files(149) "/home/data/hcp/160830/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 150
+set fmri(groupmem.150) 1
+
+# Higher-level EV value for EV 1 and input 150
+set fmri(evg150.1) 1
+
+# 4D AVW data or FEAT directory (150)
+set feat_files(150) "/home/data/hcp/161327/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 151
+set fmri(groupmem.151) 1
+
+# Higher-level EV value for EV 1 and input 151
+set fmri(evg151.1) 1
+
+# 4D AVW data or FEAT directory (151)
+set feat_files(151) "/home/data/hcp/161630/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 152
+set fmri(groupmem.152) 1
+
+# Higher-level EV value for EV 1 and input 152
+set fmri(evg152.1) 1
+
+# 4D AVW data or FEAT directory (152)
+set feat_files(152) "/home/data/hcp/161731/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 153
+set fmri(groupmem.153) 1
+
+# Higher-level EV value for EV 1 and input 153
+set fmri(evg153.1) 1
+
+# 4D AVW data or FEAT directory (153)
+set feat_files(153) "/home/data/hcp/162026/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 154
+set fmri(groupmem.154) 1
+
+# Higher-level EV value for EV 1 and input 154
+set fmri(evg154.1) 1
+
+# 4D AVW data or FEAT directory (154)
+set feat_files(154) "/home/data/hcp/162228/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 155
+set fmri(groupmem.155) 1
+
+# Higher-level EV value for EV 1 and input 155
+set fmri(evg155.1) 1
+
+# 4D AVW data or FEAT directory (155)
+set feat_files(155) "/home/data/hcp/162329/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 156
+set fmri(groupmem.156) 1
+
+# Higher-level EV value for EV 1 and input 156
+set fmri(evg156.1) 1
+
+# 4D AVW data or FEAT directory (156)
+set feat_files(156) "/home/data/hcp/162733/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 157
+set fmri(groupmem.157) 1
+
+# Higher-level EV value for EV 1 and input 157
+set fmri(evg157.1) 1
+
+# 4D AVW data or FEAT directory (157)
+set feat_files(157) "/home/data/hcp/163129/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 158
+set fmri(groupmem.158) 1
+
+# Higher-level EV value for EV 1 and input 158
+set fmri(evg158.1) 1
+
+# 4D AVW data or FEAT directory (158)
+set feat_files(158) "/home/data/hcp/163331/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 159
+set fmri(groupmem.159) 1
+
+# Higher-level EV value for EV 1 and input 159
+set fmri(evg159.1) 1
+
+# 4D AVW data or FEAT directory (159)
+set feat_files(159) "/home/data/hcp/163432/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 160
+set fmri(groupmem.160) 1
+
+# Higher-level EV value for EV 1 and input 160
+set fmri(evg160.1) 1
+
+# 4D AVW data or FEAT directory (160)
+set feat_files(160) "/home/data/hcp/163836/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 161
+set fmri(groupmem.161) 1
+
+# Higher-level EV value for EV 1 and input 161
+set fmri(evg161.1) 1
+
+# 4D AVW data or FEAT directory (161)
+set feat_files(161) "/home/data/hcp/164030/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 162
+set fmri(groupmem.162) 1
+
+# Higher-level EV value for EV 1 and input 162
+set fmri(evg162.1) 1
+
+# 4D AVW data or FEAT directory (162)
+set feat_files(162) "/home/data/hcp/164131/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 163
+set fmri(groupmem.163) 1
+
+# Higher-level EV value for EV 1 and input 163
+set fmri(evg163.1) 1
+
+# 4D AVW data or FEAT directory (163)
+set feat_files(163) "/home/data/hcp/164939/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 164
+set fmri(groupmem.164) 1
+
+# Higher-level EV value for EV 1 and input 164
+set fmri(evg164.1) 1
+
+# 4D AVW data or FEAT directory (164)
+set feat_files(164) "/home/data/hcp/165032/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 165
+set fmri(groupmem.165) 1
+
+# Higher-level EV value for EV 1 and input 165
+set fmri(evg165.1) 1
+
+# 4D AVW data or FEAT directory (165)
+set feat_files(165) "/home/data/hcp/165234/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 166
+set fmri(groupmem.166) 1
+
+# Higher-level EV value for EV 1 and input 166
+set fmri(evg166.1) 1
+
+# 4D AVW data or FEAT directory (166)
+set feat_files(166) "/home/data/hcp/165840/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 167
+set fmri(groupmem.167) 1
+
+# Higher-level EV value for EV 1 and input 167
+set fmri(evg167.1) 1
+
+# 4D AVW data or FEAT directory (167)
+set feat_files(167) "/home/data/hcp/166438/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 168
+set fmri(groupmem.168) 1
+
+# Higher-level EV value for EV 1 and input 168
+set fmri(evg168.1) 1
+
+# 4D AVW data or FEAT directory (168)
+set feat_files(168) "/home/data/hcp/167036/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 169
+set fmri(groupmem.169) 1
+
+# Higher-level EV value for EV 1 and input 169
+set fmri(evg169.1) 1
+
+# 4D AVW data or FEAT directory (169)
+set feat_files(169) "/home/data/hcp/167743/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 170
+set fmri(groupmem.170) 1
+
+# Higher-level EV value for EV 1 and input 170
+set fmri(evg170.1) 1
+
+# 4D AVW data or FEAT directory (170)
+set feat_files(170) "/home/data/hcp/168139/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 171
+set fmri(groupmem.171) 1
+
+# Higher-level EV value for EV 1 and input 171
+set fmri(evg171.1) 1
+
+# 4D AVW data or FEAT directory (171)
+set feat_files(171) "/home/data/hcp/168341/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 172
+set fmri(groupmem.172) 1
+
+# Higher-level EV value for EV 1 and input 172
+set fmri(evg172.1) 1
+
+# 4D AVW data or FEAT directory (172)
+set feat_files(172) "/home/data/hcp/169141/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 173
+set fmri(groupmem.173) 1
+
+# Higher-level EV value for EV 1 and input 173
+set fmri(evg173.1) 1
+
+# 4D AVW data or FEAT directory (173)
+set feat_files(173) "/home/data/hcp/169343/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 174
+set fmri(groupmem.174) 1
+
+# Higher-level EV value for EV 1 and input 174
+set fmri(evg174.1) 1
+
+# 4D AVW data or FEAT directory (174)
+set feat_files(174) "/home/data/hcp/169444/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 175
+set fmri(groupmem.175) 1
+
+# Higher-level EV value for EV 1 and input 175
+set fmri(evg175.1) 1
+
+# 4D AVW data or FEAT directory (175)
+set feat_files(175) "/home/data/hcp/170934/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 176
+set fmri(groupmem.176) 1
+
+# Higher-level EV value for EV 1 and input 176
+set fmri(evg176.1) 1
+
+# 4D AVW data or FEAT directory (176)
+set feat_files(176) "/home/data/hcp/171431/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 177
+set fmri(groupmem.177) 1
+
+# Higher-level EV value for EV 1 and input 177
+set fmri(evg177.1) 1
+
+# 4D AVW data or FEAT directory (177)
+set feat_files(177) "/home/data/hcp/171633/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 178
+set fmri(groupmem.178) 1
+
+# Higher-level EV value for EV 1 and input 178
+set fmri(evg178.1) 1
+
+# 4D AVW data or FEAT directory (178)
+set feat_files(178) "/home/data/hcp/172029/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 179
+set fmri(groupmem.179) 1
+
+# Higher-level EV value for EV 1 and input 179
+set fmri(evg179.1) 1
+
+# 4D AVW data or FEAT directory (179)
+set feat_files(179) "/home/data/hcp/172130/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 180
+set fmri(groupmem.180) 1
+
+# Higher-level EV value for EV 1 and input 180
+set fmri(evg180.1) 1
+
+# 4D AVW data or FEAT directory (180)
+set feat_files(180) "/home/data/hcp/172332/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 181
+set fmri(groupmem.181) 1
+
+# Higher-level EV value for EV 1 and input 181
+set fmri(evg181.1) 1
+
+# 4D AVW data or FEAT directory (181)
+set feat_files(181) "/home/data/hcp/172534/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 182
+set fmri(groupmem.182) 1
+
+# Higher-level EV value for EV 1 and input 182
+set fmri(evg182.1) 1
+
+# 4D AVW data or FEAT directory (182)
+set feat_files(182) "/home/data/hcp/172938/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 183
+set fmri(groupmem.183) 1
+
+# Higher-level EV value for EV 1 and input 183
+set fmri(evg183.1) 1
+
+# 4D AVW data or FEAT directory (183)
+set feat_files(183) "/home/data/hcp/173132/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 184
+set fmri(groupmem.184) 1
+
+# Higher-level EV value for EV 1 and input 184
+set fmri(evg184.1) 1
+
+# 4D AVW data or FEAT directory (184)
+set feat_files(184) "/home/data/hcp/173334/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 185
+set fmri(groupmem.185) 1
+
+# Higher-level EV value for EV 1 and input 185
+set fmri(evg185.1) 1
+
+# 4D AVW data or FEAT directory (185)
+set feat_files(185) "/home/data/hcp/173435/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 186
+set fmri(groupmem.186) 1
+
+# Higher-level EV value for EV 1 and input 186
+set fmri(evg186.1) 1
+
+# 4D AVW data or FEAT directory (186)
+set feat_files(186) "/home/data/hcp/173536/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 187
+set fmri(groupmem.187) 1
+
+# Higher-level EV value for EV 1 and input 187
+set fmri(evg187.1) 1
+
+# 4D AVW data or FEAT directory (187)
+set feat_files(187) "/home/data/hcp/173940/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 188
+set fmri(groupmem.188) 1
+
+# Higher-level EV value for EV 1 and input 188
+set fmri(evg188.1) 1
+
+# 4D AVW data or FEAT directory (188)
+set feat_files(188) "/home/data/hcp/175035/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 189
+set fmri(groupmem.189) 1
+
+# Higher-level EV value for EV 1 and input 189
+set fmri(evg189.1) 1
+
+# 4D AVW data or FEAT directory (189)
+set feat_files(189) "/home/data/hcp/175439/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 190
+set fmri(groupmem.190) 1
+
+# Higher-level EV value for EV 1 and input 190
+set fmri(evg190.1) 1
+
+# 4D AVW data or FEAT directory (190)
+set feat_files(190) "/home/data/hcp/176542/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 191
+set fmri(groupmem.191) 1
+
+# Higher-level EV value for EV 1 and input 191
+set fmri(evg191.1) 1
+
+# 4D AVW data or FEAT directory (191)
+set feat_files(191) "/home/data/hcp/177645/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 192
+set fmri(groupmem.192) 1
+
+# Higher-level EV value for EV 1 and input 192
+set fmri(evg192.1) 1
+
+# 4D AVW data or FEAT directory (192)
+set feat_files(192) "/home/data/hcp/177746/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 193
+set fmri(groupmem.193) 1
+
+# Higher-level EV value for EV 1 and input 193
+set fmri(evg193.1) 1
+
+# 4D AVW data or FEAT directory (193)
+set feat_files(193) "/home/data/hcp/178142/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 194
+set fmri(groupmem.194) 1
+
+# Higher-level EV value for EV 1 and input 194
+set fmri(evg194.1) 1
+
+# 4D AVW data or FEAT directory (194)
+set feat_files(194) "/home/data/hcp/178748/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 195
+set fmri(groupmem.195) 1
+
+# Higher-level EV value for EV 1 and input 195
+set fmri(evg195.1) 1
+
+# 4D AVW data or FEAT directory (195)
+set feat_files(195) "/home/data/hcp/178849/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 196
+set fmri(groupmem.196) 1
+
+# Higher-level EV value for EV 1 and input 196
+set fmri(evg196.1) 1
+
+# 4D AVW data or FEAT directory (196)
+set feat_files(196) "/home/data/hcp/178950/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 197
+set fmri(groupmem.197) 1
+
+# Higher-level EV value for EV 1 and input 197
+set fmri(evg197.1) 1
+
+# 4D AVW data or FEAT directory (197)
+set feat_files(197) "/home/data/hcp/179346/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 198
+set fmri(groupmem.198) 1
+
+# Higher-level EV value for EV 1 and input 198
+set fmri(evg198.1) 1
+
+# 4D AVW data or FEAT directory (198)
+set feat_files(198) "/home/data/hcp/179548/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 199
+set fmri(groupmem.199) 1
+
+# Higher-level EV value for EV 1 and input 199
+set fmri(evg199.1) 1
+
+# 4D AVW data or FEAT directory (199)
+set feat_files(199) "/home/data/hcp/180129/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 200
+set fmri(groupmem.200) 1
+
+# Higher-level EV value for EV 1 and input 200
+set fmri(evg200.1) 1
+
+# 4D AVW data or FEAT directory (200)
+set feat_files(200) "/home/data/hcp/180432/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 201
+set fmri(groupmem.201) 1
+
+# Higher-level EV value for EV 1 and input 201
+set fmri(evg201.1) 1
+
+# 4D AVW data or FEAT directory (201)
+set feat_files(201) "/home/data/hcp/180836/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 202
+set fmri(groupmem.202) 1
+
+# Higher-level EV value for EV 1 and input 202
+set fmri(evg202.1) 1
+
+# 4D AVW data or FEAT directory (202)
+set feat_files(202) "/home/data/hcp/180937/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 203
+set fmri(groupmem.203) 1
+
+# Higher-level EV value for EV 1 and input 203
+set fmri(evg203.1) 1
+
+# 4D AVW data or FEAT directory (203)
+set feat_files(203) "/home/data/hcp/181131/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 204
+set fmri(groupmem.204) 1
+
+# Higher-level EV value for EV 1 and input 204
+set fmri(evg204.1) 1
+
+# 4D AVW data or FEAT directory (204)
+set feat_files(204) "/home/data/hcp/181232/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 205
+set fmri(groupmem.205) 1
+
+# Higher-level EV value for EV 1 and input 205
+set fmri(evg205.1) 1
+
+# 4D AVW data or FEAT directory (205)
+set feat_files(205) "/home/data/hcp/182739/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 206
+set fmri(groupmem.206) 1
+
+# Higher-level EV value for EV 1 and input 206
+set fmri(evg206.1) 1
+
+# 4D AVW data or FEAT directory (206)
+set feat_files(206) "/home/data/hcp/182840/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 207
+set fmri(groupmem.207) 1
+
+# Higher-level EV value for EV 1 and input 207
+set fmri(evg207.1) 1
+
+# 4D AVW data or FEAT directory (207)
+set feat_files(207) "/home/data/hcp/183034/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 208
+set fmri(groupmem.208) 1
+
+# Higher-level EV value for EV 1 and input 208
+set fmri(evg208.1) 1
+
+# 4D AVW data or FEAT directory (208)
+set feat_files(208) "/home/data/hcp/185139/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 209
+set fmri(groupmem.209) 1
+
+# Higher-level EV value for EV 1 and input 209
+set fmri(evg209.1) 1
+
+# 4D AVW data or FEAT directory (209)
+set feat_files(209) "/home/data/hcp/185442/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 210
+set fmri(groupmem.210) 1
+
+# Higher-level EV value for EV 1 and input 210
+set fmri(evg210.1) 1
+
+# 4D AVW data or FEAT directory (210)
+set feat_files(210) "/home/data/hcp/186141/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 211
+set fmri(groupmem.211) 1
+
+# Higher-level EV value for EV 1 and input 211
+set fmri(evg211.1) 1
+
+# 4D AVW data or FEAT directory (211)
+set feat_files(211) "/home/data/hcp/187143/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 212
+set fmri(groupmem.212) 1
+
+# Higher-level EV value for EV 1 and input 212
+set fmri(evg212.1) 1
+
+# 4D AVW data or FEAT directory (212)
+set feat_files(212) "/home/data/hcp/187547/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 213
+set fmri(groupmem.213) 1
+
+# Higher-level EV value for EV 1 and input 213
+set fmri(evg213.1) 1
+
+# 4D AVW data or FEAT directory (213)
+set feat_files(213) "/home/data/hcp/187850/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 214
+set fmri(groupmem.214) 1
+
+# Higher-level EV value for EV 1 and input 214
+set fmri(evg214.1) 1
+
+# 4D AVW data or FEAT directory (214)
+set feat_files(214) "/home/data/hcp/188347/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 215
+set fmri(groupmem.215) 1
+
+# Higher-level EV value for EV 1 and input 215
+set fmri(evg215.1) 1
+
+# 4D AVW data or FEAT directory (215)
+set feat_files(215) "/home/data/hcp/189349/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 216
+set fmri(groupmem.216) 1
+
+# Higher-level EV value for EV 1 and input 216
+set fmri(evg216.1) 1
+
+# 4D AVW data or FEAT directory (216)
+set feat_files(216) "/home/data/hcp/189450/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 217
+set fmri(groupmem.217) 1
+
+# Higher-level EV value for EV 1 and input 217
+set fmri(evg217.1) 1
+
+# 4D AVW data or FEAT directory (217)
+set feat_files(217) "/home/data/hcp/190031/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 218
+set fmri(groupmem.218) 1
+
+# Higher-level EV value for EV 1 and input 218
+set fmri(evg218.1) 1
+
+# 4D AVW data or FEAT directory (218)
+set feat_files(218) "/home/data/hcp/191033/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 219
+set fmri(groupmem.219) 1
+
+# Higher-level EV value for EV 1 and input 219
+set fmri(evg219.1) 1
+
+# 4D AVW data or FEAT directory (219)
+set feat_files(219) "/home/data/hcp/191336/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 220
+set fmri(groupmem.220) 1
+
+# Higher-level EV value for EV 1 and input 220
+set fmri(evg220.1) 1
+
+# 4D AVW data or FEAT directory (220)
+set feat_files(220) "/home/data/hcp/191437/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 221
+set fmri(groupmem.221) 1
+
+# Higher-level EV value for EV 1 and input 221
+set fmri(evg221.1) 1
+
+# 4D AVW data or FEAT directory (221)
+set feat_files(221) "/home/data/hcp/191841/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 222
+set fmri(groupmem.222) 1
+
+# Higher-level EV value for EV 1 and input 222
+set fmri(evg222.1) 1
+
+# 4D AVW data or FEAT directory (222)
+set feat_files(222) "/home/data/hcp/192439/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 223
+set fmri(groupmem.223) 1
+
+# Higher-level EV value for EV 1 and input 223
+set fmri(evg223.1) 1
+
+# 4D AVW data or FEAT directory (223)
+set feat_files(223) "/home/data/hcp/192540/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 224
+set fmri(groupmem.224) 1
+
+# Higher-level EV value for EV 1 and input 224
+set fmri(evg224.1) 1
+
+# 4D AVW data or FEAT directory (224)
+set feat_files(224) "/home/data/hcp/192843/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 225
+set fmri(groupmem.225) 1
+
+# Higher-level EV value for EV 1 and input 225
+set fmri(evg225.1) 1
+
+# 4D AVW data or FEAT directory (225)
+set feat_files(225) "/home/data/hcp/193239/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 226
+set fmri(groupmem.226) 1
+
+# Higher-level EV value for EV 1 and input 226
+set fmri(evg226.1) 1
+
+# 4D AVW data or FEAT directory (226)
+set feat_files(226) "/home/data/hcp/194140/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 227
+set fmri(groupmem.227) 1
+
+# Higher-level EV value for EV 1 and input 227
+set fmri(evg227.1) 1
+
+# 4D AVW data or FEAT directory (227)
+set feat_files(227) "/home/data/hcp/194645/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 228
+set fmri(groupmem.228) 1
+
+# Higher-level EV value for EV 1 and input 228
+set fmri(evg228.1) 1
+
+# 4D AVW data or FEAT directory (228)
+set feat_files(228) "/home/data/hcp/194847/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 229
+set fmri(groupmem.229) 1
+
+# Higher-level EV value for EV 1 and input 229
+set fmri(evg229.1) 1
+
+# 4D AVW data or FEAT directory (229)
+set feat_files(229) "/home/data/hcp/195041/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 230
+set fmri(groupmem.230) 1
+
+# Higher-level EV value for EV 1 and input 230
+set fmri(evg230.1) 1
+
+# 4D AVW data or FEAT directory (230)
+set feat_files(230) "/home/data/hcp/195647/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 231
+set fmri(groupmem.231) 1
+
+# Higher-level EV value for EV 1 and input 231
+set fmri(evg231.1) 1
+
+# 4D AVW data or FEAT directory (231)
+set feat_files(231) "/home/data/hcp/195849/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 232
+set fmri(groupmem.232) 1
+
+# Higher-level EV value for EV 1 and input 232
+set fmri(evg232.1) 1
+
+# 4D AVW data or FEAT directory (232)
+set feat_files(232) "/home/data/hcp/196144/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 233
+set fmri(groupmem.233) 1
+
+# Higher-level EV value for EV 1 and input 233
+set fmri(evg233.1) 1
+
+# 4D AVW data or FEAT directory (233)
+set feat_files(233) "/home/data/hcp/196750/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 234
+set fmri(groupmem.234) 1
+
+# Higher-level EV value for EV 1 and input 234
+set fmri(evg234.1) 1
+
+# 4D AVW data or FEAT directory (234)
+set feat_files(234) "/home/data/hcp/197348/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 235
+set fmri(groupmem.235) 1
+
+# Higher-level EV value for EV 1 and input 235
+set fmri(evg235.1) 1
+
+# 4D AVW data or FEAT directory (235)
+set feat_files(235) "/home/data/hcp/197550/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 236
+set fmri(groupmem.236) 1
+
+# Higher-level EV value for EV 1 and input 236
+set fmri(evg236.1) 1
+
+# 4D AVW data or FEAT directory (236)
+set feat_files(236) "/home/data/hcp/198350/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 237
+set fmri(groupmem.237) 1
+
+# Higher-level EV value for EV 1 and input 237
+set fmri(evg237.1) 1
+
+# 4D AVW data or FEAT directory (237)
+set feat_files(237) "/home/data/hcp/198451/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 238
+set fmri(groupmem.238) 1
+
+# Higher-level EV value for EV 1 and input 238
+set fmri(evg238.1) 1
+
+# 4D AVW data or FEAT directory (238)
+set feat_files(238) "/home/data/hcp/198855/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 239
+set fmri(groupmem.239) 1
+
+# Higher-level EV value for EV 1 and input 239
+set fmri(evg239.1) 1
+
+# 4D AVW data or FEAT directory (239)
+set feat_files(239) "/home/data/hcp/199150/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 240
+set fmri(groupmem.240) 1
+
+# Higher-level EV value for EV 1 and input 240
+set fmri(evg240.1) 1
+
+# 4D AVW data or FEAT directory (240)
+set feat_files(240) "/home/data/hcp/199251/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 241
+set fmri(groupmem.241) 1
+
+# Higher-level EV value for EV 1 and input 241
+set fmri(evg241.1) 1
+
+# 4D AVW data or FEAT directory (241)
+set feat_files(241) "/home/data/hcp/199453/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 242
+set fmri(groupmem.242) 1
+
+# Higher-level EV value for EV 1 and input 242
+set fmri(evg242.1) 1
+
+# 4D AVW data or FEAT directory (242)
+set feat_files(242) "/home/data/hcp/199655/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 243
+set fmri(groupmem.243) 1
+
+# Higher-level EV value for EV 1 and input 243
+set fmri(evg243.1) 1
+
+# 4D AVW data or FEAT directory (243)
+set feat_files(243) "/home/data/hcp/199958/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 244
+set fmri(groupmem.244) 1
+
+# Higher-level EV value for EV 1 and input 244
+set fmri(evg244.1) 1
+
+# 4D AVW data or FEAT directory (244)
+set feat_files(244) "/home/data/hcp/200109/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 245
+set fmri(groupmem.245) 1
+
+# Higher-level EV value for EV 1 and input 245
+set fmri(evg245.1) 1
+
+# 4D AVW data or FEAT directory (245)
+set feat_files(245) "/home/data/hcp/200614/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 246
+set fmri(groupmem.246) 1
+
+# Higher-level EV value for EV 1 and input 246
+set fmri(evg246.1) 1
+
+# 4D AVW data or FEAT directory (246)
+set feat_files(246) "/home/data/hcp/201111/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 247
+set fmri(groupmem.247) 1
+
+# Higher-level EV value for EV 1 and input 247
+set fmri(evg247.1) 1
+
+# 4D AVW data or FEAT directory (247)
+set feat_files(247) "/home/data/hcp/201414/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 248
+set fmri(groupmem.248) 1
+
+# Higher-level EV value for EV 1 and input 248
+set fmri(evg248.1) 1
+
+# 4D AVW data or FEAT directory (248)
+set feat_files(248) "/home/data/hcp/201818/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 249
+set fmri(groupmem.249) 1
+
+# Higher-level EV value for EV 1 and input 249
+set fmri(evg249.1) 1
+
+# 4D AVW data or FEAT directory (249)
+set feat_files(249) "/home/data/hcp/203418/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 250
+set fmri(groupmem.250) 1
+
+# Higher-level EV value for EV 1 and input 250
+set fmri(evg250.1) 1
+
+# 4D AVW data or FEAT directory (250)
+set feat_files(250) "/home/data/hcp/204016/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 251
+set fmri(groupmem.251) 1
+
+# Higher-level EV value for EV 1 and input 251
+set fmri(evg251.1) 1
+
+# 4D AVW data or FEAT directory (251)
+set feat_files(251) "/home/data/hcp/204521/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 252
+set fmri(groupmem.252) 1
+
+# Higher-level EV value for EV 1 and input 252
+set fmri(evg252.1) 1
+
+# 4D AVW data or FEAT directory (252)
+set feat_files(252) "/home/data/hcp/205119/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 253
+set fmri(groupmem.253) 1
+
+# Higher-level EV value for EV 1 and input 253
+set fmri(evg253.1) 1
+
+# 4D AVW data or FEAT directory (253)
+set feat_files(253) "/home/data/hcp/205220/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 254
+set fmri(groupmem.254) 1
+
+# Higher-level EV value for EV 1 and input 254
+set fmri(evg254.1) 1
+
+# 4D AVW data or FEAT directory (254)
+set feat_files(254) "/home/data/hcp/205725/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 255
+set fmri(groupmem.255) 1
+
+# Higher-level EV value for EV 1 and input 255
+set fmri(evg255.1) 1
+
+# 4D AVW data or FEAT directory (255)
+set feat_files(255) "/home/data/hcp/205826/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 256
+set fmri(groupmem.256) 1
+
+# Higher-level EV value for EV 1 and input 256
+set fmri(evg256.1) 1
+
+# 4D AVW data or FEAT directory (256)
+set feat_files(256) "/home/data/hcp/208024/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 257
+set fmri(groupmem.257) 1
+
+# Higher-level EV value for EV 1 and input 257
+set fmri(evg257.1) 1
+
+# 4D AVW data or FEAT directory (257)
+set feat_files(257) "/home/data/hcp/208226/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 258
+set fmri(groupmem.258) 1
+
+# Higher-level EV value for EV 1 and input 258
+set fmri(evg258.1) 1
+
+# 4D AVW data or FEAT directory (258)
+set feat_files(258) "/home/data/hcp/208327/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 259
+set fmri(groupmem.259) 1
+
+# Higher-level EV value for EV 1 and input 259
+set fmri(evg259.1) 1
+
+# 4D AVW data or FEAT directory (259)
+set feat_files(259) "/home/data/hcp/209834/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 260
+set fmri(groupmem.260) 1
+
+# Higher-level EV value for EV 1 and input 260
+set fmri(evg260.1) 1
+
+# 4D AVW data or FEAT directory (260)
+set feat_files(260) "/home/data/hcp/209935/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 261
+set fmri(groupmem.261) 1
+
+# Higher-level EV value for EV 1 and input 261
+set fmri(evg261.1) 1
+
+# 4D AVW data or FEAT directory (261)
+set feat_files(261) "/home/data/hcp/210011/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 262
+set fmri(groupmem.262) 1
+
+# Higher-level EV value for EV 1 and input 262
+set fmri(evg262.1) 1
+
+# 4D AVW data or FEAT directory (262)
+set feat_files(262) "/home/data/hcp/210415/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 263
+set fmri(groupmem.263) 1
+
+# Higher-level EV value for EV 1 and input 263
+set fmri(evg263.1) 1
+
+# 4D AVW data or FEAT directory (263)
+set feat_files(263) "/home/data/hcp/210617/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 264
+set fmri(groupmem.264) 1
+
+# Higher-level EV value for EV 1 and input 264
+set fmri(evg264.1) 1
+
+# 4D AVW data or FEAT directory (264)
+set feat_files(264) "/home/data/hcp/211215/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 265
+set fmri(groupmem.265) 1
+
+# Higher-level EV value for EV 1 and input 265
+set fmri(evg265.1) 1
+
+# 4D AVW data or FEAT directory (265)
+set feat_files(265) "/home/data/hcp/211316/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 266
+set fmri(groupmem.266) 1
+
+# Higher-level EV value for EV 1 and input 266
+set fmri(evg266.1) 1
+
+# 4D AVW data or FEAT directory (266)
+set feat_files(266) "/home/data/hcp/211417/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 267
+set fmri(groupmem.267) 1
+
+# Higher-level EV value for EV 1 and input 267
+set fmri(evg267.1) 1
+
+# 4D AVW data or FEAT directory (267)
+set feat_files(267) "/home/data/hcp/211720/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 268
+set fmri(groupmem.268) 1
+
+# Higher-level EV value for EV 1 and input 268
+set fmri(evg268.1) 1
+
+# 4D AVW data or FEAT directory (268)
+set feat_files(268) "/home/data/hcp/211922/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 269
+set fmri(groupmem.269) 1
+
+# Higher-level EV value for EV 1 and input 269
+set fmri(evg269.1) 1
+
+# 4D AVW data or FEAT directory (269)
+set feat_files(269) "/home/data/hcp/212116/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 270
+set fmri(groupmem.270) 1
+
+# Higher-level EV value for EV 1 and input 270
+set fmri(evg270.1) 1
+
+# 4D AVW data or FEAT directory (270)
+set feat_files(270) "/home/data/hcp/212217/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 271
+set fmri(groupmem.271) 1
+
+# Higher-level EV value for EV 1 and input 271
+set fmri(evg271.1) 1
+
+# 4D AVW data or FEAT directory (271)
+set feat_files(271) "/home/data/hcp/212318/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 272
+set fmri(groupmem.272) 1
+
+# Higher-level EV value for EV 1 and input 272
+set fmri(evg272.1) 1
+
+# 4D AVW data or FEAT directory (272)
+set feat_files(272) "/home/data/hcp/212419/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 273
+set fmri(groupmem.273) 1
+
+# Higher-level EV value for EV 1 and input 273
+set fmri(evg273.1) 1
+
+# 4D AVW data or FEAT directory (273)
+set feat_files(273) "/home/data/hcp/214019/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 274
+set fmri(groupmem.274) 1
+
+# Higher-level EV value for EV 1 and input 274
+set fmri(evg274.1) 1
+
+# 4D AVW data or FEAT directory (274)
+set feat_files(274) "/home/data/hcp/214221/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 275
+set fmri(groupmem.275) 1
+
+# Higher-level EV value for EV 1 and input 275
+set fmri(evg275.1) 1
+
+# 4D AVW data or FEAT directory (275)
+set feat_files(275) "/home/data/hcp/214423/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 276
+set fmri(groupmem.276) 1
+
+# Higher-level EV value for EV 1 and input 276
+set fmri(evg276.1) 1
+
+# 4D AVW data or FEAT directory (276)
+set feat_files(276) "/home/data/hcp/214726/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 277
+set fmri(groupmem.277) 1
+
+# Higher-level EV value for EV 1 and input 277
+set fmri(evg277.1) 1
+
+# 4D AVW data or FEAT directory (277)
+set feat_files(277) "/home/data/hcp/217126/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 278
+set fmri(groupmem.278) 1
+
+# Higher-level EV value for EV 1 and input 278
+set fmri(evg278.1) 1
+
+# 4D AVW data or FEAT directory (278)
+set feat_files(278) "/home/data/hcp/217429/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 279
+set fmri(groupmem.279) 1
+
+# Higher-level EV value for EV 1 and input 279
+set fmri(evg279.1) 1
+
+# 4D AVW data or FEAT directory (279)
+set feat_files(279) "/home/data/hcp/221319/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 280
+set fmri(groupmem.280) 1
+
+# Higher-level EV value for EV 1 and input 280
+set fmri(evg280.1) 1
+
+# 4D AVW data or FEAT directory (280)
+set feat_files(280) "/home/data/hcp/224022/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 281
+set fmri(groupmem.281) 1
+
+# Higher-level EV value for EV 1 and input 281
+set fmri(evg281.1) 1
+
+# 4D AVW data or FEAT directory (281)
+set feat_files(281) "/home/data/hcp/231928/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 282
+set fmri(groupmem.282) 1
+
+# Higher-level EV value for EV 1 and input 282
+set fmri(evg282.1) 1
+
+# 4D AVW data or FEAT directory (282)
+set feat_files(282) "/home/data/hcp/233326/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 283
+set fmri(groupmem.283) 1
+
+# Higher-level EV value for EV 1 and input 283
+set fmri(evg283.1) 1
+
+# 4D AVW data or FEAT directory (283)
+set feat_files(283) "/home/data/hcp/239944/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 284
+set fmri(groupmem.284) 1
+
+# Higher-level EV value for EV 1 and input 284
+set fmri(evg284.1) 1
+
+# 4D AVW data or FEAT directory (284)
+set feat_files(284) "/home/data/hcp/245333/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 285
+set fmri(groupmem.285) 1
+
+# Higher-level EV value for EV 1 and input 285
+set fmri(evg285.1) 1
+
+# 4D AVW data or FEAT directory (285)
+set feat_files(285) "/home/data/hcp/246133/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 286
+set fmri(groupmem.286) 1
+
+# Higher-level EV value for EV 1 and input 286
+set fmri(evg286.1) 1
+
+# 4D AVW data or FEAT directory (286)
+set feat_files(286) "/home/data/hcp/249947/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 287
+set fmri(groupmem.287) 1
+
+# Higher-level EV value for EV 1 and input 287
+set fmri(evg287.1) 1
+
+# 4D AVW data or FEAT directory (287)
+set feat_files(287) "/home/data/hcp/250427/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 288
+set fmri(groupmem.288) 1
+
+# Higher-level EV value for EV 1 and input 288
+set fmri(evg288.1) 1
+
+# 4D AVW data or FEAT directory (288)
+set feat_files(288) "/home/data/hcp/250932/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 289
+set fmri(groupmem.289) 1
+
+# Higher-level EV value for EV 1 and input 289
+set fmri(evg289.1) 1
+
+# 4D AVW data or FEAT directory (289)
+set feat_files(289) "/home/data/hcp/251833/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 290
+set fmri(groupmem.290) 1
+
+# Higher-level EV value for EV 1 and input 290
+set fmri(evg290.1) 1
+
+# 4D AVW data or FEAT directory (290)
+set feat_files(290) "/home/data/hcp/255639/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 291
+set fmri(groupmem.291) 1
+
+# Higher-level EV value for EV 1 and input 291
+set fmri(evg291.1) 1
+
+# 4D AVW data or FEAT directory (291)
+set feat_files(291) "/home/data/hcp/256540/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 292
+set fmri(groupmem.292) 1
+
+# Higher-level EV value for EV 1 and input 292
+set fmri(evg292.1) 1
+
+# 4D AVW data or FEAT directory (292)
+set feat_files(292) "/home/data/hcp/268850/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 293
+set fmri(groupmem.293) 1
+
+# Higher-level EV value for EV 1 and input 293
+set fmri(evg293.1) 1
+
+# 4D AVW data or FEAT directory (293)
+set feat_files(293) "/home/data/hcp/280739/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 294
+set fmri(groupmem.294) 1
+
+# Higher-level EV value for EV 1 and input 294
+set fmri(evg294.1) 1
+
+# 4D AVW data or FEAT directory (294)
+set feat_files(294) "/home/data/hcp/284646/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 295
+set fmri(groupmem.295) 1
+
+# Higher-level EV value for EV 1 and input 295
+set fmri(evg295.1) 1
+
+# 4D AVW data or FEAT directory (295)
+set feat_files(295) "/home/data/hcp/285345/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 296
+set fmri(groupmem.296) 1
+
+# Higher-level EV value for EV 1 and input 296
+set fmri(evg296.1) 1
+
+# 4D AVW data or FEAT directory (296)
+set feat_files(296) "/home/data/hcp/285446/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 297
+set fmri(groupmem.297) 1
+
+# Higher-level EV value for EV 1 and input 297
+set fmri(evg297.1) 1
+
+# 4D AVW data or FEAT directory (297)
+set feat_files(297) "/home/data/hcp/289555/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 298
+set fmri(groupmem.298) 1
+
+# Higher-level EV value for EV 1 and input 298
+set fmri(evg298.1) 1
+
+# 4D AVW data or FEAT directory (298)
+set feat_files(298) "/home/data/hcp/290136/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 299
+set fmri(groupmem.299) 1
+
+# Higher-level EV value for EV 1 and input 299
+set fmri(evg299.1) 1
+
+# 4D AVW data or FEAT directory (299)
+set feat_files(299) "/home/data/hcp/293748/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 300
+set fmri(groupmem.300) 1
+
+# Higher-level EV value for EV 1 and input 300
+set fmri(evg300.1) 1
+
+# 4D AVW data or FEAT directory (300)
+set feat_files(300) "/home/data/hcp/298051/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 301
+set fmri(groupmem.301) 1
+
+# Higher-level EV value for EV 1 and input 301
+set fmri(evg301.1) 1
+
+# 4D AVW data or FEAT directory (301)
+set feat_files(301) "/home/data/hcp/298455/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 302
+set fmri(groupmem.302) 1
+
+# Higher-level EV value for EV 1 and input 302
+set fmri(evg302.1) 1
+
+# 4D AVW data or FEAT directory (302)
+set feat_files(302) "/home/data/hcp/303119/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 303
+set fmri(groupmem.303) 1
+
+# Higher-level EV value for EV 1 and input 303
+set fmri(evg303.1) 1
+
+# 4D AVW data or FEAT directory (303)
+set feat_files(303) "/home/data/hcp/303624/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 304
+set fmri(groupmem.304) 1
+
+# Higher-level EV value for EV 1 and input 304
+set fmri(evg304.1) 1
+
+# 4D AVW data or FEAT directory (304)
+set feat_files(304) "/home/data/hcp/304020/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 305
+set fmri(groupmem.305) 1
+
+# Higher-level EV value for EV 1 and input 305
+set fmri(evg305.1) 1
+
+# 4D AVW data or FEAT directory (305)
+set feat_files(305) "/home/data/hcp/307127/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 306
+set fmri(groupmem.306) 1
+
+# Higher-level EV value for EV 1 and input 306
+set fmri(evg306.1) 1
+
+# 4D AVW data or FEAT directory (306)
+set feat_files(306) "/home/data/hcp/308331/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 307
+set fmri(groupmem.307) 1
+
+# Higher-level EV value for EV 1 and input 307
+set fmri(evg307.1) 1
+
+# 4D AVW data or FEAT directory (307)
+set feat_files(307) "/home/data/hcp/310621/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 308
+set fmri(groupmem.308) 1
+
+# Higher-level EV value for EV 1 and input 308
+set fmri(evg308.1) 1
+
+# 4D AVW data or FEAT directory (308)
+set feat_files(308) "/home/data/hcp/316633/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 309
+set fmri(groupmem.309) 1
+
+# Higher-level EV value for EV 1 and input 309
+set fmri(evg309.1) 1
+
+# 4D AVW data or FEAT directory (309)
+set feat_files(309) "/home/data/hcp/329440/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 310
+set fmri(groupmem.310) 1
+
+# Higher-level EV value for EV 1 and input 310
+set fmri(evg310.1) 1
+
+# 4D AVW data or FEAT directory (310)
+set feat_files(310) "/home/data/hcp/334635/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 311
+set fmri(groupmem.311) 1
+
+# Higher-level EV value for EV 1 and input 311
+set fmri(evg311.1) 1
+
+# 4D AVW data or FEAT directory (311)
+set feat_files(311) "/home/data/hcp/339847/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 312
+set fmri(groupmem.312) 1
+
+# Higher-level EV value for EV 1 and input 312
+set fmri(evg312.1) 1
+
+# 4D AVW data or FEAT directory (312)
+set feat_files(312) "/home/data/hcp/351938/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 313
+set fmri(groupmem.313) 1
+
+# Higher-level EV value for EV 1 and input 313
+set fmri(evg313.1) 1
+
+# 4D AVW data or FEAT directory (313)
+set feat_files(313) "/home/data/hcp/352132/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 314
+set fmri(groupmem.314) 1
+
+# Higher-level EV value for EV 1 and input 314
+set fmri(evg314.1) 1
+
+# 4D AVW data or FEAT directory (314)
+set feat_files(314) "/home/data/hcp/352738/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 315
+set fmri(groupmem.315) 1
+
+# Higher-level EV value for EV 1 and input 315
+set fmri(evg315.1) 1
+
+# 4D AVW data or FEAT directory (315)
+set feat_files(315) "/home/data/hcp/355239/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 316
+set fmri(groupmem.316) 1
+
+# Higher-level EV value for EV 1 and input 316
+set fmri(evg316.1) 1
+
+# 4D AVW data or FEAT directory (316)
+set feat_files(316) "/home/data/hcp/356948/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 317
+set fmri(groupmem.317) 1
+
+# Higher-level EV value for EV 1 and input 317
+set fmri(evg317.1) 1
+
+# 4D AVW data or FEAT directory (317)
+set feat_files(317) "/home/data/hcp/361941/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 318
+set fmri(groupmem.318) 1
+
+# Higher-level EV value for EV 1 and input 318
+set fmri(evg318.1) 1
+
+# 4D AVW data or FEAT directory (318)
+set feat_files(318) "/home/data/hcp/365343/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 319
+set fmri(groupmem.319) 1
+
+# Higher-level EV value for EV 1 and input 319
+set fmri(evg319.1) 1
+
+# 4D AVW data or FEAT directory (319)
+set feat_files(319) "/home/data/hcp/366042/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 320
+set fmri(groupmem.320) 1
+
+# Higher-level EV value for EV 1 and input 320
+set fmri(evg320.1) 1
+
+# 4D AVW data or FEAT directory (320)
+set feat_files(320) "/home/data/hcp/366446/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 321
+set fmri(groupmem.321) 1
+
+# Higher-level EV value for EV 1 and input 321
+set fmri(evg321.1) 1
+
+# 4D AVW data or FEAT directory (321)
+set feat_files(321) "/home/data/hcp/371843/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 322
+set fmri(groupmem.322) 1
+
+# Higher-level EV value for EV 1 and input 322
+set fmri(evg322.1) 1
+
+# 4D AVW data or FEAT directory (322)
+set feat_files(322) "/home/data/hcp/377451/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 323
+set fmri(groupmem.323) 1
+
+# Higher-level EV value for EV 1 and input 323
+set fmri(evg323.1) 1
+
+# 4D AVW data or FEAT directory (323)
+set feat_files(323) "/home/data/hcp/380036/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 324
+set fmri(groupmem.324) 1
+
+# Higher-level EV value for EV 1 and input 324
+set fmri(evg324.1) 1
+
+# 4D AVW data or FEAT directory (324)
+set feat_files(324) "/home/data/hcp/382242/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 325
+set fmri(groupmem.325) 1
+
+# Higher-level EV value for EV 1 and input 325
+set fmri(evg325.1) 1
+
+# 4D AVW data or FEAT directory (325)
+set feat_files(325) "/home/data/hcp/385450/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 326
+set fmri(groupmem.326) 1
+
+# Higher-level EV value for EV 1 and input 326
+set fmri(evg326.1) 1
+
+# 4D AVW data or FEAT directory (326)
+set feat_files(326) "/home/data/hcp/386250/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 327
+set fmri(groupmem.327) 1
+
+# Higher-level EV value for EV 1 and input 327
+set fmri(evg327.1) 1
+
+# 4D AVW data or FEAT directory (327)
+set feat_files(327) "/home/data/hcp/390645/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 328
+set fmri(groupmem.328) 1
+
+# Higher-level EV value for EV 1 and input 328
+set fmri(evg328.1) 1
+
+# 4D AVW data or FEAT directory (328)
+set feat_files(328) "/home/data/hcp/395958/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 329
+set fmri(groupmem.329) 1
+
+# Higher-level EV value for EV 1 and input 329
+set fmri(evg329.1) 1
+
+# 4D AVW data or FEAT directory (329)
+set feat_files(329) "/home/data/hcp/397154/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 330
+set fmri(groupmem.330) 1
+
+# Higher-level EV value for EV 1 and input 330
+set fmri(evg330.1) 1
+
+# 4D AVW data or FEAT directory (330)
+set feat_files(330) "/home/data/hcp/397760/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 331
+set fmri(groupmem.331) 1
+
+# Higher-level EV value for EV 1 and input 331
+set fmri(evg331.1) 1
+
+# 4D AVW data or FEAT directory (331)
+set feat_files(331) "/home/data/hcp/397861/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 332
+set fmri(groupmem.332) 1
+
+# Higher-level EV value for EV 1 and input 332
+set fmri(evg332.1) 1
+
+# 4D AVW data or FEAT directory (332)
+set feat_files(332) "/home/data/hcp/412528/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 333
+set fmri(groupmem.333) 1
+
+# Higher-level EV value for EV 1 and input 333
+set fmri(evg333.1) 1
+
+# 4D AVW data or FEAT directory (333)
+set feat_files(333) "/home/data/hcp/414229/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 334
+set fmri(groupmem.334) 1
+
+# Higher-level EV value for EV 1 and input 334
+set fmri(evg334.1) 1
+
+# 4D AVW data or FEAT directory (334)
+set feat_files(334) "/home/data/hcp/415837/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 335
+set fmri(groupmem.335) 1
+
+# Higher-level EV value for EV 1 and input 335
+set fmri(evg335.1) 1
+
+# 4D AVW data or FEAT directory (335)
+set feat_files(335) "/home/data/hcp/422632/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 336
+set fmri(groupmem.336) 1
+
+# Higher-level EV value for EV 1 and input 336
+set fmri(evg336.1) 1
+
+# 4D AVW data or FEAT directory (336)
+set feat_files(336) "/home/data/hcp/433839/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 337
+set fmri(groupmem.337) 1
+
+# Higher-level EV value for EV 1 and input 337
+set fmri(evg337.1) 1
+
+# 4D AVW data or FEAT directory (337)
+set feat_files(337) "/home/data/hcp/436239/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 338
+set fmri(groupmem.338) 1
+
+# Higher-level EV value for EV 1 and input 338
+set fmri(evg338.1) 1
+
+# 4D AVW data or FEAT directory (338)
+set feat_files(338) "/home/data/hcp/436845/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 339
+set fmri(groupmem.339) 1
+
+# Higher-level EV value for EV 1 and input 339
+set fmri(evg339.1) 1
+
+# 4D AVW data or FEAT directory (339)
+set feat_files(339) "/home/data/hcp/441939/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 340
+set fmri(groupmem.340) 1
+
+# Higher-level EV value for EV 1 and input 340
+set fmri(evg340.1) 1
+
+# 4D AVW data or FEAT directory (340)
+set feat_files(340) "/home/data/hcp/445543/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 341
+set fmri(groupmem.341) 1
+
+# Higher-level EV value for EV 1 and input 341
+set fmri(evg341.1) 1
+
+# 4D AVW data or FEAT directory (341)
+set feat_files(341) "/home/data/hcp/448347/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 342
+set fmri(groupmem.342) 1
+
+# Higher-level EV value for EV 1 and input 342
+set fmri(evg342.1) 1
+
+# 4D AVW data or FEAT directory (342)
+set feat_files(342) "/home/data/hcp/465852/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 343
+set fmri(groupmem.343) 1
+
+# Higher-level EV value for EV 1 and input 343
+set fmri(evg343.1) 1
+
+# 4D AVW data or FEAT directory (343)
+set feat_files(343) "/home/data/hcp/473952/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 344
+set fmri(groupmem.344) 1
+
+# Higher-level EV value for EV 1 and input 344
+set fmri(evg344.1) 1
+
+# 4D AVW data or FEAT directory (344)
+set feat_files(344) "/home/data/hcp/475855/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 345
+set fmri(groupmem.345) 1
+
+# Higher-level EV value for EV 1 and input 345
+set fmri(evg345.1) 1
+
+# 4D AVW data or FEAT directory (345)
+set feat_files(345) "/home/data/hcp/479762/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 346
+set fmri(groupmem.346) 1
+
+# Higher-level EV value for EV 1 and input 346
+set fmri(evg346.1) 1
+
+# 4D AVW data or FEAT directory (346)
+set feat_files(346) "/home/data/hcp/480141/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 347
+set fmri(groupmem.347) 1
+
+# Higher-level EV value for EV 1 and input 347
+set fmri(evg347.1) 1
+
+# 4D AVW data or FEAT directory (347)
+set feat_files(347) "/home/data/hcp/485757/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 348
+set fmri(groupmem.348) 1
+
+# Higher-level EV value for EV 1 and input 348
+set fmri(evg348.1) 1
+
+# 4D AVW data or FEAT directory (348)
+set feat_files(348) "/home/data/hcp/486759/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 349
+set fmri(groupmem.349) 1
+
+# Higher-level EV value for EV 1 and input 349
+set fmri(evg349.1) 1
+
+# 4D AVW data or FEAT directory (349)
+set feat_files(349) "/home/data/hcp/497865/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 350
+set fmri(groupmem.350) 1
+
+# Higher-level EV value for EV 1 and input 350
+set fmri(evg350.1) 1
+
+# 4D AVW data or FEAT directory (350)
+set feat_files(350) "/home/data/hcp/499566/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 351
+set fmri(groupmem.351) 1
+
+# Higher-level EV value for EV 1 and input 351
+set fmri(evg351.1) 1
+
+# 4D AVW data or FEAT directory (351)
+set feat_files(351) "/home/data/hcp/500222/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 352
+set fmri(groupmem.352) 1
+
+# Higher-level EV value for EV 1 and input 352
+set fmri(evg352.1) 1
+
+# 4D AVW data or FEAT directory (352)
+set feat_files(352) "/home/data/hcp/510326/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 353
+set fmri(groupmem.353) 1
+
+# Higher-level EV value for EV 1 and input 353
+set fmri(evg353.1) 1
+
+# 4D AVW data or FEAT directory (353)
+set feat_files(353) "/home/data/hcp/519950/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 354
+set fmri(groupmem.354) 1
+
+# Higher-level EV value for EV 1 and input 354
+set fmri(evg354.1) 1
+
+# 4D AVW data or FEAT directory (354)
+set feat_files(354) "/home/data/hcp/521331/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 355
+set fmri(groupmem.355) 1
+
+# Higher-level EV value for EV 1 and input 355
+set fmri(evg355.1) 1
+
+# 4D AVW data or FEAT directory (355)
+set feat_files(355) "/home/data/hcp/522434/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 356
+set fmri(groupmem.356) 1
+
+# Higher-level EV value for EV 1 and input 356
+set fmri(evg356.1) 1
+
+# 4D AVW data or FEAT directory (356)
+set feat_files(356) "/home/data/hcp/530635/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 357
+set fmri(groupmem.357) 1
+
+# Higher-level EV value for EV 1 and input 357
+set fmri(evg357.1) 1
+
+# 4D AVW data or FEAT directory (357)
+set feat_files(357) "/home/data/hcp/531536/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 358
+set fmri(groupmem.358) 1
+
+# Higher-level EV value for EV 1 and input 358
+set fmri(evg358.1) 1
+
+# 4D AVW data or FEAT directory (358)
+set feat_files(358) "/home/data/hcp/540436/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 359
+set fmri(groupmem.359) 1
+
+# Higher-level EV value for EV 1 and input 359
+set fmri(evg359.1) 1
+
+# 4D AVW data or FEAT directory (359)
+set feat_files(359) "/home/data/hcp/541943/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 360
+set fmri(groupmem.360) 1
+
+# Higher-level EV value for EV 1 and input 360
+set fmri(evg360.1) 1
+
+# 4D AVW data or FEAT directory (360)
+set feat_files(360) "/home/data/hcp/545345/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 361
+set fmri(groupmem.361) 1
+
+# Higher-level EV value for EV 1 and input 361
+set fmri(evg361.1) 1
+
+# 4D AVW data or FEAT directory (361)
+set feat_files(361) "/home/data/hcp/547046/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 362
+set fmri(groupmem.362) 1
+
+# Higher-level EV value for EV 1 and input 362
+set fmri(evg362.1) 1
+
+# 4D AVW data or FEAT directory (362)
+set feat_files(362) "/home/data/hcp/552544/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 363
+set fmri(groupmem.363) 1
+
+# Higher-level EV value for EV 1 and input 363
+set fmri(evg363.1) 1
+
+# 4D AVW data or FEAT directory (363)
+set feat_files(363) "/home/data/hcp/559053/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 364
+set fmri(groupmem.364) 1
+
+# Higher-level EV value for EV 1 and input 364
+set fmri(evg364.1) 1
+
+# 4D AVW data or FEAT directory (364)
+set feat_files(364) "/home/data/hcp/561242/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 365
+set fmri(groupmem.365) 1
+
+# Higher-level EV value for EV 1 and input 365
+set fmri(evg365.1) 1
+
+# 4D AVW data or FEAT directory (365)
+set feat_files(365) "/home/data/hcp/562446/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 366
+set fmri(groupmem.366) 1
+
+# Higher-level EV value for EV 1 and input 366
+set fmri(evg366.1) 1
+
+# 4D AVW data or FEAT directory (366)
+set feat_files(366) "/home/data/hcp/565452/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 367
+set fmri(groupmem.367) 1
+
+# Higher-level EV value for EV 1 and input 367
+set fmri(evg367.1) 1
+
+# 4D AVW data or FEAT directory (367)
+set feat_files(367) "/home/data/hcp/566454/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 368
+set fmri(groupmem.368) 1
+
+# Higher-level EV value for EV 1 and input 368
+set fmri(evg368.1) 1
+
+# 4D AVW data or FEAT directory (368)
+set feat_files(368) "/home/data/hcp/567052/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 369
+set fmri(groupmem.369) 1
+
+# Higher-level EV value for EV 1 and input 369
+set fmri(evg369.1) 1
+
+# 4D AVW data or FEAT directory (369)
+set feat_files(369) "/home/data/hcp/567961/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 370
+set fmri(groupmem.370) 1
+
+# Higher-level EV value for EV 1 and input 370
+set fmri(evg370.1) 1
+
+# 4D AVW data or FEAT directory (370)
+set feat_files(370) "/home/data/hcp/568963/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 371
+set fmri(groupmem.371) 1
+
+# Higher-level EV value for EV 1 and input 371
+set fmri(evg371.1) 1
+
+# 4D AVW data or FEAT directory (371)
+set feat_files(371) "/home/data/hcp/570243/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 372
+set fmri(groupmem.372) 1
+
+# Higher-level EV value for EV 1 and input 372
+set fmri(evg372.1) 1
+
+# 4D AVW data or FEAT directory (372)
+set feat_files(372) "/home/data/hcp/573249/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 373
+set fmri(groupmem.373) 1
+
+# Higher-level EV value for EV 1 and input 373
+set fmri(evg373.1) 1
+
+# 4D AVW data or FEAT directory (373)
+set feat_files(373) "/home/data/hcp/573451/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 374
+set fmri(groupmem.374) 1
+
+# Higher-level EV value for EV 1 and input 374
+set fmri(evg374.1) 1
+
+# 4D AVW data or FEAT directory (374)
+set feat_files(374) "/home/data/hcp/579665/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 375
+set fmri(groupmem.375) 1
+
+# Higher-level EV value for EV 1 and input 375
+set fmri(evg375.1) 1
+
+# 4D AVW data or FEAT directory (375)
+set feat_files(375) "/home/data/hcp/580044/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 376
+set fmri(groupmem.376) 1
+
+# Higher-level EV value for EV 1 and input 376
+set fmri(evg376.1) 1
+
+# 4D AVW data or FEAT directory (376)
+set feat_files(376) "/home/data/hcp/581349/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 377
+set fmri(groupmem.377) 1
+
+# Higher-level EV value for EV 1 and input 377
+set fmri(evg377.1) 1
+
+# 4D AVW data or FEAT directory (377)
+set feat_files(377) "/home/data/hcp/583858/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 378
+set fmri(groupmem.378) 1
+
+# Higher-level EV value for EV 1 and input 378
+set fmri(evg378.1) 1
+
+# 4D AVW data or FEAT directory (378)
+set feat_files(378) "/home/data/hcp/585862/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 379
+set fmri(groupmem.379) 1
+
+# Higher-level EV value for EV 1 and input 379
+set fmri(evg379.1) 1
+
+# 4D AVW data or FEAT directory (379)
+set feat_files(379) "/home/data/hcp/586460/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 380
+set fmri(groupmem.380) 1
+
+# Higher-level EV value for EV 1 and input 380
+set fmri(evg380.1) 1
+
+# 4D AVW data or FEAT directory (380)
+set feat_files(380) "/home/data/hcp/592455/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 381
+set fmri(groupmem.381) 1
+
+# Higher-level EV value for EV 1 and input 381
+set fmri(evg381.1) 1
+
+# 4D AVW data or FEAT directory (381)
+set feat_files(381) "/home/data/hcp/594156/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 382
+set fmri(groupmem.382) 1
+
+# Higher-level EV value for EV 1 and input 382
+set fmri(evg382.1) 1
+
+# 4D AVW data or FEAT directory (382)
+set feat_files(382) "/home/data/hcp/598568/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 383
+set fmri(groupmem.383) 1
+
+# Higher-level EV value for EV 1 and input 383
+set fmri(evg383.1) 1
+
+# 4D AVW data or FEAT directory (383)
+set feat_files(383) "/home/data/hcp/599469/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 384
+set fmri(groupmem.384) 1
+
+# Higher-level EV value for EV 1 and input 384
+set fmri(evg384.1) 1
+
+# 4D AVW data or FEAT directory (384)
+set feat_files(384) "/home/data/hcp/599671/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 385
+set fmri(groupmem.385) 1
+
+# Higher-level EV value for EV 1 and input 385
+set fmri(evg385.1) 1
+
+# 4D AVW data or FEAT directory (385)
+set feat_files(385) "/home/data/hcp/601127/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 386
+set fmri(groupmem.386) 1
+
+# Higher-level EV value for EV 1 and input 386
+set fmri(evg386.1) 1
+
+# 4D AVW data or FEAT directory (386)
+set feat_files(386) "/home/data/hcp/613538/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 387
+set fmri(groupmem.387) 1
+
+# Higher-level EV value for EV 1 and input 387
+set fmri(evg387.1) 1
+
+# 4D AVW data or FEAT directory (387)
+set feat_files(387) "/home/data/hcp/620434/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 388
+set fmri(groupmem.388) 1
+
+# Higher-level EV value for EV 1 and input 388
+set fmri(evg388.1) 1
+
+# 4D AVW data or FEAT directory (388)
+set feat_files(388) "/home/data/hcp/622236/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 389
+set fmri(groupmem.389) 1
+
+# Higher-level EV value for EV 1 and input 389
+set fmri(evg389.1) 1
+
+# 4D AVW data or FEAT directory (389)
+set feat_files(389) "/home/data/hcp/623844/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 390
+set fmri(groupmem.390) 1
+
+# Higher-level EV value for EV 1 and input 390
+set fmri(evg390.1) 1
+
+# 4D AVW data or FEAT directory (390)
+set feat_files(390) "/home/data/hcp/627549/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 391
+set fmri(groupmem.391) 1
+
+# Higher-level EV value for EV 1 and input 391
+set fmri(evg391.1) 1
+
+# 4D AVW data or FEAT directory (391)
+set feat_files(391) "/home/data/hcp/638049/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 392
+set fmri(groupmem.392) 1
+
+# Higher-level EV value for EV 1 and input 392
+set fmri(evg392.1) 1
+
+# 4D AVW data or FEAT directory (392)
+set feat_files(392) "/home/data/hcp/644044/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 393
+set fmri(groupmem.393) 1
+
+# Higher-level EV value for EV 1 and input 393
+set fmri(evg393.1) 1
+
+# 4D AVW data or FEAT directory (393)
+set feat_files(393) "/home/data/hcp/645551/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 394
+set fmri(groupmem.394) 1
+
+# Higher-level EV value for EV 1 and input 394
+set fmri(evg394.1) 1
+
+# 4D AVW data or FEAT directory (394)
+set feat_files(394) "/home/data/hcp/654754/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 395
+set fmri(groupmem.395) 1
+
+# Higher-level EV value for EV 1 and input 395
+set fmri(evg395.1) 1
+
+# 4D AVW data or FEAT directory (395)
+set feat_files(395) "/home/data/hcp/665254/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 396
+set fmri(groupmem.396) 1
+
+# Higher-level EV value for EV 1 and input 396
+set fmri(evg396.1) 1
+
+# 4D AVW data or FEAT directory (396)
+set feat_files(396) "/home/data/hcp/672756/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 397
+set fmri(groupmem.397) 1
+
+# Higher-level EV value for EV 1 and input 397
+set fmri(evg397.1) 1
+
+# 4D AVW data or FEAT directory (397)
+set feat_files(397) "/home/data/hcp/673455/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 398
+set fmri(groupmem.398) 1
+
+# Higher-level EV value for EV 1 and input 398
+set fmri(evg398.1) 1
+
+# 4D AVW data or FEAT directory (398)
+set feat_files(398) "/home/data/hcp/677968/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 399
+set fmri(groupmem.399) 1
+
+# Higher-level EV value for EV 1 and input 399
+set fmri(evg399.1) 1
+
+# 4D AVW data or FEAT directory (399)
+set feat_files(399) "/home/data/hcp/679568/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 400
+set fmri(groupmem.400) 1
+
+# Higher-level EV value for EV 1 and input 400
+set fmri(evg400.1) 1
+
+# 4D AVW data or FEAT directory (400)
+set feat_files(400) "/home/data/hcp/680957/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 401
+set fmri(groupmem.401) 1
+
+# Higher-level EV value for EV 1 and input 401
+set fmri(evg401.1) 1
+
+# 4D AVW data or FEAT directory (401)
+set feat_files(401) "/home/data/hcp/683256/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 402
+set fmri(groupmem.402) 1
+
+# Higher-level EV value for EV 1 and input 402
+set fmri(evg402.1) 1
+
+# 4D AVW data or FEAT directory (402)
+set feat_files(402) "/home/data/hcp/685058/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 403
+set fmri(groupmem.403) 1
+
+# Higher-level EV value for EV 1 and input 403
+set fmri(evg403.1) 1
+
+# 4D AVW data or FEAT directory (403)
+set feat_files(403) "/home/data/hcp/687163/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 404
+set fmri(groupmem.404) 1
+
+# Higher-level EV value for EV 1 and input 404
+set fmri(evg404.1) 1
+
+# 4D AVW data or FEAT directory (404)
+set feat_files(404) "/home/data/hcp/690152/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 405
+set fmri(groupmem.405) 1
+
+# Higher-level EV value for EV 1 and input 405
+set fmri(evg405.1) 1
+
+# 4D AVW data or FEAT directory (405)
+set feat_files(405) "/home/data/hcp/695768/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 406
+set fmri(groupmem.406) 1
+
+# Higher-level EV value for EV 1 and input 406
+set fmri(evg406.1) 1
+
+# 4D AVW data or FEAT directory (406)
+set feat_files(406) "/home/data/hcp/702133/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 407
+set fmri(groupmem.407) 1
+
+# Higher-level EV value for EV 1 and input 407
+set fmri(evg407.1) 1
+
+# 4D AVW data or FEAT directory (407)
+set feat_files(407) "/home/data/hcp/704238/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 408
+set fmri(groupmem.408) 1
+
+# Higher-level EV value for EV 1 and input 408
+set fmri(evg408.1) 1
+
+# 4D AVW data or FEAT directory (408)
+set feat_files(408) "/home/data/hcp/705341/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 409
+set fmri(groupmem.409) 1
+
+# Higher-level EV value for EV 1 and input 409
+set fmri(evg409.1) 1
+
+# 4D AVW data or FEAT directory (409)
+set feat_files(409) "/home/data/hcp/709551/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 410
+set fmri(groupmem.410) 1
+
+# Higher-level EV value for EV 1 and input 410
+set fmri(evg410.1) 1
+
+# 4D AVW data or FEAT directory (410)
+set feat_files(410) "/home/data/hcp/713239/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 411
+set fmri(groupmem.411) 1
+
+# Higher-level EV value for EV 1 and input 411
+set fmri(evg411.1) 1
+
+# 4D AVW data or FEAT directory (411)
+set feat_files(411) "/home/data/hcp/715041/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 412
+set fmri(groupmem.412) 1
+
+# Higher-level EV value for EV 1 and input 412
+set fmri(evg412.1) 1
+
+# 4D AVW data or FEAT directory (412)
+set feat_files(412) "/home/data/hcp/715647/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 413
+set fmri(groupmem.413) 1
+
+# Higher-level EV value for EV 1 and input 413
+set fmri(evg413.1) 1
+
+# 4D AVW data or FEAT directory (413)
+set feat_files(413) "/home/data/hcp/729254/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 414
+set fmri(groupmem.414) 1
+
+# Higher-level EV value for EV 1 and input 414
+set fmri(evg414.1) 1
+
+# 4D AVW data or FEAT directory (414)
+set feat_files(414) "/home/data/hcp/729557/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 415
+set fmri(groupmem.415) 1
+
+# Higher-level EV value for EV 1 and input 415
+set fmri(evg415.1) 1
+
+# 4D AVW data or FEAT directory (415)
+set feat_files(415) "/home/data/hcp/732243/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 416
+set fmri(groupmem.416) 1
+
+# Higher-level EV value for EV 1 and input 416
+set fmri(evg416.1) 1
+
+# 4D AVW data or FEAT directory (416)
+set feat_files(416) "/home/data/hcp/734045/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 417
+set fmri(groupmem.417) 1
+
+# Higher-level EV value for EV 1 and input 417
+set fmri(evg417.1) 1
+
+# 4D AVW data or FEAT directory (417)
+set feat_files(417) "/home/data/hcp/742549/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 418
+set fmri(groupmem.418) 1
+
+# Higher-level EV value for EV 1 and input 418
+set fmri(evg418.1) 1
+
+# 4D AVW data or FEAT directory (418)
+set feat_files(418) "/home/data/hcp/748258/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 419
+set fmri(groupmem.419) 1
+
+# Higher-level EV value for EV 1 and input 419
+set fmri(evg419.1) 1
+
+# 4D AVW data or FEAT directory (419)
+set feat_files(419) "/home/data/hcp/748662/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 420
+set fmri(groupmem.420) 1
+
+# Higher-level EV value for EV 1 and input 420
+set fmri(evg420.1) 1
+
+# 4D AVW data or FEAT directory (420)
+set feat_files(420) "/home/data/hcp/749361/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 421
+set fmri(groupmem.421) 1
+
+# Higher-level EV value for EV 1 and input 421
+set fmri(evg421.1) 1
+
+# 4D AVW data or FEAT directory (421)
+set feat_files(421) "/home/data/hcp/751348/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 422
+set fmri(groupmem.422) 1
+
+# Higher-level EV value for EV 1 and input 422
+set fmri(evg422.1) 1
+
+# 4D AVW data or FEAT directory (422)
+set feat_files(422) "/home/data/hcp/753251/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 423
+set fmri(groupmem.423) 1
+
+# Higher-level EV value for EV 1 and input 423
+set fmri(evg423.1) 1
+
+# 4D AVW data or FEAT directory (423)
+set feat_files(423) "/home/data/hcp/756055/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 424
+set fmri(groupmem.424) 1
+
+# Higher-level EV value for EV 1 and input 424
+set fmri(evg424.1) 1
+
+# 4D AVW data or FEAT directory (424)
+set feat_files(424) "/home/data/hcp/759869/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 425
+set fmri(groupmem.425) 1
+
+# Higher-level EV value for EV 1 and input 425
+set fmri(evg425.1) 1
+
+# 4D AVW data or FEAT directory (425)
+set feat_files(425) "/home/data/hcp/761957/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 426
+set fmri(groupmem.426) 1
+
+# Higher-level EV value for EV 1 and input 426
+set fmri(evg426.1) 1
+
+# 4D AVW data or FEAT directory (426)
+set feat_files(426) "/home/data/hcp/765056/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 427
+set fmri(groupmem.427) 1
+
+# Higher-level EV value for EV 1 and input 427
+set fmri(evg427.1) 1
+
+# 4D AVW data or FEAT directory (427)
+set feat_files(427) "/home/data/hcp/770352/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 428
+set fmri(groupmem.428) 1
+
+# Higher-level EV value for EV 1 and input 428
+set fmri(evg428.1) 1
+
+# 4D AVW data or FEAT directory (428)
+set feat_files(428) "/home/data/hcp/771354/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 429
+set fmri(groupmem.429) 1
+
+# Higher-level EV value for EV 1 and input 429
+set fmri(evg429.1) 1
+
+# 4D AVW data or FEAT directory (429)
+set feat_files(429) "/home/data/hcp/779370/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 430
+set fmri(groupmem.430) 1
+
+# Higher-level EV value for EV 1 and input 430
+set fmri(evg430.1) 1
+
+# 4D AVW data or FEAT directory (430)
+set feat_files(430) "/home/data/hcp/782561/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 431
+set fmri(groupmem.431) 1
+
+# Higher-level EV value for EV 1 and input 431
+set fmri(evg431.1) 1
+
+# 4D AVW data or FEAT directory (431)
+set feat_files(431) "/home/data/hcp/784565/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 432
+set fmri(groupmem.432) 1
+
+# Higher-level EV value for EV 1 and input 432
+set fmri(evg432.1) 1
+
+# 4D AVW data or FEAT directory (432)
+set feat_files(432) "/home/data/hcp/786569/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 433
+set fmri(groupmem.433) 1
+
+# Higher-level EV value for EV 1 and input 433
+set fmri(evg433.1) 1
+
+# 4D AVW data or FEAT directory (433)
+set feat_files(433) "/home/data/hcp/788876/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 434
+set fmri(groupmem.434) 1
+
+# Higher-level EV value for EV 1 and input 434
+set fmri(evg434.1) 1
+
+# 4D AVW data or FEAT directory (434)
+set feat_files(434) "/home/data/hcp/789373/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 435
+set fmri(groupmem.435) 1
+
+# Higher-level EV value for EV 1 and input 435
+set fmri(evg435.1) 1
+
+# 4D AVW data or FEAT directory (435)
+set feat_files(435) "/home/data/hcp/792564/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 436
+set fmri(groupmem.436) 1
+
+# Higher-level EV value for EV 1 and input 436
+set fmri(evg436.1) 1
+
+# 4D AVW data or FEAT directory (436)
+set feat_files(436) "/home/data/hcp/792766/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 437
+set fmri(groupmem.437) 1
+
+# Higher-level EV value for EV 1 and input 437
+set fmri(evg437.1) 1
+
+# 4D AVW data or FEAT directory (437)
+set feat_files(437) "/home/data/hcp/802844/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 438
+set fmri(groupmem.438) 1
+
+# Higher-level EV value for EV 1 and input 438
+set fmri(evg438.1) 1
+
+# 4D AVW data or FEAT directory (438)
+set feat_files(438) "/home/data/hcp/814649/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 439
+set fmri(groupmem.439) 1
+
+# Higher-level EV value for EV 1 and input 439
+set fmri(evg439.1) 1
+
+# 4D AVW data or FEAT directory (439)
+set feat_files(439) "/home/data/hcp/816653/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 440
+set fmri(groupmem.440) 1
+
+# Higher-level EV value for EV 1 and input 440
+set fmri(evg440.1) 1
+
+# 4D AVW data or FEAT directory (440)
+set feat_files(440) "/home/data/hcp/826353/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 441
+set fmri(groupmem.441) 1
+
+# Higher-level EV value for EV 1 and input 441
+set fmri(evg441.1) 1
+
+# 4D AVW data or FEAT directory (441)
+set feat_files(441) "/home/data/hcp/826454/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 442
+set fmri(groupmem.442) 1
+
+# Higher-level EV value for EV 1 and input 442
+set fmri(evg442.1) 1
+
+# 4D AVW data or FEAT directory (442)
+set feat_files(442) "/home/data/hcp/833148/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 443
+set fmri(groupmem.443) 1
+
+# Higher-level EV value for EV 1 and input 443
+set fmri(evg443.1) 1
+
+# 4D AVW data or FEAT directory (443)
+set feat_files(443) "/home/data/hcp/833249/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 444
+set fmri(groupmem.444) 1
+
+# Higher-level EV value for EV 1 and input 444
+set fmri(evg444.1) 1
+
+# 4D AVW data or FEAT directory (444)
+set feat_files(444) "/home/data/hcp/837560/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 445
+set fmri(groupmem.445) 1
+
+# Higher-level EV value for EV 1 and input 445
+set fmri(evg445.1) 1
+
+# 4D AVW data or FEAT directory (445)
+set feat_files(445) "/home/data/hcp/837964/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 446
+set fmri(groupmem.446) 1
+
+# Higher-level EV value for EV 1 and input 446
+set fmri(evg446.1) 1
+
+# 4D AVW data or FEAT directory (446)
+set feat_files(446) "/home/data/hcp/845458/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 447
+set fmri(groupmem.447) 1
+
+# Higher-level EV value for EV 1 and input 447
+set fmri(evg447.1) 1
+
+# 4D AVW data or FEAT directory (447)
+set feat_files(447) "/home/data/hcp/849971/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 448
+set fmri(groupmem.448) 1
+
+# Higher-level EV value for EV 1 and input 448
+set fmri(evg448.1) 1
+
+# 4D AVW data or FEAT directory (448)
+set feat_files(448) "/home/data/hcp/856766/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 449
+set fmri(groupmem.449) 1
+
+# Higher-level EV value for EV 1 and input 449
+set fmri(evg449.1) 1
+
+# 4D AVW data or FEAT directory (449)
+set feat_files(449) "/home/data/hcp/857263/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 450
+set fmri(groupmem.450) 1
+
+# Higher-level EV value for EV 1 and input 450
+set fmri(evg450.1) 1
+
+# 4D AVW data or FEAT directory (450)
+set feat_files(450) "/home/data/hcp/859671/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 451
+set fmri(groupmem.451) 1
+
+# Higher-level EV value for EV 1 and input 451
+set fmri(evg451.1) 1
+
+# 4D AVW data or FEAT directory (451)
+set feat_files(451) "/home/data/hcp/861456/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 452
+set fmri(groupmem.452) 1
+
+# Higher-level EV value for EV 1 and input 452
+set fmri(evg452.1) 1
+
+# 4D AVW data or FEAT directory (452)
+set feat_files(452) "/home/data/hcp/865363/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 453
+set fmri(groupmem.453) 1
+
+# Higher-level EV value for EV 1 and input 453
+set fmri(evg453.1) 1
+
+# 4D AVW data or FEAT directory (453)
+set feat_files(453) "/home/data/hcp/871762/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 454
+set fmri(groupmem.454) 1
+
+# Higher-level EV value for EV 1 and input 454
+set fmri(evg454.1) 1
+
+# 4D AVW data or FEAT directory (454)
+set feat_files(454) "/home/data/hcp/871964/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 455
+set fmri(groupmem.455) 1
+
+# Higher-level EV value for EV 1 and input 455
+set fmri(evg455.1) 1
+
+# 4D AVW data or FEAT directory (455)
+set feat_files(455) "/home/data/hcp/872158/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 456
+set fmri(groupmem.456) 1
+
+# Higher-level EV value for EV 1 and input 456
+set fmri(evg456.1) 1
+
+# 4D AVW data or FEAT directory (456)
+set feat_files(456) "/home/data/hcp/872764/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 457
+set fmri(groupmem.457) 1
+
+# Higher-level EV value for EV 1 and input 457
+set fmri(evg457.1) 1
+
+# 4D AVW data or FEAT directory (457)
+set feat_files(457) "/home/data/hcp/877168/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 458
+set fmri(groupmem.458) 1
+
+# Higher-level EV value for EV 1 and input 458
+set fmri(evg458.1) 1
+
+# 4D AVW data or FEAT directory (458)
+set feat_files(458) "/home/data/hcp/877269/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 459
+set fmri(groupmem.459) 1
+
+# Higher-level EV value for EV 1 and input 459
+set fmri(evg459.1) 1
+
+# 4D AVW data or FEAT directory (459)
+set feat_files(459) "/home/data/hcp/885975/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 460
+set fmri(groupmem.460) 1
+
+# Higher-level EV value for EV 1 and input 460
+set fmri(evg460.1) 1
+
+# 4D AVW data or FEAT directory (460)
+set feat_files(460) "/home/data/hcp/887373/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 461
+set fmri(groupmem.461) 1
+
+# Higher-level EV value for EV 1 and input 461
+set fmri(evg461.1) 1
+
+# 4D AVW data or FEAT directory (461)
+set feat_files(461) "/home/data/hcp/889579/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 462
+set fmri(groupmem.462) 1
+
+# Higher-level EV value for EV 1 and input 462
+set fmri(evg462.1) 1
+
+# 4D AVW data or FEAT directory (462)
+set feat_files(462) "/home/data/hcp/894673/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 463
+set fmri(groupmem.463) 1
+
+# Higher-level EV value for EV 1 and input 463
+set fmri(evg463.1) 1
+
+# 4D AVW data or FEAT directory (463)
+set feat_files(463) "/home/data/hcp/896778/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 464
+set fmri(groupmem.464) 1
+
+# Higher-level EV value for EV 1 and input 464
+set fmri(evg464.1) 1
+
+# 4D AVW data or FEAT directory (464)
+set feat_files(464) "/home/data/hcp/896879/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 465
+set fmri(groupmem.465) 1
+
+# Higher-level EV value for EV 1 and input 465
+set fmri(evg465.1) 1
+
+# 4D AVW data or FEAT directory (465)
+set feat_files(465) "/home/data/hcp/898176/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 466
+set fmri(groupmem.466) 1
+
+# Higher-level EV value for EV 1 and input 466
+set fmri(evg466.1) 1
+
+# 4D AVW data or FEAT directory (466)
+set feat_files(466) "/home/data/hcp/899885/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 467
+set fmri(groupmem.467) 1
+
+# Higher-level EV value for EV 1 and input 467
+set fmri(evg467.1) 1
+
+# 4D AVW data or FEAT directory (467)
+set feat_files(467) "/home/data/hcp/901038/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 468
+set fmri(groupmem.468) 1
+
+# Higher-level EV value for EV 1 and input 468
+set fmri(evg468.1) 1
+
+# 4D AVW data or FEAT directory (468)
+set feat_files(468) "/home/data/hcp/901139/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 469
+set fmri(groupmem.469) 1
+
+# Higher-level EV value for EV 1 and input 469
+set fmri(evg469.1) 1
+
+# 4D AVW data or FEAT directory (469)
+set feat_files(469) "/home/data/hcp/901442/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 470
+set fmri(groupmem.470) 1
+
+# Higher-level EV value for EV 1 and input 470
+set fmri(evg470.1) 1
+
+# 4D AVW data or FEAT directory (470)
+set feat_files(470) "/home/data/hcp/904044/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 471
+set fmri(groupmem.471) 1
+
+# Higher-level EV value for EV 1 and input 471
+set fmri(evg471.1) 1
+
+# 4D AVW data or FEAT directory (471)
+set feat_files(471) "/home/data/hcp/907656/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 472
+set fmri(groupmem.472) 1
+
+# Higher-level EV value for EV 1 and input 472
+set fmri(evg472.1) 1
+
+# 4D AVW data or FEAT directory (472)
+set feat_files(472) "/home/data/hcp/910241/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 473
+set fmri(groupmem.473) 1
+
+# Higher-level EV value for EV 1 and input 473
+set fmri(evg473.1) 1
+
+# 4D AVW data or FEAT directory (473)
+set feat_files(473) "/home/data/hcp/912447/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 474
+set fmri(groupmem.474) 1
+
+# Higher-level EV value for EV 1 and input 474
+set fmri(evg474.1) 1
+
+# 4D AVW data or FEAT directory (474)
+set feat_files(474) "/home/data/hcp/917255/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 475
+set fmri(groupmem.475) 1
+
+# Higher-level EV value for EV 1 and input 475
+set fmri(evg475.1) 1
+
+# 4D AVW data or FEAT directory (475)
+set feat_files(475) "/home/data/hcp/922854/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 476
+set fmri(groupmem.476) 1
+
+# Higher-level EV value for EV 1 and input 476
+set fmri(evg476.1) 1
+
+# 4D AVW data or FEAT directory (476)
+set feat_files(476) "/home/data/hcp/930449/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 477
+set fmri(groupmem.477) 1
+
+# Higher-level EV value for EV 1 and input 477
+set fmri(evg477.1) 1
+
+# 4D AVW data or FEAT directory (477)
+set feat_files(477) "/home/data/hcp/932554/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 478
+set fmri(groupmem.478) 1
+
+# Higher-level EV value for EV 1 and input 478
+set fmri(evg478.1) 1
+
+# 4D AVW data or FEAT directory (478)
+set feat_files(478) "/home/data/hcp/937160/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 479
+set fmri(groupmem.479) 1
+
+# Higher-level EV value for EV 1 and input 479
+set fmri(evg479.1) 1
+
+# 4D AVW data or FEAT directory (479)
+set feat_files(479) "/home/data/hcp/951457/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 480
+set fmri(groupmem.480) 1
+
+# Higher-level EV value for EV 1 and input 480
+set fmri(evg480.1) 1
+
+# 4D AVW data or FEAT directory (480)
+set feat_files(480) "/home/data/hcp/957974/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 481
+set fmri(groupmem.481) 1
+
+# Higher-level EV value for EV 1 and input 481
+set fmri(evg481.1) 1
+
+# 4D AVW data or FEAT directory (481)
+set feat_files(481) "/home/data/hcp/958976/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 482
+set fmri(groupmem.482) 1
+
+# Higher-level EV value for EV 1 and input 482
+set fmri(evg482.1) 1
+
+# 4D AVW data or FEAT directory (482)
+set feat_files(482) "/home/data/hcp/959574/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 483
+set fmri(groupmem.483) 1
+
+# Higher-level EV value for EV 1 and input 483
+set fmri(evg483.1) 1
+
+# 4D AVW data or FEAT directory (483)
+set feat_files(483) "/home/data/hcp/965367/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 484
+set fmri(groupmem.484) 1
+
+# Higher-level EV value for EV 1 and input 484
+set fmri(evg484.1) 1
+
+# 4D AVW data or FEAT directory (484)
+set feat_files(484) "/home/data/hcp/965771/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 485
+set fmri(groupmem.485) 1
+
+# Higher-level EV value for EV 1 and input 485
+set fmri(evg485.1) 1
+
+# 4D AVW data or FEAT directory (485)
+set feat_files(485) "/home/data/hcp/978578/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 486
+set fmri(groupmem.486) 1
+
+# Higher-level EV value for EV 1 and input 486
+set fmri(evg486.1) 1
+
+# 4D AVW data or FEAT directory (486)
+set feat_files(486) "/home/data/hcp/979984/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 487
+set fmri(groupmem.487) 1
+
+# Higher-level EV value for EV 1 and input 487
+set fmri(evg487.1) 1
+
+# 4D AVW data or FEAT directory (487)
+set feat_files(487) "/home/data/hcp/983773/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 488
+set fmri(groupmem.488) 1
+
+# Higher-level EV value for EV 1 and input 488
+set fmri(evg488.1) 1
+
+# 4D AVW data or FEAT directory (488)
+set feat_files(488) "/home/data/hcp/984472/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 489
+set fmri(groupmem.489) 1
+
+# Higher-level EV value for EV 1 and input 489
+set fmri(evg489.1) 1
+
+# 4D AVW data or FEAT directory (489)
+set feat_files(489) "/home/data/hcp/987983/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 490
+set fmri(groupmem.490) 1
+
+# Higher-level EV value for EV 1 and input 490
+set fmri(evg490.1) 1
+
+# 4D AVW data or FEAT directory (490)
+set feat_files(490) "/home/data/hcp/991267/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 491
+set fmri(groupmem.491) 1
+
+# Higher-level EV value for EV 1 and input 491
+set fmri(evg491.1) 1
+
+# 4D AVW data or FEAT directory (491)
+set feat_files(491) "/home/data/hcp/992774/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
+# Group membership for input 492
+set fmri(groupmem.492) 1
+
+# Higher-level EV value for EV 1 and input 492
+set fmri(evg492.1) 1
+
+# 4D AVW data or FEAT directory (492)
+set feat_files(492) "/home/data/hcp/994273/MNINonLinear/Results/tfMRI_MOTOR/tfMRI_MOTOR_hp200_s4_level2vol.feat/cope10.feat/stats/cope1.nii.gz"
+
