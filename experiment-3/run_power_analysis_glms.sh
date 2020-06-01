@@ -15,7 +15,7 @@
 #SBATCH --account iacc_nbc
 
 #---Partition
-#SBATCH -p centos7
+#SBATCH -p IB_40C_1.5T
 ########################################################
 export NPROCS=`echo $LSB_HOSTS | wc -w`
 export OMP_NUM_THREADS=$NPROCS
