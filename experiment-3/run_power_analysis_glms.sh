@@ -21,7 +21,7 @@ export NPROCS=`echo $LSB_HOSTS | wc -w`
 export OMP_NUM_THREADS=$NPROCS
 . $MODULESHOME/../global/profile.modules
 
-module load fsl/6.0.1
+module load fsl/5.0.10
 
 feat /scratch/tsalo006/motor_lh_power_analysis_design.fsf
 
