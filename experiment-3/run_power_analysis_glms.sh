@@ -23,8 +23,8 @@ export OMP_NUM_THREADS=$NPROCS
 
 module load fsl/5.0.10
 
-feat /scratch/tsalo006/motor_lh_power_analysis_design.fsf
+feat /scratch/tsalo006/motor-lh/motor_lh_power_analysis_design.fsf
 
-feat /scratch/tsalo006/motor_rh_power_analysis_design.fsf
+feat /scratch/tsalo006/motor-rh/motor_rh_power_analysis_design.fsf
 
-feat /scratch/tsalo006/visual_power_analysis_design.fsf
+feat /scratch/tsalo006/visual/visual_power_analysis_design.fsf

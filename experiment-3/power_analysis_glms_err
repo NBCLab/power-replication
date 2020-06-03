@@ -3,13 +3,3 @@
 /bin/bash: error importing function definition for `BASH_FUNC__moduleraw()'
 WARNING: $MANPATH does not agree with $MANPATH_modshare counter. The following directories' usage counters were adjusted to match. Note that this may mean that module unloading may not work correctly.
  /home/applications/git/2.10.0/share/man /home/share/platform/lsf/8.3/man /home/share/slurm/19.05.3/share/man
-child process exited abnormally
-    while executing
-"fsl:exec "${FSLDIR}/bin/feat ${fsfroot}.fsf -D $FD -gfeatprep" -b 60 -N feat2_pre -l logs "
-    invoked from within
-"if { $done_something == 0 } {
-
-    if { ! $fmri(inmelodic) } {
-       if { $fmri(level) == 1 } {
-	      for { set session 1 } { $session <= $fmri(mult..."
-    (file "/home/applications/fsl/5.0.10/bin/feat" line 390)

@@ -39,7 +39,7 @@ def make_image_file():
     with open(design_file, 'r') as fo:
         data = fo.read()
 
-    out_dir = '/home/tsalo006/Desktop/hcp-visual/back0.gfeat/'
+    out_dir = '/scratch/tsalo006/visual/'
     if not op.isdir(out_dir):
         mkdir(out_dir)
 
@@ -99,7 +99,7 @@ def make_fingertapping_files():
     with open(design_file, 'r') as fo:
         data = fo.read()
 
-    out_dir = '/home/tsalo006/Desktop/hcp-motor/lh-avg.gfeat/'
+    out_dir = '/scratch/tsalo006/motor-lh/'
     if not op.isdir(out_dir):
         mkdir(out_dir)
 
@@ -129,7 +129,7 @@ def make_fingertapping_files():
     with open(design_file, 'r') as fo:
         data = fo.read()
 
-    out_dir = '/home/tsalo006/Desktop/hcp-motor/rh-avg.gfeat/'
+    out_dir = '/scratch/tsalo006/motor-rh/'
     if not op.isdir(out_dir):
         mkdir(out_dir)
 

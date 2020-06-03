@@ -338,7 +338,7 @@ set fmri(overwrite_yn) 0
 set fmri(multiple) 492
 
 # Output directory
-set fmri(outputdir) "/home/tsalo006/Desktop/hcp-motor/rh-avg.gfeat/"
+set fmri(outputdir) "/scratch/tsalo006/motor-rh"
 
 # Total volumes
 set fmri(npts) 492
