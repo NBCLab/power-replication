@@ -21,7 +21,7 @@ def make_image_file():
 
     # Get files
     in_dir = '/home/data/hcp/'
-    subdir = 'MNINonLinear/Results/tfMRI_WM/tfMRI_WM_hp200_s4_level2.feat'
+    subdir = 'MNINonLinear/Results/tfMRI_WM/tfMRI_WM_hp200_s4_level2vol.feat'
 
     subjects = glob(op.join(in_dir, '*'))
     subjects = [op.basename(s) for s in subjects]
