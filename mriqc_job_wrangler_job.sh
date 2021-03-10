@@ -22,7 +22,7 @@ export OMP_NUM_THREADS=1
 . $MODULESHOME/../global/profile.modules
 source /home/data/nbc/misc-projects/Salo_PowerReplication/code/activate_environment
 
-python mriqc_job_wrangler.py \
-    -t mriqc_job_template.sh \
+python /home/data/nbc/misc-projects/Salo_PowerReplication/code/mriqc_job_wrangler.py \
+    -t /home/data/nbc/misc-projects/Salo_PowerReplication/code/mriqc_job_template.sh \
     --tsv_file /home/data/nbc/misc-projects/Salo_PowerReplication/dset-dupre/participants.tsv \
     --job_limit 5

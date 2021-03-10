@@ -3,13 +3,13 @@
 #SBATCH -c 1
 
 #---Job's name in SLURM system
-#SBATCH -J {subject}_mriqc
+#SBATCH -J sub-04_mriqc
 
 #---Error file
-#SBATCH -e /home/data/nbc/misc-projects/Salo_PowerReplication/code/jobs/mriqc_{subject}_err
+#SBATCH -e /home/data/nbc/misc-projects/Salo_PowerReplication/code/jobs/mriqc_sub-04_err
 
 #---Output file
-#SBATCH -o /home/data/nbc/misc-projects/Salo_PowerReplication/code/jobs/mriqc_{subject}_out
+#SBATCH -o /home/data/nbc/misc-projects/Salo_PowerReplication/code/jobs/mriqc_sub-04_out
 
 #---Queue name
 #SBATCH --account iacc_nbc
@@ -29,6 +29,6 @@ WORK_DIR="/scratch/nbc/tsalo006/dset-dupre-mriqc/"
 singularity run --cleanenv \
     /home/data/cis/singularity-images/poldracklab_mriqc_0.15.1.sif \
     $DSET_DIR $DSET_DIR/derivatives/ participant \
-    --participant-label {subject} \
+    --participant-label sub-04 \
     -w $DSET_DIR --no-sub \
     --nprocs 1
