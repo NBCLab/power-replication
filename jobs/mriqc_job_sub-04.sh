@@ -29,6 +29,6 @@ WORK_DIR="/scratch/nbc/tsalo006/dset-dupre-mriqc/"
 singularity run --cleanenv \
     /home/data/cis/singularity-images/poldracklab_mriqc_0.15.1.sif \
     $DSET_DIR $DSET_DIR/derivatives/ participant \
-    --participant-label sub-04 \
+    --participant-label 04 \
     -w $DSET_DIR --no-sub \
     --nprocs 1
