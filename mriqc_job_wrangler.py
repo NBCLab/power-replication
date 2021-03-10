@@ -193,7 +193,7 @@ def main(
     for subject in subjects:
         subject_job = template_job.format(subject=subject)
         subject_job_file = template_job_file.replace("template", subject)
-        subject_job_file = op.join(op.dirname(subject_job_file, "jobs", op.basename(subject_job_file))
+        subject_job_file = op.join(op.dirname(subject_job_file), "jobs", op.basename(subject_job_file))
 
         with open(subject_job_file, "w") as fo:
             fo.write(subject_job)
