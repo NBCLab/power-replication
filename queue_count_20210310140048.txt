@@ -1,6 +1,0 @@
-             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
-           2062523 default-p sub-01_m tsalo006 PD       0:00      1 (None)
-           2062524 default-p sub-02_m tsalo006 PD       0:00      1 (None)
-           2062525 default-p sub-03_m tsalo006 PD       0:00      1 (None)
-           2062522 default-p mriqc_wr tsalo006  R       0:03      1 n046
-           2062486   16C_48G nimare-p tsalo006  R    3:55:25      1 n047
