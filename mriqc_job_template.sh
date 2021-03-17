@@ -25,11 +25,14 @@ module load singularity-3.5.3
 DSET_DIR="/home/data/nbc/misc-projects/Salo_PowerReplication/dset-dupre/"
 WORK_DIR="/scratch/nbc/tsalo006/dset-dupre-mriqc/"
 
+SINGULARITYENV_NO_ET=1
+SINGULARITYENV_TEMPLATEFLOW_HOME="/opt/templateflow"
+
 # Run MRIQC
-singularity run --cleanenv \
-    -B /home/tsalo006/.cache/templateflow:$HOME/.cache/templateflow \
-    /home/data/cis/singularity-images/poldracklab_mriqc_0.15.1.sif \
+singularity run --home $HOME --cleanenv \
+    -B /home/tsalo006/.cache/templateflow:$SINGULARITYENV_TEMPLATEFLOW_HOME \
+    /home/data/cis/singularity-images/poldracklab_mriqc_0.16.1.sif \
     $DSET_DIR $DSET_DIR/derivatives/ participant \
     --participant-label {sid} \
-    -w $DSET_DIR --no-sub \
+    -w $WORK_DIR --no-sub \
     --nprocs 1
