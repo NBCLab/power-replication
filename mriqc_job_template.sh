@@ -23,7 +23,7 @@ export OMP_NUM_THREADS=1
 module load singularity-3.5.3
 
 DSET_DIR="/home/data/nbc/misc-projects/Salo_PowerReplication/dset-dupre/"
-WORK_DIR="/scratch/nbc/tsalo006/dset-dupre-mriqc/"
+WORK_DIR="/scratch/nbc/tsalo006/dset-dupre-mriqc/{subject}"
 
 SINGULARITYENV_NO_ET=1
 SINGULARITYENV_TEMPLATEFLOW_HOME="/opt/templateflow"
