@@ -24,5 +24,5 @@ source /home/data/nbc/misc-projects/Salo_PowerReplication/code/activate_environm
 
 python /home/data/nbc/misc-projects/Salo_PowerReplication/code/mriqc_job_wrangler.py \
     -t /home/data/nbc/misc-projects/Salo_PowerReplication/code/mriqc_job_template.sh \
-    --tsv_file /home/data/nbc/misc-projects/Salo_PowerReplication/dset-dupre/participants.tsv \
-    --job_limit 5
+    --tsv_file /home/data/nbc/misc-projects/Salo_PowerReplication/dset-cambridge/participants.tsv \
+    --job_limit 15
