@@ -22,7 +22,12 @@ export OMP_NUM_THREADS=1
 . $MODULESHOME/../global/profile.modules
 source /home/data/nbc/misc-projects/Salo_PowerReplication/code/activate_environment
 
-python /home/data/nbc/misc-projects/Salo_PowerReplication/code/mriqc_job_wrangler.py \
+DSET_NAME="dset-camcan"
+
+python /home/data/nbc/misc-projects/Salo_PowerReplication/code/bids_job_wrangler.py \
+    -d /home/data/nbc/misc-projects/Salo_PowerReplication/${DSET_NAME} \
+    -w /scratch/nbc/tsalo006/${DSET_NAME} \
     -t /home/data/nbc/misc-projects/Salo_PowerReplication/code/mriqc_job_template.sh \
-    --tsv_file /home/data/nbc/misc-projects/Salo_PowerReplication/dset-camcan/participants.tsv \
-    --job_limit 15
+    --tsv_file /home/data/nbc/misc-projects/Salo_PowerReplication/${DSET_NAME}/participants.tsv \
+    --job_limit 15 \
+    --copy

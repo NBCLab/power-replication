@@ -2,10 +2,12 @@
 """Submit jobs for multiple participants."""
 import os
 import os.path as op
+import shutil
 import subprocess
 import sys
 import time
 from datetime import datetime
+from glob import glob
 
 import argparse
 import getpass
@@ -18,6 +20,31 @@ def is_valid_file(parser, arg):
         parser.error("The file {0} does not exist!".format(arg))
 
     return arg
+
+
+def is_valid_path(parser, arg):
+    """Check if argument is existing folder."""
+    if not op.isdir(arg) and arg is not None:
+        parser.error("The folder {0} does not exist!".format(arg))
+
+    return arg
+
+
+def copy_dset_files(in_dir, out_dir, sub):
+    """Copy top-level and subject files from a BIDS dataset to a path."""
+    top_level_files = sorted(glob(op.join(in_dir, "*")))
+    top_level_files = [f for f in top_level_files if op.isfile(f)]
+    sub_folder = op.join(in_dir, sub)
+
+    if not op.isdir(out_dir):
+        os.mkdir(out_dir)
+
+    for top_level_file in top_level_files:
+        out_file = op.join(out_dir, op.basename(top_level_file))
+        shutil.copyfile(top_level_file, out_file)
+
+    out_sub_folder = op.join(out_dir, sub)
+    shutil.copytree(sub_folder, out_sub_folder)
 
 
 def run(command, env={}):
@@ -68,9 +95,34 @@ def _get_parser():
         metavar="FILE",
         type=lambda x: is_valid_file(parser, x),
         dest="template_job_file",
-        help='Template job file. Filename should have "template" in it, which '
-        "will be replaced with the participant ID to write out a "
-        "participant-specific job file to be submitted.",
+        help=(
+            "Template job file. Filename should have 'template' in it, which "
+            "will be replaced with the participant ID to write out a "
+            "participant-specific job file to be submitted."
+        ),
+    )
+    parser.add_argument(
+        "-d",
+        "--dataset",
+        required=True,
+        metavar="PATH",
+        type=lambda x: is_valid_path(parser, x),
+        dest="dset_dir",
+        help=(
+            "Path to the BIDS dataset."
+        ),
+    )
+    parser.add_argument(
+        "-w",
+        "--work-dir",
+        "--work_dir",
+        required=True,
+        metavar="PATH",
+        type=str,
+        dest="work_dir",
+        help=(
+            "Working directory."
+        ),
     )
 
     subgrp = parser.add_mutually_exclusive_group(required=True)
@@ -79,8 +131,10 @@ def _get_parser():
         "--participant-label",
         action="store",
         nargs="+",
-        help="A space delimited list of participant identifiers or a single "
-        "identifier (the sub- prefix can be removed)",
+        help=(
+            "A space delimited list of participant identifiers or a single "
+            "identifier (the sub- prefix can be removed)"
+        ),
     )
     subgrp.add_argument(
         "--tsv_file",
@@ -88,8 +142,10 @@ def _get_parser():
         action="store",
         metavar="FILE",
         type=lambda x: is_valid_file(parser, x),
-        help="A tsv file with participant IDs. Matches format of BIDS "
-        'participants.tsv file (i.e., IDs are in "participant_id" column)',
+        help=(
+            "A tsv file with participant IDs. Matches format of BIDS "
+            "participants.tsv file (i.e., IDs are in 'participant_id' column)"
+        ),
     )
     subgrp.add_argument(
         "--txt_file",
@@ -97,8 +153,10 @@ def _get_parser():
         action="store",
         metavar="FILE",
         type=lambda x: is_valid_file(parser, x),
-        help="A single-column txt file with participant IDs. Every row is "
-        "expected to be one participant ID.",
+        help=(
+            "A single-column txt file with participant IDs. "
+            "Every row is expected to be one participant ID."
+        ),
     )
 
     parser.add_argument(
@@ -106,27 +164,36 @@ def _get_parser():
         "--job-limit",
         action="store",
         type=int,
-        help="Maximum number of jobs to run at once. "
-        "If set, you should submit "
-        "this script via a job, or else it will keep running on the node "
-        'you run it from. Requires argument "username".',
+        help=(
+            "Maximum number of jobs to run at once. "
+            "If set, you should submit this script via a job, "
+            "or else it will keep running on the node "
+            "you run it from. Requires argument 'username'."
+        ),
         default=None,
+    )
+    parser.add_argument(
+        "--copy",
+        action="store_true",
+        dest="copy_files",
+        help=(
+            "Copy relevant files from the BIDS dataset to the working "
+            "directory."
+        ),
+        default=False,
     )
     return parser
 
 
-def _main(argv=None):
-    """Entry point."""
-    options = _get_parser().parse_args(argv)
-    main(**vars(options))
-
-
 def main(
     template_job_file,
+    dset_dir,
+    work_dir,
     participant_label=None,
     tsv_file=None,
     txt_file=None,
     job_limit=None,
+    copy_files=False,
 ):
     """Submit jobs for multiple participants.
 
@@ -139,6 +206,10 @@ def main(
         Template job file. Filename should have "template" in it, which
         will be replaced with the participant ID to write out a
         participant-specific job file to be submitted.
+    dset_dir : str
+        BIDS dataset directory.
+    work_dir : str
+        Working directory.
     participant_label : str or list or None, optional
         A list of participant identifiers or a single identifier (the sub-
         prefix can be removed).
@@ -161,6 +232,9 @@ def main(
         Maximum number of jobs to run at once. If set, you should submit
         this script via a job, or else it will keep running on the node
         you run it from.
+    copy_files : bool, optional
+        If True, copy subject and top-level files to the working directory.
+        If False, don't.
     """
     if (participant_label is not None) and isinstance(participant_label, list):
         subjects = participant_label[:]
@@ -181,19 +255,50 @@ def main(
             '"txt_file" must be provided.'
         )
 
+    out_dir = op.join(dset_dir, "derivatives")
+
+    work_dir = op.abspath(work_dir)
+    if not op.isdir(work_dir):
+        os.mkdir(work_dir)
+
+    jobs_dir = op.join(op.dirname(template_job_file), "jobs")
+    if not op.isdir(jobs_dir):
+        os.mkdir(jobs_dir)
+
     if job_limit is not None:
         job_limit = int(job_limit)
         timestamp = datetime.strftime(datetime.now(), "%Y%m%d%H%M%S")
-        job_tracker_file = "queue_count_{}.txt".format(timestamp)
+        job_tracker_file = op.join(
+            jobs_dir,
+            "queue_count_{}.txt".format(timestamp),
+        )
         username = getpass.getuser()
 
     with open(template_job_file, "r") as fo:
         template_job = fo.read()
 
     for subject in subjects:
-        subject_job = template_job.format(subject=subject, sid=subject.replace("sub-", ""))
         subject_job_file = template_job_file.replace("template", subject)
-        subject_job_file = op.join(op.dirname(subject_job_file), "jobs", op.basename(subject_job_file))
+        subject_job_file = op.join(jobs_dir, op.basename(subject_job_file))
+
+        if copy_files:
+            sub_temp_dir = op.join(work_dir, subject)
+            if not os.isdir(sub_temp_dir):
+                os.mkdir(sub_temp_dir)
+            sub_dset_dir = op.join(sub_temp_dir, "dset")
+            sub_work_dir = op.join(sub_temp_dir, "work")
+            copy_dset_files(dset_dir, sub_dset_dir, subject)
+        else:
+            sub_dset_dir = op.abspath(dset_dir)
+            sub_work_dir = op.abspath(work_dir)
+
+        subject_job = template_job.format(
+            subject=subject,
+            sid=subject.replace("sub-", ""),
+            dset_dir=sub_dset_dir,
+            work_dir=sub_work_dir,
+            out_dir=out_dir,
+        )
 
         with open(subject_job_file, "w") as fo:
             fo.write(subject_job)
@@ -213,6 +318,7 @@ def main(
 
                 with open(job_tracker_file, "r") as fo:
                     curr_jobs = fo.readlines()
+
                 n_current_jobs = len(curr_jobs) - 1
                 if n_current_jobs >= job_limit:
                     time.sleep(1800)  # 30 minutes
@@ -220,6 +326,12 @@ def main(
                 else:
                     run(submission_cmd)
                     break
+
+
+def _main(argv=None):
+    """Entry point."""
+    options = _get_parser().parse_args(argv)
+    main(**vars(options))
 
 
 if __name__ == "__main__":
