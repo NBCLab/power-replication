@@ -22,8 +22,8 @@ export OMP_NUM_THREADS=1
 . $MODULESHOME/../global/profile.modules
 module load singularity-3.5.3
 
-DSET_DIR="/home/data/nbc/misc-projects/Salo_PowerReplication/dset-cambridge/"
-WORK_DIR="/scratch/nbc/tsalo006/dset-cambridge-mriqc/{subject}"
+DSET_DIR="/home/data/nbc/misc-projects/Salo_PowerReplication/dset-camcan/"
+WORK_DIR="/scratch/nbc/tsalo006/dset-camcan-mriqc/{subject}"
 
 SINGULARITYENV_NO_ET=1
 SINGULARITYENV_TEMPLATEFLOW_HOME="/opt/templateflow"
