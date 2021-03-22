@@ -283,7 +283,7 @@ def main(
 
         if copy_files:
             sub_temp_dir = op.join(work_dir, subject)
-            if not os.isdir(sub_temp_dir):
+            if not op.isdir(sub_temp_dir):
                 os.mkdir(sub_temp_dir)
             sub_dset_dir = op.join(sub_temp_dir, "dset")
             sub_work_dir = op.join(sub_temp_dir, "work")
