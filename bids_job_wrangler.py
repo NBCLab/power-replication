@@ -44,7 +44,8 @@ def copy_dset_files(in_dir, out_dir, sub):
         shutil.copyfile(top_level_file, out_file)
 
     out_sub_folder = op.join(out_dir, sub)
-    shutil.copytree(sub_folder, out_sub_folder)
+    if not op.isdir(out_sub_dir):
+        shutil.copytree(sub_folder, out_sub_folder)
 
 
 def run(command, env={}):

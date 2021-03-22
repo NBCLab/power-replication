@@ -29,5 +29,5 @@ python /home/data/nbc/misc-projects/Salo_PowerReplication/code/bids_job_wrangler
     -w /scratch/nbc/tsalo006/${DSET_NAME} \
     -t /home/data/nbc/misc-projects/Salo_PowerReplication/code/mriqc_job_template.sh \
     --tsv_file /home/data/nbc/misc-projects/Salo_PowerReplication/${DSET_NAME}/participants.tsv \
-    --job_limit 3 \
+    --job_limit 20 \
     --copy
