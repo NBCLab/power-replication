@@ -15,7 +15,7 @@
 #SBATCH --account iacc_nbc
 
 #---Partition
-#SBATCH -p default-partition
+#SBATCH -p investor
 ########################################################
 export NPROCS=`echo $LSB_HOSTS | wc -w`
 export OMP_NUM_THREADS=1

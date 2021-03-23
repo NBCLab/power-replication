@@ -44,7 +44,7 @@ def copy_dset_files(in_dir, out_dir, sub):
         shutil.copyfile(top_level_file, out_file)
 
     out_sub_folder = op.join(out_dir, sub)
-    if not op.isdir(out_sub_dir):
+    if not op.isdir(out_sub_folder):
         shutil.copytree(sub_folder, out_sub_folder)
 
 
@@ -281,6 +281,11 @@ def main(
     for subject in subjects:
         subject_job_file = template_job_file.replace("template", subject)
         subject_job_file = op.join(jobs_dir, op.basename(subject_job_file))
+        # A hack to skip complete subjects
+        test_file = op.join(out_dir, "mriqc", "{}_T2w.html".format(subject))
+        if op.isfile(test_file):
+            print("Subject {} already run. Skipping".format(subject), flush=True)
+            continue
 
         if copy_files:
             sub_temp_dir = op.join(work_dir, subject)
