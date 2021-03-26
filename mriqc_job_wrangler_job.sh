@@ -28,6 +28,8 @@ python /home/data/nbc/misc-projects/Salo_PowerReplication/code/bids_job_wrangler
     -d /home/data/nbc/misc-projects/Salo_PowerReplication/${DSET_NAME} \
     -w /scratch/nbc/tsalo006/${DSET_NAME} \
     -t /home/data/nbc/misc-projects/Salo_PowerReplication/code/mriqc_job_template.sh \
-    --tsv_file /home/data/nbc/misc-projects/Salo_PowerReplication/${DSET_NAME}/participants.tsv \
+    --participant_label sub-CC110126 sub-CC110174 sub-CC110187 sub-CC223115 sub-CC310400 \
+    sub-CC320379 sub-CC320621 sub-CC320686 sub-CC321053 sub-CC410032 \
+    sub-CC410040 sub-CC420720 sub-CC510354 \
     --job_limit 20 \
     --copy

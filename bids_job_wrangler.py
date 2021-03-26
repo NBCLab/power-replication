@@ -282,7 +282,7 @@ def main(
         subject_job_file = template_job_file.replace("template", subject)
         subject_job_file = op.join(jobs_dir, op.basename(subject_job_file))
         # A hack to skip complete subjects
-        test_file = op.join(out_dir, "mriqc", "{}_T2w.html".format(subject))
+        test_file = op.join(out_dir, "mriqc", "{}_task-movie_echo-5_bold.html".format(subject))
         if op.isfile(test_file):
             print("Subject {} already run. Skipping".format(subject), flush=True)
             continue
