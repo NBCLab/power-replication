@@ -24,10 +24,10 @@ source /home/data/nbc/misc-projects/Salo_PowerReplication/code/activate_environm
 
 DSET_NAME="dset-camcan"
 
-python /home/data/nbc/misc-projects/Salo_PowerReplication/code/bids_job_wrangler.py \
+python /home/data/nbc/misc-projects/Salo_PowerReplication/code/processing/bids_job_wrangler.py \
     -d /home/data/nbc/misc-projects/Salo_PowerReplication/${DSET_NAME} \
     -w /scratch/nbc/tsalo006/${DSET_NAME} \
-    -t /home/data/nbc/misc-projects/Salo_PowerReplication/code/mriqc_job_template.sh \
+    -t /home/data/nbc/misc-projects/Salo_PowerReplication/code/processing/mriqc_job_template.sh \
     --participant_label sub-CC110126 sub-CC110174 sub-CC110187 sub-CC223115 sub-CC310400 \
     sub-CC320379 sub-CC320621 sub-CC320686 sub-CC321053 sub-CC410032 \
     sub-CC410040 sub-CC420720 sub-CC510354 \
