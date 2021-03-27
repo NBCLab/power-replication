@@ -22,7 +22,7 @@ export OMP_NUM_THREADS=1
 . $MODULESHOME/../global/profile.modules
 source /home/data/nbc/misc-projects/Salo_PowerReplication/code/activate_environment
 
-DSET_NAME="dset-dalenberg"
+DSET_NAME="dset-cohen"
 
 python /home/data/nbc/misc-projects/Salo_PowerReplication/code/processing/bids_job_wrangler.py \
     -d /home/data/nbc/misc-projects/Salo_PowerReplication/${DSET_NAME} \
