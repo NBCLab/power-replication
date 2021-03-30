@@ -13,6 +13,10 @@ sub-04620 cannot be processed/analyzed, because the nifti file for echo-2 is cor
 Someone posted on OpenNeuro about this issue >1 year ago, but received no response.
 I just removed the folder (and corresponding entry in participants.tsv) completely.
 
+## dset-dalenberg
+
+I removed all FlavorRun files.
+
 ## dset-dupre
 
 I removed all cuedSGT files from the dataset because I figured that it would be easier
