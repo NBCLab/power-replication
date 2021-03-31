@@ -13,6 +13,12 @@ sub-04620 cannot be processed/analyzed, because the nifti file for echo-2 is cor
 Someone posted on OpenNeuro about this issue >1 year ago, but received no response.
 I just removed the folder (and corresponding entry in participants.tsv) completely.
 
+## dset-cohen
+
+Echos 2 and 3 seem to consistently be impacted by a slice-wise artifact.
+I assume the artifact is related to the ASL sequence.
+I am not removing these echos though.
+
 ## dset-dalenberg
 
 I removed all FlavorRun files.
