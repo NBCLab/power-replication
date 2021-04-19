@@ -78,12 +78,13 @@ echo
 echo "Collecting partially preprocessed images"
 SHELL_CMD="singularity exec --cleanenv \
       -B ${BIDS_DIR}:/data \
+      -B ${DATA_DIR}/${PROJECT}/code:/code \
       -B $DERIVS_DIR/fmriprep:/deriv_dir \
       -B $SCRATCH_DIR/fmriprep_wf:/work_dir \
       $IMG_DIR/poldracklab-fmriprep_20.2.1.sif"
 
 # Run python script inside fmriprep environment
-cmd="${SHELL_CMD} python /data/code/processing/collect_fmriprep.py \
+cmd="${SHELL_CMD} python /code/processing/collect_fmriprep.py \
       --deriv_dir /deriv_dir \
       --work_dir /work_dir \
       --subs $subject"
