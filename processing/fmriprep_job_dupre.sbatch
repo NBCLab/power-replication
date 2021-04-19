@@ -64,7 +64,7 @@ cmd="${SINGULARITY_CMD} /data \
       --mem_mb 32000 \
       --output-spaces MNI152NLin6Asym:res-native anat:res-native func:res-native \
       --notrack \
-      --fs-no-reconall \
+      --no-submm-recon \
       --fs-license-file $FS_LICENSE"
 
 # Setup done, run the command
