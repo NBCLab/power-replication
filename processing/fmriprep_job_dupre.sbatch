@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=fmriprep
-#SBATCH --time=60:00:00
+#SBATCH --time=600:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
@@ -12,7 +12,9 @@
 #SBATCH --output=/home/data/nbc/misc-projects/Salo_PowerReplication/code/jobs/fmriprep-dupre-%j-%A-%a.out
 #SBATCH --error=/home/data/nbc/misc-projects/Salo_PowerReplication/code/jobs/fmriprep-dupre-%j-%A-%a.err
 # ------------------------------------------
-
+# USAGE information:
+# Use the -array= option.
+# Start with 1.
 pwd; hostname; date
 set -e
 
@@ -91,7 +93,7 @@ eval $cmd
 
 # Output results to a table
 echo "sub-$subject   ${SLURM_ARRAY_TASK_ID}    $exitcode" \
-      >> ${DATA_DIR}/${PROJECT}/code/log/${SLURM_JOB_NAME}.${SLURM_ARRAY_JOB_ID}.tsv
+      >> ${DATA_DIR}/${PROJECT}/code/jobs/${SLURM_JOB_NAME}.${SLURM_ARRAY_JOB_ID}.tsv
 echo "Finished tasks ${SLURM_ARRAY_TASK_ID} with exit code ${exitcode}"
 exit $exitcode
 
