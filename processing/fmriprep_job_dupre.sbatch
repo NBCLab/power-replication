@@ -7,12 +7,10 @@
 #SBATCH --mem-per-cpu=4gb
 #SBATCH --account=iacc_nbc
 #SBATCH --qos=pq_nbc
-#SBATCH --partition=IB_40C_512G
+#SBATCH --partition=investor
 # Outputs ----------------------------------
-#SBATCH --output=/home/data/nbc/misc-projects/Salo_PowerReplication/code/jobs/fmriprep-%j-%A-%a.out
-#SBATCH --error=/home/data/nbc/misc-projects/Salo_PowerReplication/code/jobs/fmriprep-%j-%A-%a.err
-#SBATCH --mail-type=ALL,ARRAY_TASKS
-#SBATCH --mail-user=tsalo006@fiu.edu
+#SBATCH --output=/home/data/nbc/misc-projects/Salo_PowerReplication/code/jobs/fmriprep-dupre-%j-%A-%a.out
+#SBATCH --error=/home/data/nbc/misc-projects/Salo_PowerReplication/code/jobs/fmriprep-dupre-%j-%A-%a.err
 # ------------------------------------------
 
 pwd; hostname; date
@@ -62,7 +60,7 @@ cmd="${SINGULARITY_CMD} /data \
       --omp-nthreads 8 \
       --nprocs 8 \
       --mem_mb 32000 \
-      --output-spaces MNI152NLin6Asym:res-native anat:res-native boldref:res-native \
+      --output-spaces MNI152NLin6Asym:res-native anat:res-native func:res-native \
       --notrack \
       --fs-no-reconall \
       --fs-license-file $FS_LICENSE"
