@@ -48,7 +48,7 @@ SINGULARITY_CMD="singularity run --cleanenv \
       -B ${DERIVS_DIR}:/out \
       -B ${TEMPLATEFLOW_HOST_HOME}:${SINGULARITYENV_TEMPLATEFLOW_HOME} \
       -B $SCRATCH_DIR:/work \
-      $IMG_DIR/nipreps-fmriprep_20.2.1.sif"
+      $IMG_DIR/poldracklab-fmriprep_20.2.1.sif"
 
 # Parse the participants.tsv file and extract one subject ID from the line corresponding to this SLURM task.
 subject=$( sed -n -E "$((${SLURM_ARRAY_TASK_ID} + 1))s/sub-(\S*)\>.*/\1/gp" ${BIDS_DIR}/participants.tsv )
@@ -80,7 +80,7 @@ SHELL_CMD="singularity exec --cleanenv \
       -B ${DATA_DIR}/${PROJECT}:/data \
       -B $DERIVS_DIR/fmriprep:/deriv_dir \
       -B $SCRATCH_DIR/fmriprep_wf:/work_dir \
-      $IMG_DIR/nipreps-fmriprep_20.2.1.sif"
+      $IMG_DIR/poldracklab-fmriprep_20.2.1.sif"
 
 # Run python script inside fmriprep environment
 cmd="${SHELL_CMD} python /data/code/collect_fmriprep.py \
