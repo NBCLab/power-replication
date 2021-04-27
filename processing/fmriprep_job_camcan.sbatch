@@ -1,6 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=fmriprep
-#SBATCH --time=600:00:00
+#SBATCH --job-name=camcan
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
