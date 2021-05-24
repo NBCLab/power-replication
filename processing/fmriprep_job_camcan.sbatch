@@ -2,7 +2,7 @@
 #SBATCH --job-name=camcan
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=8
+#SBATCH --cpus-per-task=4
 #SBATCH --mem-per-cpu=4gb
 #SBATCH --account=iacc_nbc
 #SBATCH --qos=pq_nbc
