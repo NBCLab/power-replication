@@ -9,8 +9,8 @@ Mean cortical signal correlated with signal of whole brain
 """
 import os.path as op
 
-import numpy as np
 import nibabel as nib
+import numpy as np
 from bids.grabbids import BIDSLayout
 from nilearn.masking import apply_mask
 from scipy.stats import ttest_1samp
@@ -67,7 +67,7 @@ def analysis_01(in_dir, dset):
     -   Page 2, right column, first paragraph
     """
     dset_dir = op.join(in_dir, dset)
-    deriv_dir = op.join(dset_dir, 'derivatives')
+    deriv_dir = op.join(dset_dir, "derivatives")
     layout = BIDSLayout(dset_dir)
     subjects = layout.get_subjects()
 
@@ -75,15 +75,14 @@ def analysis_01(in_dir, dset):
     cort_mask_files = []
     gm_mask_files = []
     for subj in subjects:
-        cort_mask_file = op.join(deriv_dir, 'power', subj, 'cortical_mask.nii.gz')
-        gm_mask_file = op.join(deriv_dir, 'power', subj, 'graymatter_mask.nii.gz')
-        fmri_file = op.join(deriv_dir, 'fmriprep', subj, 'preproc.nii.gz')
+        cort_mask_file = op.join(deriv_dir, "power", subj, "cortical_mask.nii.gz")
+        gm_mask_file = op.join(deriv_dir, "power", subj, "graymatter_mask.nii.gz")
+        fmri_file = op.join(deriv_dir, "fmriprep", subj, "preproc.nii.gz")
         fmri_files.append(fmri_file)
         cort_mask_files.append(cort_mask_file)
         gm_mask_files.append(gm_mask_file)
 
-    corrs, t, p = mean_signal_corr_dist(fmri_files, cort_mask_files,
-                                        gm_mask_files)
+    corrs, t, p = mean_signal_corr_dist(fmri_files, cort_mask_files, gm_mask_files)
 
 
 def analysis_02(in_dir, dset):
@@ -93,7 +92,7 @@ def analysis_02(in_dir, dset):
     -   Page 2, right column, first paragraph
     """
     dset_dir = op.join(in_dir, dset)
-    deriv_dir = op.join(dset_dir, 'derivatives')
+    deriv_dir = op.join(dset_dir, "derivatives")
     layout = BIDSLayout(dset_dir)
     subjects = layout.get_subjects()
 
@@ -101,12 +100,11 @@ def analysis_02(in_dir, dset):
     cort_mask_files = []
     brain_mask_files = []
     for subj in subjects:
-        cort_mask_file = op.join(deriv_dir, 'power', subj, 'cortical_mask.nii.gz')
-        brain_mask_file = op.join(deriv_dir, 'power', subj, 'brain_mask.nii.gz')
-        fmri_file = op.join(deriv_dir, 'fmriprep', subj, 'preproc.nii.gz')
+        cort_mask_file = op.join(deriv_dir, "power", subj, "cortical_mask.nii.gz")
+        brain_mask_file = op.join(deriv_dir, "power", subj, "brain_mask.nii.gz")
+        fmri_file = op.join(deriv_dir, "fmriprep", subj, "preproc.nii.gz")
         fmri_files.append(fmri_file)
         cort_mask_files.append(cort_mask_file)
         brain_mask_files.append(brain_mask_file)
 
-    corrs, t, p = mean_signal_corr_dist(fmri_files, cort_mask_files,
-                                        brain_mask_files)
+    corrs, t, p = mean_signal_corr_dist(fmri_files, cort_mask_files, brain_mask_files)

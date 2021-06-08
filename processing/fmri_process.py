@@ -4,14 +4,14 @@ Additional, post-fMRIPrep preprocessing.
 import os
 import os.path as op
 
-import numpy as np
 import nibabel as nib
+import numpy as np
 from bids.grabbids import BIDSLayout
 from nilearn.image import resample_to_img
 from scipy.ndimage.morphology import binary_erosion
 
 
-def preprocess(dset, in_dir='/scratch/tsalo006/power-replication/'):
+def preprocess(dset, in_dir="/scratch/tsalo006/power-replication/"):
     """
     Perform additional, post-fMRIPrep preprocessing of structural and
     functional MRI data.
@@ -30,48 +30,60 @@ def preprocess(dset, in_dir='/scratch/tsalo006/power-replication/'):
     layout = BIDSLayout(dset_dir)
     subjects = layout.get_subjects()
 
-    fp_dir = op.join(dset_dir, 'derivatives/fmriprep')
-    fs_dir = op.join(dset_dir, 'derivatives/freesurfer')
-    out_dir = op.join(dset_dir, 'derivatives/power')
+    fp_dir = op.join(dset_dir, "derivatives/fmriprep")
+    fs_dir = op.join(dset_dir, "derivatives/freesurfer")
+    out_dir = op.join(dset_dir, "derivatives/power")
     if not op.isdir(out_dir):
         os.mkdir(out_dir)
 
     for subject in subjects:
         fp_subj_dir = op.join(fp_dir, subject)
         fs_subj_dir = op.join(fs_dir, subject)
-        preproc_dir = op.join(out_dir, subject, 'preprocessed')
+        preproc_dir = op.join(out_dir, subject, "preprocessed")
         if not op.isdir(preproc_dir):
             os.mkdir(preproc_dir)
 
-        anat_dir = op.join(preproc_dir, 'anat')
+        anat_dir = op.join(preproc_dir, "anat")
         if not op.isdir(anat_dir):
             os.mkdir(anat_dir)
 
-        func_dir = op.join(preproc_dir, 'anat')
+        func_dir = op.join(preproc_dir, "anat")
         if not op.isdir(func_dir):
             os.mkdir(func_dir)
 
         # Get echo times in ms as numpy array or list
-        echos = layout.get_echoes(subject=subject, modality='func',
-                                  type='bold', task='rest', run=1,
-                                  extensions=['nii', 'nii.gz'])
+        echos = layout.get_echoes(
+            subject=subject,
+            modality="func",
+            type="bold",
+            task="rest",
+            run=1,
+            extensions=["nii", "nii.gz"],
+        )
         echos = sorted(echos)  # just to be extra safe
         n_echos = len(echos)
 
         # Create GM, WM, and CSF masks
         # Use preprocessed data from first echo for func resolution
-        func_file = op.join(fp_subj_dir, 'func',
-                            ('sub-{0}_task-rest_run-01_echo-1_bold_'
-                             'space-MNI152NLin2009cAsym_preproc'
-                             '.nii.gz').format(subject))
-        warp_file = op.join(fp_subj_dir, 'anat',
-                            'sub-{0}_run-01_T1w_target-'
-                            'MNI152NLin2009cAsym_warp.h5'.format(subject))
-        aparc_file = op.join(fs_subj_dir, 'mri/aparc+aseg.mgz')
+        func_file = op.join(
+            fp_subj_dir,
+            "func",
+            (
+                "sub-{0}_task-rest_run-01_echo-1_bold_"
+                "space-MNI152NLin2009cAsym_preproc"
+                ".nii.gz"
+            ).format(subject),
+        )
+        warp_file = op.join(
+            fp_subj_dir,
+            "anat",
+            "sub-{0}_run-01_T1w_target-" "MNI152NLin2009cAsym_warp.h5".format(subject),
+        )
+        aparc_file = op.join(fs_subj_dir, "mri/aparc+aseg.mgz")
 
         # warp T1w-space aparc file to MNI-space
         # how??
-        res_aparc_file = op.join(anat_dir, 'res_aparc.nii.gz')
+        res_aparc_file = op.join(anat_dir, "res_aparc.nii.gz")
 
         # select labels for each compartment
         aparc_img = nib.load(res_aparc_file)
@@ -93,17 +105,16 @@ def preprocess(dset, in_dir='/scratch/tsalo006/power-replication/'):
 
         # Resample cortical mask to 3mm (functional) resolution with NN interp
         # NOTE: Used for most analyses of "global signal"
-        res_cort_img = resample_to_img(cort_img, func_img,
-                                       interpolation='nearest')
-        res_cort_img.to_filename(op.join(anat_dir, 'cortical_mask.nii.gz'))
+        res_cort_img = resample_to_img(cort_img, func_img, interpolation="nearest")
+        res_cort_img.to_filename(op.join(anat_dir, "cortical_mask.nii.gz"))
 
         # Resample cortical mask to 3mm (functional) resolution with NN interp
-        res_subcort_img = resample_to_img(subcort_img, func_img,
-                                          interpolation='nearest')
+        res_subcort_img = resample_to_img(
+            subcort_img, func_img, interpolation="nearest"
+        )
 
         # Resample cortical mask to 3mm (functional) resolution with NN interp
-        res_cereb_img = resample_to_img(cereb_img, func_img,
-                                        interpolation='nearest')
+        res_cereb_img = resample_to_img(cereb_img, func_img, interpolation="nearest")
 
         # Erode WM mask
         wm_ero0 = wm_img.get_data()
@@ -118,12 +129,9 @@ def preprocess(dset, in_dir='/scratch/tsalo006/power-replication/'):
         wm_ero4 = nib.Nifti1Image(wm_ero4, aff)  # aka Deepest WM
 
         # Resample WM masks to 3mm (functional) resolution with NN interp
-        res_wm_ero02 = resample_to_img(wm_ero02, func_img,
-                                       interpolation='nearest')
-        res_wm_ero24 = resample_to_img(wm_ero24, func_img,
-                                       interpolation='nearest')
-        res_wm_ero4 = resample_to_img(wm_ero4, func_img,
-                                      interpolation='nearest')
+        res_wm_ero02 = resample_to_img(wm_ero02, func_img, interpolation="nearest")
+        res_wm_ero24 = resample_to_img(wm_ero24, func_img, interpolation="nearest")
+        res_wm_ero4 = resample_to_img(wm_ero4, func_img, interpolation="nearest")
 
         # Erode CSF masks
         csf_ero0 = csf_img.get_data()
@@ -135,10 +143,8 @@ def preprocess(dset, in_dir='/scratch/tsalo006/power-replication/'):
         csf_ero2 = nib.Nifti1Image(csf_ero2, aff)  # aka Deeper CSF
 
         # Resample CSF masks to 3mm (functional) resolution with NN interp
-        res_csf_ero02 = resample_to_img(csf_ero02, func_img,
-                                        interpolation='nearest')
-        res_csf_ero2 = resample_to_img(csf_ero2, func_img,
-                                       interpolation='nearest')
+        res_csf_ero02 = resample_to_img(csf_ero02, func_img, interpolation="nearest")
+        res_csf_ero2 = resample_to_img(csf_ero2, func_img, interpolation="nearest")
 
         # Combine masks with different values for carpet pltos
         seg_arr = np.zeros(res_cort_img.shape)
@@ -157,11 +163,10 @@ def preprocess(dset, in_dir='/scratch/tsalo006/power-replication/'):
         # For carpet plots
         seg_arr[wm_ero4_arr == 1] = 6
         seg_img = nib.Nifti1Image(seg_arr, func_img.affine)
-        seg_img.to_filename(op.join(anat_dir,
-                                    'total_mask_segmentation_no_csf.nii.gz'))
+        seg_img.to_filename(op.join(anat_dir, "total_mask_segmentation_no_csf.nii.gz"))
         mask_arr = (seg_arr > 0).astype(int)
         mask_img = nib.Nifti1Image(mask_arr, func_img.affine)
-        mask_img.to_filename(op.join(anat_dir, 'total_mask_no_csf.nii.gz'))
+        mask_img.to_filename(op.join(anat_dir, "total_mask_no_csf.nii.gz"))
 
         # For brain images *under* carpet plots
         csf_ero02_arr = res_csf_ero02.get_data()
@@ -169,24 +174,34 @@ def preprocess(dset, in_dir='/scratch/tsalo006/power-replication/'):
         csf_ero2_arr = res_csf_ero2.get_data()
         seg_arr[csf_ero2_arr == 1] = 8
         seg_img = nib.Nifti1Image(seg_arr, func_img.affine)
-        seg_img.to_filename(op.join(anat_dir,
-                                    'total_mask_segmentation_with_csf.nii.gz'))
+        seg_img.to_filename(
+            op.join(anat_dir, "total_mask_segmentation_with_csf.nii.gz")
+        )
         mask_arr = (seg_arr > 0).astype(int)
         mask_img = nib.Nifti1Image(mask_arr, func_img.affine)
-        mask_img.to_filename(op.join(anat_dir, 'total_mask_with_csf.nii.gz'))
+        mask_img.to_filename(op.join(anat_dir, "total_mask_with_csf.nii.gz"))
 
         # Remove first four volumes from fMRI volumes
-        for i_echo in range(1, n_echos+1):
-            echo_file = op.join(fp_subj_dir, 'func',
-                                ('sub-{0}_task-rest_run-01_echo-{1}_bold_'
-                                 'space-MNI152NLin2009cAsym_preproc'
-                                 '.nii.gz').format(subject, i_echo))
+        for i_echo in range(1, n_echos + 1):
+            echo_file = op.join(
+                fp_subj_dir,
+                "func",
+                (
+                    "sub-{0}_task-rest_run-01_echo-{1}_bold_"
+                    "space-MNI152NLin2009cAsym_preproc"
+                    ".nii.gz"
+                ).format(subject, i_echo),
+            )
             echo_img = nib.load(echo_file)
             echo_data = echo_img.get_data()
             echo_data = echo_data[:, :, :, 4:]
             echo_img = nib.Nifti1Image(echo_data, echo_img.affine)
-            echo_img.to_filename(op.join(func_dir,
-                                         'sub-{0}_task-rest_run-01_echo-{1}'
-                                         '_bold_space-MNI152NLin2009cAsym_'
-                                         'powerpreproc'
-                                         '.nii.gz'.format(subject, i_echo)))
+            echo_img.to_filename(
+                op.join(
+                    func_dir,
+                    "sub-{0}_task-rest_run-01_echo-{1}"
+                    "_bold_space-MNI152NLin2009cAsym_"
+                    "powerpreproc"
+                    ".nii.gz".format(subject, i_echo),
+                )
+            )

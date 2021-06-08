@@ -12,13 +12,15 @@ Methods:
 """
 import os.path as op
 
-import numpy as np
 import nibabel as nib
+import numpy as np
 from bids.grabbids import BIDSLayout
 from nilearn.masking import apply_mask, unmask
 
 
-def run_rvtreg(dset, task, method, suffix, in_dir='/scratch/tsalo006/power-replication/'):
+def run_rvtreg(
+    dset, task, method, suffix, in_dir="/scratch/tsalo006/power-replication/"
+):
     """
     Generate ICA denoised data after regressing out RVT and RVT convolved with
     RRF (including lags)
@@ -47,28 +49,30 @@ def run_rvtreg(dset, task, method, suffix, in_dir='/scratch/tsalo006/power-repli
     layout = BIDSLayout(dset_dir)
     subjects = layout.get_subjects()
 
-    power_dir = op.join(dset_dir, 'derivatives/power')
+    power_dir = op.join(dset_dir, "derivatives/power")
 
     for subj in subjects:
         power_subj_dir = op.join(power_dir, subj)
-        preproc_dir = op.join(power_subj_dir, 'preprocessed')
-        physio_dir = op.join(preproc_dir, 'physio')
-        anat_dir = op.join(preproc_dir, 'anat')
+        preproc_dir = op.join(power_subj_dir, "preprocessed")
+        physio_dir = op.join(preproc_dir, "physio")
+        anat_dir = op.join(preproc_dir, "anat")
 
-        func_file = op.join(power_subj_dir, 'denoised', method,
-                            'sub-{0}_task-{1}_run-01_{2}'
-                            '.nii.gz'.format(subj, task, suffix))
-        mask_file = op.join(anat_dir, 'cortical_mask.nii.gz')
+        func_file = op.join(
+            power_subj_dir,
+            "denoised",
+            method,
+            "sub-{0}_task-{1}_run-01_{2}" ".nii.gz".format(subj, task, suffix),
+        )
+        mask_file = op.join(anat_dir, "cortical_mask.nii.gz")
         func_img = nib.load(func_file)
         mask_img = nib.load(mask_file)
         if subj == subjects[0]:
             resid_sds = np.empty((len(subjects), func_img.shape[-1]))
 
-        rvt_file = op.join(physio_dir,
-                           'sub-{0}_task-rest_run-01_rvt.txt'.format(subj))
-        rvt_x_rrf_file = op.join(physio_dir,
-                                 'sub-{0}_task-rest_run-01_rvtXrrf'
-                                 '.txt'.format(subj))
+        rvt_file = op.join(physio_dir, "sub-{0}_task-rest_run-01_rvt.txt".format(subj))
+        rvt_x_rrf_file = op.join(
+            physio_dir, "sub-{0}_task-rest_run-01_rvtXrrf" ".txt".format(subj)
+        )
         rvt = np.loadtxt(rvt_file)
         rvt_x_rrf = np.loadtxt(rvt_x_rrf_file)
         rvt = np.hstack((np.ones(func_img.shape[-1]), rvt, rvt_x_rrf))
