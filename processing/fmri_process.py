@@ -6,6 +6,7 @@ import os.path as op
 
 import nibabel as nib
 import numpy as np
+import pandas as pd
 from bids.layout import BIDSLayout
 from nilearn import image
 from scipy.ndimage.morphology import binary_erosion
@@ -205,28 +206,21 @@ def preprocess(dset, in_dir="/scratch/tsalo006/power-replication/"):
 
         # Remove non-steady state volumes from fMRI runs
         # TODO: Load and use confounds files
-        for i_echo in range(1, n_echos + 1):
-            echo_file = op.join(
-                fp_subj_dir,
-                "func",
-                (
-                    "sub-{0}_task-rest_run-01_echo-{1}_bold_"
-                    "space-MNI152NLin2009cAsym_preproc"
-                    ".nii.gz"
-                ).format(subject, i_echo),
-            )
-            echo_img = nib.load(echo_file)
-            echo_data = echo_img.get_fdata()
-            echo_data = echo_data[:, :, :, 4:]
-            echo_img = nib.Nifti1Image(echo_data, echo_img.affine)
-            echo_img.to_filename(
-                op.join(
-                    func_dir,
-                    "sub-{0}_task-rest_run-01_echo-{1}"
-                    "_bold_space-MNI152NLin2009cAsym_"
-                    "powerpreproc"
-                    ".nii.gz".format(subject, i_echo),
+        confounds_file = op.join(
+            fp_subj_dir,
+            "func",
+            f"sub-{subject}_task-rest_run-1_desc-confounds_timeseries.tsv",
+        )
+        confounds_df = pd.read_table(confounds_file)
+        nss_cols = [c for c in confounds_df.columns if c.startswith("non_steady_state_outlier")]
+        if len(nss_cols):
+            nss_vols = confounds_df.loc[confounds_df[nss_cols].sum(axis=1).astype(bool)].index.tolist()
+            # Assume non-steady state volumes are (1) at the beginning and (2) contiguous.
+            first_kept_vol = nss_vols[-1] + 1
+            n_vols = confounds_df.shape[0]
+            reduced_confounds_df = confounds_df.loc[first_kept_vol:]
+            for echo_file in echo_files:
+                reduced_echo_img = image.index_img(
+                    echo_file,
+                    slice(first_kept_vol, n_vols + 1)
                 )
-            )
-
-        # TODO: Also remove non-steady state volumes from the confounds files
