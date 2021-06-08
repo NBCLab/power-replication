@@ -3,6 +3,7 @@ Additional, post-fMRIPrep preprocessing.
 """
 import os
 import os.path as op
+from glob import glob
 
 import nibabel as nib
 import numpy as np
@@ -19,41 +20,6 @@ def preprocess(dset, in_dir="/scratch/tsalo006/power-replication/"):
     1) Create GM, WM, and CSF masks and resample to 3mm (functional) resolution
     2) Remove non-steady state volumes from each fMRI image
     """
-    # Constants
-    PROJECT_DIR = "/home/data/nbc/misc-projects/Salo_PowerReplication/"
-
-    FUNC_FILES = {
-        "dset-camcan": [
-            "{sub}/func/{sub}_task-movie_echo-1_space-scanner_desc-partialPreproc_bold.nii.gz",
-            "{sub}/func/{sub}_task-movie_echo-2_space-scanner_desc-partialPreproc_bold.nii.gz",
-            "{sub}/func/{sub}_task-movie_echo-3_space-scanner_desc-partialPreproc_bold.nii.gz",
-            "{sub}/func/{sub}_task-movie_echo-4_space-scanner_desc-partialPreproc_bold.nii.gz",
-            "{sub}/func/{sub}_task-movie_echo-5_space-scanner_desc-partialPreproc_bold.nii.gz",
-        ],
-        "dset-cambridge": [
-            "{sub}/func/{sub}_task-rest_echo-1_space-scanner_desc-partialPreproc_bold.nii.gz",
-            "{sub}/func/{sub}_task-rest_echo-2_space-scanner_desc-partialPreproc_bold.nii.gz",
-            "{sub}/func/{sub}_task-rest_echo-3_space-scanner_desc-partialPreproc_bold.nii.gz",
-            "{sub}/func/{sub}_task-rest_echo-4_space-scanner_desc-partialPreproc_bold.nii.gz",
-        ],
-        "dset-dupre": [
-            "{sub}/func/{sub}_task-rest_run-1_echo-1_space-scanner_desc-partialPreproc_bold.nii.gz",
-            "{sub}/func/{sub}_task-rest_run-1_echo-2_space-scanner_desc-partialPreproc_bold.nii.gz",
-            "{sub}/func/{sub}_task-rest_run-1_echo-3_space-scanner_desc-partialPreproc_bold.nii.gz",
-        ],
-        "dset-dalenberg": [
-            "{sub}/func/{sub}_task-images_echo-1_space-scanner_desc-partialPreproc_bold.nii.gz",
-            "{sub}/func/{sub}_task-images_echo-2_space-scanner_desc-partialPreproc_bold.nii.gz",
-            "{sub}/func/{sub}_task-images_echo-3_space-scanner_desc-partialPreproc_bold.nii.gz",
-        ],
-        "dset-cohen": [
-            "{sub}/func/{sub}_task-bilateralfingertapping_echo-1_space-scanner_desc-partialPreproc_bold.nii.gz",
-            "{sub}/func/{sub}_task-bilateralfingertapping_echo-2_space-scanner_desc-partialPreproc_bold.nii.gz",
-            "{sub}/func/{sub}_task-bilateralfingertapping_echo-3_space-scanner_desc-partialPreproc_bold.nii.gz",
-            "{sub}/func/{sub}_task-bilateralfingertapping_echo-4_space-scanner_desc-partialPreproc_bold.nii.gz",
-        ],
-    }
-
     # LUT values from
     # https://surfer.nmr.mgh.harvard.edu/fswiki/FsTutorial/AnatomicalROI/FreeSurferColorLUT
     CORTICAL_LABELS = [3, 17, 18, 19, 20, 42, 53, 54, 55, 56]
@@ -205,6 +171,12 @@ def preprocess(dset, in_dir="/scratch/tsalo006/power-replication/"):
         ))
 
         # Remove non-steady state volumes from fMRI runs
+        echo_files = sorted(glob(op.join(
+            fp_subj_dir,
+            "func",
+            "{sub}_task-*_echo-*_space-scanner_desc-partialPreproc_bold.nii.gz",
+        )))
+
         # TODO: Load and use confounds files
         confounds_file = op.join(
             fp_subj_dir,
@@ -219,8 +191,28 @@ def preprocess(dset, in_dir="/scratch/tsalo006/power-replication/"):
             first_kept_vol = nss_vols[-1] + 1
             n_vols = confounds_df.shape[0]
             reduced_confounds_df = confounds_df.loc[first_kept_vol:]
+            confounds_filename = op.basename(confounds_file)
+            out_confounds_file = op.join(func_dir, confounds_filename)
+            reduced_confounds_df.to_csv(out_confounds_file, sep="\t", index=False)
+            # TODO: Copy and update metadata
+            # Specifically add Description and Sources fields.
+
             for echo_file in echo_files:
                 reduced_echo_img = image.index_img(
                     echo_file,
                     slice(first_kept_vol, n_vols + 1)
                 )
+                echo_filename = op.basename(echo_file)
+                echo_filename = echo_filename.replace(
+                    "_desc-partialPreproc_",
+                    "_desc-NSSRemoved_",
+                )
+                out_echo_file = op.join(func_dir, echo_filename)
+                reduced_echo_img.to_filename(out_echo_file)
+                # TODO: Copy and update metadata
+                # Specifically add Description and Sources fields.
+        else:
+            # TODO: Copy the existing files to the out_dir
+            # Also copy and update metadata.
+            # Specifically add Description and Sources fields.
+            # Mention that no volumes were removed in the Description.
