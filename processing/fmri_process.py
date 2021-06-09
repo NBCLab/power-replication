@@ -216,7 +216,7 @@ def preprocess(project_dir, dset):
         mask_img.to_filename(
             op.join(
                 anat_out_dir,
-                "{subject}_space-T1w_res-bold_desc-totalMaskWithCSF_mask.nii.gz",
+                f"{subject}_space-T1w_res-bold_desc-totalMaskWithCSF_mask.nii.gz",
             )
         )
 
@@ -224,7 +224,7 @@ def preprocess(project_dir, dset):
         pattern = op.join(
             subj_fmriprep_dir,
             "func",
-            "{sub}_task-*_echo-*_space-scanner_desc-partialPreproc_bold.nii.gz",
+            f"{subject}_task-*_echo-*_space-scanner_desc-partialPreproc_bold.nii.gz",
         )
         echo_files = sorted(glob(pattern))
         assert len(echo_files) >= 3, pattern
