@@ -13,7 +13,7 @@ from nilearn import image
 from scipy.ndimage.morphology import binary_erosion
 
 
-def preprocess(dset, in_dir="/scratch/tsalo006/power-replication/"):
+def preprocess(project_dir, dset):
     """
     Perform additional, post-fMRIPrep preprocessing of structural and
     functional MRI data.
@@ -29,7 +29,7 @@ def preprocess(dset, in_dir="/scratch/tsalo006/power-replication/"):
     CEREBELLUM_LABELS = [8, 47]
 
     # TODO: Replace with post-qc subject list
-    dset_dir = op.join(in_dir, dset)
+    dset_dir = op.join(project_dir, dset)
     participants_file = op.join(dset_dir, "participants.tsv")
     participants_df = pd.read_table(participants_file)
     subjects = participants_df.loc[participants_df["exclude"] == 0].index.tolist()
@@ -323,3 +323,10 @@ def preprocess(dset, in_dir="/scratch/tsalo006/power-replication/"):
 
                 with open(out_nii_json_file, "w") as fo:
                     json.dump(json_info, fo, indent=4, sort_keys=True)
+
+
+if __name__ == "__main__":
+    project_dir = "/home/data/nbc/misc-projects/Salo_PowerReplication/code/"
+    dsets = ["dset-cambridge", "dset-camcan", "dset-cohen", "dset-dalenberg", "dset-dupre"]
+    for dset in dsets:
+        preprocess(project_dir, dset)
