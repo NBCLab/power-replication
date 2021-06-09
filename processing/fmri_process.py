@@ -221,16 +221,13 @@ def preprocess(project_dir, dset):
         )
 
         # Remove non-steady state volumes from fMRI runs
-        echo_files = sorted(
-            glob(
-                op.join(
-                    subj_fmriprep_dir,
-                    "func",
-                    "{sub}_task-*_echo-*_space-scanner_desc-partialPreproc_bold.nii.gz",
-                )
-            )
+        pattern = op.join(
+            subj_fmriprep_dir,
+            "func",
+            "{sub}_task-*_echo-*_space-scanner_desc-partialPreproc_bold.nii.gz",
         )
-        assert len(echo_files) >= 3
+        echo_files = sorted(glob(pattern))
+        assert len(echo_files) >= 3, pattern
 
         # TODO: Load and use confounds files
         confounds_file = sorted(
