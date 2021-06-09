@@ -103,7 +103,7 @@ def preprocess(project_dir, dset):
         cort_img.to_filename(
             op.join(
                 anat_out_dir,
-                f"{subject}_space-MNI152NLin6Asym_res-bold_label-CGM_mask.nii.gz",
+                f"{subject}_space-T1w_res-bold_label-CGM_mask.nii.gz",
             )
         )
 
@@ -230,6 +230,7 @@ def preprocess(project_dir, dset):
                 )
             )
         )
+        assert len(echo_files) >= 3
 
         # TODO: Load and use confounds files
         confounds_file = sorted(
