@@ -35,7 +35,9 @@ def preprocess(project_dir, dset):
     # Get list of participants with good data
     participants_file = op.join(dset_dir, "participants.tsv")
     participants_df = pd.read_table(participants_file)
-    subjects = participants_df.loc[participants_df["exclude"] == 0, "participant_id"].tolist()
+    subjects = participants_df.loc[
+        participants_df["exclude"] == 0, "participant_id"
+    ].tolist()
 
     if not op.isdir(out_dir):
         os.mkdir(out_dir)
@@ -229,11 +231,15 @@ def preprocess(project_dir, dset):
         )
 
         # TODO: Load and use confounds files
-        confounds_file = op.join(
-            subj_fmriprep_dir,
-            "func",
-            f"{subject}_task-rest_run-1_desc-confounds_timeseries.tsv",
-        )
+        confounds_file = sorted(
+            glob(
+                op.join(
+                    subj_fmriprep_dir,
+                    "func",
+                    f"{subject}_task-*_desc-confounds_timeseries.tsv",
+                )
+            )
+        )[0]
         confounds_filename = op.basename(confounds_file)
         out_confounds_file = op.join(func_out_dir, confounds_filename)
         confounds_json_file = confounds_file.replace(".tsv", ".json")
@@ -258,9 +264,9 @@ def preprocess(project_dir, dset):
             with open(confounds_json_file, "r") as fo:
                 json_info = json.load(fo)
                 json_info["Sources"] = [confounds_filename]
-                json_info["Description"] = (
-                    "fMRIPrep-generated confounds file with non-steady state volumes removed."
-                )
+                json_info[
+                    "Description"
+                ] = "fMRIPrep-generated confounds file with non-steady state volumes removed."
 
             with open(out_confounds_json_file, "w") as fo:
                 json.dump(json_info, fo, indent=4, sort_keys=True)
@@ -295,9 +301,9 @@ def preprocess(project_dir, dset):
             with open(confounds_json_file, "r") as fo:
                 json_info = json.load(fo)
                 json_info["Sources"] = [confounds_filename]
-                json_info["Description"] = (
-                    "fMRIPrep-generated confounds file with non-steady state volumes removed."
-                )
+                json_info[
+                    "Description"
+                ] = "fMRIPrep-generated confounds file with non-steady state volumes removed."
 
             with open(out_confounds_json_file, "w") as fo:
                 json.dump(json_info, fo, indent=4, sort_keys=True)
@@ -329,7 +335,13 @@ def preprocess(project_dir, dset):
 
 if __name__ == "__main__":
     project_dir = "/home/data/nbc/misc-projects/Salo_PowerReplication/"
-    dsets = ["dset-cambridge", "dset-camcan", "dset-cohen", "dset-dalenberg", "dset-dupre"]
+    dsets = [
+        "dset-cambridge",
+        "dset-camcan",
+        "dset-cohen",
+        "dset-dalenberg",
+        "dset-dupre",
+    ]
     for dset in dsets[:1]:
         print(f"{dset}", flush=True)
         preprocess(project_dir, dset)
