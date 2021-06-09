@@ -110,8 +110,8 @@ def preprocess(project_dir, dset):
         wm_ero4 = binary_erosion(wm_ero0, iterations=4)
 
         # Subtract WM mask
-        wm_ero02 = wm_ero0 - wm_ero2
-        wm_ero24 = wm_ero2 - wm_ero4
+        wm_ero02 = wm_ero0.astype(int) - wm_ero2.astype(int)
+        wm_ero24 = wm_ero2.astype(int) - wm_ero4.astype(int)
         wm_ero02 = nib.Nifti1Image(
             wm_ero02, wm_img.affine, header=wm_img.header
         )  # aka Superficial WM
@@ -144,7 +144,7 @@ def preprocess(project_dir, dset):
         csf_ero2 = binary_erosion(csf_ero0, iterations=2)
 
         # Subtract CSF masks
-        csf_ero02 = csf_ero0 - csf_ero2
+        csf_ero02 = csf_ero0.astype(int) - csf_ero2.astype(int)
         csf_ero02 = nib.Nifti1Image(
             csf_ero02, csf_img.affine, header=csf_img.header
         )  # aka Superficial CSF
