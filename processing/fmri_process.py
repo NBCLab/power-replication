@@ -28,43 +28,44 @@ def preprocess(project_dir, dset):
     CSF_LABELS = [4, 5, 14, 15, 24, 43, 44, 72]
     CEREBELLUM_LABELS = [8, 47]
 
-    # TODO: Replace with post-qc subject list
     dset_dir = op.join(project_dir, dset)
+    fp_dir = op.join(dset_dir, "derivatives/fmriprep")
+    out_dir = op.join(dset_dir, "derivatives/power")
+
+    # Get list of participants with good data
     participants_file = op.join(dset_dir, "participants.tsv")
     participants_df = pd.read_table(participants_file)
     subjects = participants_df.loc[participants_df["exclude"] == 0].index.tolist()
 
-    fp_dir = op.join(dset_dir, "derivatives/fmriprep")
-    out_dir = op.join(dset_dir, "derivatives/power")
     if not op.isdir(out_dir):
         os.mkdir(out_dir)
 
-    for subject in subjects:
-        fp_subj_dir = op.join(fp_dir, subject)
-        preproc_dir = op.join(out_dir, subject, "preprocessed")
-        if not op.isdir(preproc_dir):
-            os.mkdir(preproc_dir)
+    for subject in subjects[:1]:
+        subj_fmriprep_dir = op.join(fp_dir, subject)
+        subj_out_dir = op.join(out_dir, subject)
+        if not op.isdir(subj_out_dir):
+            os.mkdir(subj_out_dir)
 
-        anat_dir = op.join(preproc_dir, "anat")
-        if not op.isdir(anat_dir):
-            os.mkdir(anat_dir)
+        anat_out_dir = op.join(subj_out_dir, "anat")
+        if not op.isdir(anat_out_dir):
+            os.mkdir(anat_out_dir)
 
-        func_dir = op.join(preproc_dir, "func")
-        if not op.isdir(func_dir):
-            os.mkdir(func_dir)
+        func_out_dir = op.join(subj_out_dir, "func")
+        if not op.isdir(func_out_dir):
+            os.mkdir(func_out_dir)
 
         # Create GM, WM, and CSF masks
         # WM and CSF masks must be created from the high resolution Freesurfer aparc file
         # Then they must be eroded
         aparcaseg_t1wres = op.join(
-            fp_subj_dir,
+            subj_fmriprep_dir,
             "anat",
             f"sub-{subject}_desc-aparcaseg_dseg.nii.gz",
         )
         aparcaseg_boldres = sorted(
             glob(
                 op.join(
-                    fp_subj_dir,
+                    subj_fmriprep_dir,
                     "func",
                     f"sub-{subject}_task-*_space-T1w_desc-aparcaseg_dseg.nii.gz",
                 )
@@ -97,7 +98,7 @@ def preprocess(project_dir, dset):
         # NOTE: Used for most analyses of "global signal"
         cort_img.to_filename(
             op.join(
-                anat_dir,
+                anat_out_dir,
                 f"sub-{subject}_space-MNI152NLin6Asym_res-bold_label-CGM_mask.nii.gz",
             )
         )
@@ -181,7 +182,7 @@ def preprocess(project_dir, dset):
         seg_img = nib.Nifti1Image(seg_arr, cort_img.affine, header=cort_img.header)
         seg_img.to_filename(
             op.join(
-                anat_dir,
+                anat_out_dir,
                 f"sub-{subject}_space-T1w_res-bold_desc-totalMaskNoCSF_dseg.nii.gz",
             )
         )
@@ -189,7 +190,7 @@ def preprocess(project_dir, dset):
         mask_img = nib.Nifti1Image(mask_arr, cort_img.affine, header=cort_img.header)
         mask_img.to_filename(
             op.join(
-                anat_dir,
+                anat_out_dir,
                 "sub-{subject}_space-T1w_res-bold_desc-totalMaskNoCSF_mask.nii.gz",
             )
         )
@@ -202,7 +203,7 @@ def preprocess(project_dir, dset):
         seg_img = nib.Nifti1Image(seg_arr, cort_img.affine, header=cort_img.header)
         seg_img.to_filename(
             op.join(
-                anat_dir,
+                anat_out_dir,
                 f"sub-{subject}_space-T1w_res-bold_desc-totalMaskWithCSF_dseg.nii.gz",
             )
         )
@@ -210,7 +211,7 @@ def preprocess(project_dir, dset):
         mask_img = nib.Nifti1Image(mask_arr, cort_img.affine, header=cort_img.header)
         mask_img.to_filename(
             op.join(
-                anat_dir,
+                anat_out_dir,
                 "sub-{subject}_space-T1w_res-bold_desc-totalMaskWithCSF_mask.nii.gz",
             )
         )
@@ -219,7 +220,7 @@ def preprocess(project_dir, dset):
         echo_files = sorted(
             glob(
                 op.join(
-                    fp_subj_dir,
+                    subj_fmriprep_dir,
                     "func",
                     "{sub}_task-*_echo-*_space-scanner_desc-partialPreproc_bold.nii.gz",
                 )
@@ -228,12 +229,12 @@ def preprocess(project_dir, dset):
 
         # TODO: Load and use confounds files
         confounds_file = op.join(
-            fp_subj_dir,
+            subj_fmriprep_dir,
             "func",
             f"sub-{subject}_task-rest_run-1_desc-confounds_timeseries.tsv",
         )
         confounds_filename = op.basename(confounds_file)
-        out_confounds_file = op.join(func_dir, confounds_filename)
+        out_confounds_file = op.join(func_out_dir, confounds_filename)
         confounds_json_file = confounds_file.replace(".tsv", ".json")
         out_confounds_json_file = out_confounds_file.replace(".tsv", ".json")
 
@@ -272,7 +273,7 @@ def preprocess(project_dir, dset):
                     "_desc-partialPreproc_",
                     "_desc-NSSRemoved_",
                 )
-                out_echo_file = op.join(func_dir, echo_filename)
+                out_echo_file = op.join(func_out_dir, echo_filename)
                 reduced_echo_img.to_filename(out_echo_file)
 
                 # Copy and update metadata for imaging files
@@ -307,7 +308,7 @@ def preprocess(project_dir, dset):
                     "_desc-partialPreproc_",
                     "_desc-NSSRemoved_",
                 )
-                out_echo_file = op.join(func_dir, echo_filename)
+                out_echo_file = op.join(func_out_dir, echo_filename)
                 shutil.copyfile(echo_file, out_echo_file)
 
                 # Copy and update metadata
@@ -328,5 +329,5 @@ def preprocess(project_dir, dset):
 if __name__ == "__main__":
     project_dir = "/home/data/nbc/misc-projects/Salo_PowerReplication/code/"
     dsets = ["dset-cambridge", "dset-camcan", "dset-cohen", "dset-dalenberg", "dset-dupre"]
-    for dset in dsets:
+    for dset in dsets[:1]:
         preprocess(project_dir, dset)
