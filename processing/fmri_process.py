@@ -35,7 +35,7 @@ def preprocess(project_dir, dset):
     # Get list of participants with good data
     participants_file = op.join(dset_dir, "participants.tsv")
     participants_df = pd.read_table(participants_file)
-    subjects = participants_df.loc[participants_df["exclude"] == 0].index.tolist()
+    subjects = participants_df.loc[participants_df["exclude"] == 0, "participant_id"].tolist()
 
     if not op.isdir(out_dir):
         os.mkdir(out_dir)
