@@ -41,6 +41,7 @@ def preprocess(project_dir, dset):
         os.mkdir(out_dir)
 
     for subject in subjects[:1]:
+        print(f"\t{subject}", flush=True)
         subj_fmriprep_dir = op.join(fp_dir, subject)
         subj_out_dir = op.join(out_dir, subject)
         if not op.isdir(subj_out_dir):
@@ -327,7 +328,8 @@ def preprocess(project_dir, dset):
 
 
 if __name__ == "__main__":
-    project_dir = "/home/data/nbc/misc-projects/Salo_PowerReplication/code/"
+    project_dir = "/home/data/nbc/misc-projects/Salo_PowerReplication/"
     dsets = ["dset-cambridge", "dset-camcan", "dset-cohen", "dset-dalenberg", "dset-dupre"]
     for dset in dsets[:1]:
+        print(f"{dset}", flush=True)
         preprocess(project_dir, dset)
