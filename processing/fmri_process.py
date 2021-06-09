@@ -61,14 +61,14 @@ def preprocess(project_dir, dset):
         aparcaseg_t1wres = op.join(
             subj_fmriprep_dir,
             "anat",
-            f"sub-{subject}_desc-aparcaseg_dseg.nii.gz",
+            f"{subject}_desc-aparcaseg_dseg.nii.gz",
         )
         aparcaseg_boldres = sorted(
             glob(
                 op.join(
                     subj_fmriprep_dir,
                     "func",
-                    f"sub-{subject}_task-*_space-T1w_desc-aparcaseg_dseg.nii.gz",
+                    f"{subject}_task-*_space-T1w_desc-aparcaseg_dseg.nii.gz",
                 )
             )
         )[0]
@@ -100,7 +100,7 @@ def preprocess(project_dir, dset):
         cort_img.to_filename(
             op.join(
                 anat_out_dir,
-                f"sub-{subject}_space-MNI152NLin6Asym_res-bold_label-CGM_mask.nii.gz",
+                f"{subject}_space-MNI152NLin6Asym_res-bold_label-CGM_mask.nii.gz",
             )
         )
 
@@ -184,7 +184,7 @@ def preprocess(project_dir, dset):
         seg_img.to_filename(
             op.join(
                 anat_out_dir,
-                f"sub-{subject}_space-T1w_res-bold_desc-totalMaskNoCSF_dseg.nii.gz",
+                f"{subject}_space-T1w_res-bold_desc-totalMaskNoCSF_dseg.nii.gz",
             )
         )
         mask_arr = (seg_arr > 0).astype(int)
@@ -192,7 +192,7 @@ def preprocess(project_dir, dset):
         mask_img.to_filename(
             op.join(
                 anat_out_dir,
-                "sub-{subject}_space-T1w_res-bold_desc-totalMaskNoCSF_mask.nii.gz",
+                "{subject}_space-T1w_res-bold_desc-totalMaskNoCSF_mask.nii.gz",
             )
         )
 
@@ -205,7 +205,7 @@ def preprocess(project_dir, dset):
         seg_img.to_filename(
             op.join(
                 anat_out_dir,
-                f"sub-{subject}_space-T1w_res-bold_desc-totalMaskWithCSF_dseg.nii.gz",
+                f"{subject}_space-T1w_res-bold_desc-totalMaskWithCSF_dseg.nii.gz",
             )
         )
         mask_arr = (seg_arr > 0).astype(int)
@@ -213,7 +213,7 @@ def preprocess(project_dir, dset):
         mask_img.to_filename(
             op.join(
                 anat_out_dir,
-                "sub-{subject}_space-T1w_res-bold_desc-totalMaskWithCSF_mask.nii.gz",
+                "{subject}_space-T1w_res-bold_desc-totalMaskWithCSF_mask.nii.gz",
             )
         )
 
@@ -232,7 +232,7 @@ def preprocess(project_dir, dset):
         confounds_file = op.join(
             subj_fmriprep_dir,
             "func",
-            f"sub-{subject}_task-rest_run-1_desc-confounds_timeseries.tsv",
+            f"{subject}_task-rest_run-1_desc-confounds_timeseries.tsv",
         )
         confounds_filename = op.basename(confounds_file)
         out_confounds_file = op.join(func_out_dir, confounds_filename)
