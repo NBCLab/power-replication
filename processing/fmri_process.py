@@ -1,6 +1,7 @@
 """
 Additional, post-fMRIPrep preprocessing.
 """
+import json
 import os
 import os.path as op
 import shutil
