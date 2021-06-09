@@ -332,7 +332,7 @@ def preprocess(project_dir, dset):
                     json_info["Sources"] = [echo_file]
                     json_info["Description"] = (
                         "Echo-wise native-space preprocessed data from fMRIPrep, "
-                        f"with {first_kept_vol} non-steady state volume(s) removed."
+                        f"with 0 non-steady state volume(s) removed."
                     )
 
                 with open(out_nii_json_file, "w") as fo:
