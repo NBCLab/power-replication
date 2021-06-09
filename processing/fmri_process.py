@@ -228,6 +228,15 @@ def preprocess(project_dir, dset):
         )
         echo_files = sorted(glob(pattern))
         assert len(echo_files) >= 3, pattern
+        preproc_json = sorted(
+            glob(
+                op.join(
+                    subj_fmriprep_dir,
+                    "func",
+                    f"{subject}_task-*_desc-preproc_bold.json",
+                )
+            )
+        )[0]
 
         # TODO: Load and use confounds files
         confounds_file = sorted(
@@ -283,9 +292,8 @@ def preprocess(project_dir, dset):
                 reduced_echo_img.to_filename(out_echo_file)
 
                 # Copy and update metadata for imaging files
-                nii_json_file = echo_file.replace(".nii.gz", ".json")
                 out_nii_json_file = out_echo_file.replace(".nii.gz", ".json")
-                with open(nii_json_file, "r") as fo:
+                with open(preproc_json, "r") as fo:
                     json_info = json.load(fo)
                     json_info["Sources"] = [echo_file]
                     json_info["Description"] = (
@@ -318,9 +326,8 @@ def preprocess(project_dir, dset):
                 shutil.copyfile(echo_file, out_echo_file)
 
                 # Copy and update metadata
-                nii_json_file = echo_file.replace(".nii.gz", ".json")
                 out_nii_json_file = out_echo_file.replace(".nii.gz", ".json")
-                with open(nii_json_file, "r") as fo:
+                with open(preproc_json, "r") as fo:
                     json_info = json.load(fo)
                     json_info["Sources"] = [echo_file]
                     json_info["Description"] = (
