@@ -195,7 +195,7 @@ def preprocess(project_dir, dset):
         mask_img.to_filename(
             op.join(
                 anat_out_dir,
-                "{subject}_space-T1w_res-bold_desc-totalMaskNoCSF_mask.nii.gz",
+                f"{subject}_space-T1w_res-bold_desc-totalMaskNoCSF_mask.nii.gz",
             )
         )
 
@@ -304,6 +304,8 @@ def preprocess(project_dir, dset):
                 with open(out_nii_json_file, "w") as fo:
                     json.dump(json_info, fo, indent=4, sort_keys=True)
         else:
+            shutil.copyfile(confounds_file, out_confounds_file)
+
             # Copy and update metadata for confounds file
             with open(confounds_json_file, "r") as fo:
                 json_info = json.load(fo)
