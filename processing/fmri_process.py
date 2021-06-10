@@ -43,6 +43,11 @@ def preprocess(project_dir, dset):
     if not op.isdir(out_dir):
         os.mkdir(out_dir)
 
+    # Summary information saved to a file
+    nss_file = op.join(out_dir, "nss_removed.tsv")
+    nss_df = pd.DataFrame(columns=["nss_count"], index=subjects)
+    nss_df.index.name = "participant_id"
+
     for subject in subjects:
         print(f"\t{subject}", flush=True)
         subj_fmriprep_dir = op.join(fp_dir, subject)
@@ -257,6 +262,7 @@ def preprocess(project_dir, dset):
         nss_cols = [
             c for c in confounds_df.columns if c.startswith("non_steady_state_outlier")
         ]
+
         if len(nss_cols):
             nss_vols = confounds_df.loc[
                 confounds_df[nss_cols].sum(axis=1).astype(bool)
@@ -267,6 +273,7 @@ def preprocess(project_dir, dset):
             n_vols = confounds_df.shape[0]
             reduced_confounds_df = confounds_df.loc[first_kept_vol:]
             reduced_confounds_df.to_csv(out_confounds_file, sep="\t", index=False)
+            nss_df.loc[subject, "nss_count"] = first_kept_vol
 
             # Copy and update metadata for confounds file
             with open(confounds_json_file, "r") as fo:
@@ -305,6 +312,7 @@ def preprocess(project_dir, dset):
                     json.dump(json_info, fo, indent=4, sort_keys=True)
         else:
             shutil.copyfile(confounds_file, out_confounds_file)
+            nss_df.loc[subject, "nss_count"] = 0
 
             # Copy and update metadata for confounds file
             with open(confounds_json_file, "r") as fo:
@@ -339,6 +347,8 @@ def preprocess(project_dir, dset):
 
                 with open(out_nii_json_file, "w") as fo:
                     json.dump(json_info, fo, indent=4, sort_keys=True)
+
+        nss_df.to_csv(nss_file, sep="\t", index=True, index_label="participant_id")
 
 
 if __name__ == "__main__":
