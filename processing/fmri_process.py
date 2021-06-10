@@ -43,7 +43,7 @@ def preprocess(project_dir, dset):
     if not op.isdir(out_dir):
         os.mkdir(out_dir)
 
-    for subject in subjects[:1]:
+    for subject in subjects:
         print(f"\t{subject}", flush=True)
         subj_fmriprep_dir = op.join(fp_dir, subject)
         subj_out_dir = op.join(out_dir, subject)
@@ -350,6 +350,6 @@ if __name__ == "__main__":
         "dset-dalenberg",
         "dset-dupre",
     ]
-    for dset in dsets[:1]:
+    for dset in dsets:
         print(f"{dset}", flush=True)
         preprocess(project_dir, dset)
