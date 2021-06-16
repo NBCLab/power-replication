@@ -243,7 +243,7 @@ def preprocess(project_dir, dset):
             )
         )[0]
 
-        # TODO: Load and use confounds files
+        # Load and use confounds files
         confounds_file = sorted(
             glob(
                 op.join(
@@ -351,57 +351,133 @@ def preprocess(project_dir, dset):
         nss_df.to_csv(nss_file, sep="\t", index=True, index_label="participant_id")
 
 
-def create_segmentation_jsons(project_dir, dset):
+def compile_metadata(project_dir, dset):
+    """Extract metadata from raw BOLD files and add to the preprocessed BOLD file jsons.
+
+    Parameters
+    ----------
+    project_dir
+    dset
+    """
+    dset_dir = op.join(project_dir, dset)
+    power_dir = op.join(dset_dir, "derivatives/power")
+    fmriprep_dir = op.join(dset_dir, "derivatives/fmriprep")
+
+    # Get list of participants with good data
+    participants_file = op.join(dset_dir, "participants.tsv")
+    participants_df = pd.read_table(participants_file)
+    subjects = participants_df.loc[
+        participants_df["exclude"] == 0, "participant_id"
+    ].tolist()
+
+    FROM_RAW_METADATA = ["EchoTime", "RepetitionTime", "FlipAngle", "TaskName"]
+
+    for subject in subjects:
+        raw_func_dir = op.join(dset_dir, subject, "func")
+        fmriprep_func_dir = op.join(fmriprep_dir, subject, "func")
+        power_func_dir = op.join(fmriprep_dir, subject, "func")
+        raw_files = sorted(glob(op.join(raw_func_dir, "sub-*_bold.nii.gz")))
+        a = "sub-04570_task-rest_echo-1_bold.nii.gz"
+        b = "sub-04570_task-rest_echo-1_space-scanner_desc-partialPreproc_bold.nii.gz"
+        base_filenames = [op.basename(f) for f in raw_files]
+        fmriprep_files = [
+            op.join(
+                fmriprep_func_dir,
+                f.replace(
+                    "_bold.nii.gz", "_space-scanner_desc-partialPreproc_bold.nii.gz"
+                ),
+            )
+            for f in base_filenames
+        ]
+        power_files = [
+            op.join(
+                power_func_dir,
+                f.replace("_bold.nii.gz", "_space-scanner_desc-NSSRemoved_bold.nii.gz"),
+            )
+            for f in base_filenames
+        ]
+        assert all(op.isfile(f) for f in fmriprep_files), fmriprep_files
+        assert all(op.isfile(f) for f in power_files), power_files
+        for i_file, raw_file in enumerate(raw_files):
+            fmriprep_file = fmriprep_files[i_file]
+            power_file = power_files[i_file]
+            raw_json = raw_file.replace(".nii.gz", ".json")
+            fmriprep_json = fmriprep_file.replace(".nii.gz", ".json")
+            power_json = power_file.replace(".nii.gz", ".json")
+            with open(raw_json, "r") as fo:
+                raw_metadata = json.load(fo)
+            raw_metadata = {k: v for k, v in raw_metadata if k in FROM_RAW_METADATA}
+
+            if op.isfile(fmriprep_json):
+                with open(fmriprep_json, "r") as fo:
+                    fmriprep_metadata = json.load(fo)
+            else:
+                fmriprep_metadata = {}
+
+            with open(power_json, "r") as fo:
+                power_metadata = json.load(fo)
+
+            # Merge in metadata
+            fmriprep_metadata = {**raw_metadata, **fmriprep_metadata}
+            power_metadata = {**fmriprep_metadata, **power_metadata}
+
+            fmriprep_metadata["RawSources"] = [raw_file]
+            power_metadata["RawSources"] = [raw_file]
+            # Already done in preprocess()
+            # power_metadata["Sources"] = [fmripep_file]
+
+            with open(fmriprep_json, "w") as fo:
+                json.dump(fmriprep_metadata, fo, indent=4, sort_keys=True)
+
+            with open(power_json, "w") as fo:
+                json.dump(power_metadata, fo, indent=4, sort_keys=True)
+
+
+def create_top_level_files(project_dir, dset):
+    """Create top-level files describing masks and discrete segmentation values."""
     INFO = {
-        "space-T1w_res-bold_label-CGM_mask.json":
-            {
-                "Type": "ROI",
-                "Resolution": "Native BOLD resolution.",
-            },
-        "space-T1w_res-bold_desc-totalMaskNoCSF_dseg.json":
-            {
-                "Resolution": "Native BOLD resolution.",
-            },
-        "space-T1w_res-bold_desc-totalMaskNoCSF_dseg.tsv":
-            pd.DataFrame(
-                columns=["index", "name", "abbreviation", "mapping"],
-                values=[
-                    [1, "Cortical Ribbon", "CORT", 8],
-                    [2, "Subcortical Nuclei", "SUBCORT", 9],
-                    [3, "Cerebellum", "CEREB", 11],
-                    [4, "Superficial WM", "WMero02", 2],
-                    [5, "Deeper WM", "WMero24", 2],
-                    [6, "Deepest WM", "WMero4", 2],
-                ],
-            ),
-        "space-T1w_res-bold_desc-totalMaskWithCSF_dseg.json":
-            {
-                "Resolution": "Native BOLD resolution.",
-            },
-        "space-T1w_res-bold_desc-totalMaskWithCSF_dseg.tsv":
-            pd.DataFrame(
-                columns=["index", "name", "abbreviation", "mapping"],
-                values=[
-                    [1, "Cortical Ribbon", "CORT", 8],
-                    [2, "Subcortical Nuclei", "SUBCORT", 9],
-                    [3, "Cerebellum", "CEREB", 11],
-                    [4, "Superficial WM", "WMero02", 2],
-                    [5, "Deeper WM", "WMero24", 2],
-                    [6, "Deepest WM", "WMero4", 2],
-                    [7, "Superficial CSF", "CSFero02", 3],
-                    [8, "Deeper CSF", "CSFero2", 3],
-                ],
-            ),
-        "space-T1w_res-bold_desc-totalMaskNoCSF_mask.json":
-            {
-                "Type": "Brain",
-                "Resolution": "Native BOLD resolution.",
-            },
-        "space-T1w_res-bold_desc-totalMaskWithCSF_mask.json":
-            {
-                "Type": "Brain",
-                "Resolution": "Native BOLD resolution.",
-            },
+        "space-T1w_res-bold_label-CGM_mask.json": {
+            "Type": "ROI",
+            "Resolution": "Native BOLD resolution.",
+        },
+        "space-T1w_res-bold_desc-totalMaskNoCSF_dseg.json": {
+            "Resolution": "Native BOLD resolution.",
+        },
+        "space-T1w_res-bold_desc-totalMaskNoCSF_dseg.tsv": pd.DataFrame(
+            columns=["index", "name", "abbreviation", "mapping"],
+            values=[
+                [1, "Cortical Ribbon", "CORT", 8],
+                [2, "Subcortical Nuclei", "SUBCORT", 9],
+                [3, "Cerebellum", "CEREB", 11],
+                [4, "Superficial WM", "WMero02", 2],
+                [5, "Deeper WM", "WMero24", 2],
+                [6, "Deepest WM", "WMero4", 2],
+            ],
+        ),
+        "space-T1w_res-bold_desc-totalMaskWithCSF_dseg.json": {
+            "Resolution": "Native BOLD resolution.",
+        },
+        "space-T1w_res-bold_desc-totalMaskWithCSF_dseg.tsv": pd.DataFrame(
+            columns=["index", "name", "abbreviation", "mapping"],
+            values=[
+                [1, "Cortical Ribbon", "CORT", 8],
+                [2, "Subcortical Nuclei", "SUBCORT", 9],
+                [3, "Cerebellum", "CEREB", 11],
+                [4, "Superficial WM", "WMero02", 2],
+                [5, "Deeper WM", "WMero24", 2],
+                [6, "Deepest WM", "WMero4", 2],
+                [7, "Superficial CSF", "CSFero02", 3],
+                [8, "Deeper CSF", "CSFero2", 3],
+            ],
+        ),
+        "space-T1w_res-bold_desc-totalMaskNoCSF_mask.json": {
+            "Type": "Brain",
+            "Resolution": "Native BOLD resolution.",
+        },
+        "space-T1w_res-bold_desc-totalMaskWithCSF_mask.json": {
+            "Type": "Brain",
+            "Resolution": "Native BOLD resolution.",
+        },
     }
     out_dir = op.join(project_dir, dset, "derivatives/power")
     for k, v in INFO.items():
@@ -427,4 +503,5 @@ if __name__ == "__main__":
     for dset in dsets:
         print(f"{dset}", flush=True)
         # preprocess(project_dir, dset)
-        create_segmentation_jsons(project_dir, dset)
+        compile_metadata(project_dir, dset)
+        create_top_level_files(project_dir, dset)
