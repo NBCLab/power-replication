@@ -172,7 +172,7 @@ def preprocess(project_dir, dset):
             interpolation="nearest",
         )
 
-        # Combine masks with different values for carpet pltos
+        # Combine masks with different values for carpet plots
         seg_arr = np.zeros(cort_img.shape)
         cort_arr = cort_img.get_fdata()
         seg_arr[cort_arr == 1] = 1
@@ -185,9 +185,9 @@ def preprocess(project_dir, dset):
         wm_ero24_arr = res_wm_ero24.get_fdata()
         seg_arr[wm_ero24_arr == 1] = 5
         wm_ero4_arr = res_wm_ero4.get_fdata()
+        seg_arr[wm_ero4_arr == 1] = 6
 
         # For carpet plots
-        seg_arr[wm_ero4_arr == 1] = 6
         seg_img = nib.Nifti1Image(seg_arr, cort_img.affine, header=cort_img.header)
         seg_img.to_filename(
             op.join(
@@ -342,13 +342,72 @@ def preprocess(project_dir, dset):
                     json_info["Sources"] = [echo_file]
                     json_info["Description"] = (
                         "Echo-wise native-space preprocessed data from fMRIPrep, "
-                        f"with 0 non-steady state volume(s) removed."
+                        "with 0 non-steady state volume(s) removed."
                     )
 
                 with open(out_nii_json_file, "w") as fo:
                     json.dump(json_info, fo, indent=4, sort_keys=True)
 
         nss_df.to_csv(nss_file, sep="\t", index=True, index_label="participant_id")
+
+
+def create_segmentation_jsons(project_dir, dset):
+    INFO = {
+        "space-T1w_res-bold_desc-totalMaskNoCSF_dseg.json":
+            {
+                "Resolution": "Native BOLD resolution.",
+            },
+        "space-T1w_res-bold_desc-totalMaskNoCSF_dseg.tsv":
+            pd.DataFrame(
+                columns=["index", "name", "abbreviation", "mapping"],
+                values=[
+                    [1, "Cortical Ribbon", "CORT", 8],
+                    [2, "Subcortical Nuclei", "SUBCORT", 9],
+                    [3, "Cerebellum", "CEREB", 11],
+                    [4, "Superficial WM", "WM02", 2],
+                    [5, "Deeper WM", "WM24", 2],
+                    [6, "Deepest WM", "WM4", 2],
+                ],
+            ),
+        "space-T1w_res-bold_desc-totalMaskWithCSF_dseg.json":
+            {
+                "Resolution": "Native BOLD resolution.",
+            },
+        "space-T1w_res-bold_desc-totalMaskWithCSF_dseg.tsv":
+            pd.DataFrame(
+                columns=["index", "name", "abbreviation", "mapping"],
+                values=[
+                    [1, "Cortical Ribbon", "CORT", 8],
+                    [2, "Subcortical Nuclei", "SUBCORT", 9],
+                    [3, "Cerebellum", "CEREB", 11],
+                    [4, "Superficial WM", "WM02", 2],
+                    [5, "Deeper WM", "WM24", 2],
+                    [6, "Deepest WM", "WM4", 2],
+                    [7, "Superficial CSF", "CSF02", 3],
+                    [8, "Deeper CSF", "CSF2", 3],
+                ],
+            ),
+        "space-T1w_res-bold_desc-totalMaskNoCSF_mask.json":
+            {
+                "Type": "Brain",
+                "Resolution": "Native BOLD resolution.",
+            },
+        "space-T1w_res-bold_desc-totalMaskWithCSF_mask.json":
+            {
+                "Type": "Brain",
+                "Resolution": "Native BOLD resolution.",
+            },
+    }
+    out_dir = op.join(project_dir, dset, "derivatives/power")
+    for k, v in INFO.items():
+        out_file = op.join(out_dir, k)
+        if isinstance(v, dict):
+            with open(k, "w") as fo:
+                json.dump(v, fo, indent=4, sort_keys=True)
+        elif isinstance(v, pd.DataFrame):
+            v.to_csv(k, sep="\t", line_terminator="\n", index=False)
+        else:
+            raise Exception(f"Type {type(v)} not understood.")
 
 
 if __name__ == "__main__":
@@ -362,4 +421,5 @@ if __name__ == "__main__":
     ]
     for dset in dsets:
         print(f"{dset}", flush=True)
-        preprocess(project_dir, dset)
+        # preprocess(project_dir, dset)
+        create_segmentation_jsons(project_dir, dset)
