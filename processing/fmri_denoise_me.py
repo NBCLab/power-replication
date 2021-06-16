@@ -4,105 +4,102 @@ Perform multi-echo denoising strategies with tedana.
 Also included in this (because it is implemented in tedana) is wavelet
 denoising.
 """
+import json
 import os
 import os.path as op
+from glob import glob
 
+import pandas as pd
 import tedana
-from bids.grabbids import BIDSLayout
 
 
-def run_tedana(dset, task, in_dir="/scratch/tsalo006/power-replication/"):
+def run_tedana(project_dir, dset):
+    """Run multi-echo denoising workflows.
+
+    Run the following tedana workflows:
+    - tedana + fittype=curvefit + gscontrol=mir
+    - t2smap + fittype=curvefit + fitmode=all
+
+    Notes
+    -----
+    Should be run *after* fmri_process.py.
     """
-    Run tedana workflows.
-    - Basic (without GSR or GODEC)
-    - With GSR
-    - With GODEC
+    dset_dir = op.join(project_dir, dset)
+    deriv_dir = op.join(dset_dir, "derivatives")
+    preproc_dir = op.join(deriv_dir, "power")
+    t2smap_dir = op.join(deriv_dir, "t2smap")
+    tedana_dir = op.join(deriv_dir, "tedana")
 
-    Parameters
-    ----------
-    dset : {'ds000210', 'ds000254', 'ds000258'}
-    task : {'rest', 'fingertapping'}
-    in_dir : str
-    """
-    dset_dir = op.join(in_dir, dset)
-    layout = BIDSLayout(dset_dir)
-    subjects = layout.get_subjects()
-
-    out_dir = op.join(dset_dir, "derivatives/power")
-    if not op.isdir(out_dir):
-        os.mkdir(out_dir)
+    # Get list of participants with good data
+    participants_file = op.join(dset_dir, "participants.tsv")
+    participants_df = pd.read_table(participants_file)
+    subjects = participants_df.loc[
+        participants_df["exclude"] == 0, "participant_id"
+    ].tolist()
 
     for subject in subjects:
-        power_subj_dir = op.join(out_dir, subject)
-        preproc_dir = op.join(power_subj_dir, "preprocessed")
-        denoise_dir = op.join(power_subj_dir, "denoised")
+        print(f"\t{subject}", flush=True)
+        preproc_subj_dir = op.join(preproc_dir, subject, "func")
+        t2smap_subj_dir = op.join(t2smap_dir, subject, "func")
+        tedana_subj_dir = op.join(tedana_dir, subject, "func")
+        os.makedirs(t2smap_subj_dir, exist_ok=True)
+        os.makedirs(tedana_subj_dir, exist_ok=True)
 
-        # Get echo times in ms as numpy array or list
-        echos = layout.get_echoes(
-            subject=subject,
-            modality="func",
-            type="bold",
-            task=task,
-            run=1,
-            extensions=["nii", "nii.gz"],
+        preproc_files = sorted(
+            glob(op.join(preproc_subj_dir, f"{subject}_*_desc-NSSRemoved_bold.nii.gz"))
         )
-        echos = sorted(echos)  # just to be extra safe
-
-        # Get 4D preprocessed file associated with each echo in list
-        in_files = []
+        json_files = [f.replace(".nii.gz", ".json") for f in preproc_files]
         echo_times = []
-        for echo in echos:
-            # Get echo time in ms
-            orig_file = layout.get(
-                subject=subject,
-                modality="func",
-                type="bold",
-                task=task,
-                run=1,
-                extensions=["nii", "nii.gz"],
-                echo=echo,
-            )
-            metadata = layout.get_metadata(orig_file[0].filename)
-            echo_time = metadata["EchoTime"] * 1000
-            echo_times.append(echo_time)
+        for json_file in json_files:
+            with open(json_file, "r") as fo:
+                metadata = json.load(fo)
+                echo_times.append(metadata["EchoTime"] * 1000)
 
-            # Get preprocessed file associated with echo
-            func_file = op.join(
-                preproc_dir,
-                "func",
-                (
-                    "sub-{0}_task-{1}_run-01_echo-{2}"
-                    "_bold_space-MNI152NLin2009cAsym_"
-                    "powerpreproc"
-                    ".nii.gz"
-                ).format(subject, task, echo),
-            )
-            in_files.append(func_file)
+        # Get prefix from first filename
+        first_file = preproc_files[0]
+        first_file = op.basename(first_file)
+        prefix = first_file.split("_echo")[0]
 
         # FIT denoised
         # We retain t2s and s0 timeseries from this method, but do not use
         # optcom or any MEICA derivatives.
+        print("\t\tt2smap", flush=True)
         tedana.workflows.t2smap_workflow(
-            in_files,
+            preproc_files,
             echo_times,
-            fitmode="ts",
-            out_dir=denoise_dir,
             combmode="t2s",
-            label="fit",
+            fitmode="ts",
+            fittype="curvefit",
+            out_dir=t2smap_subj_dir,
+            prefix=prefix,
         )
 
-        # TEDANA v2.5 with GODEC
-        # We use MEDN+GODEC and MEHK+GODEC for GODEC
+        # TEDANA + MIR
         # We use MEDN, reconstructed MEDN-noise, MEHK,
         # reconstructed MEHK-noise, optcom, mmix (component timeseries), and
-        # comptable (classifications of components) without GODEC
+        # comptable (classifications of components)
+        print("\t\ttedana", flush=True)
         tedana.workflows.tedana_workflow(
-            in_files,
+            preproc_files,
             echo_times,
-            gscontrol=False,
-            ws_denoise="godec",
-            wvpca=False,
-            out_dir=denoise_dir,
-            label="meica_v2_5",
-            selection="kundu_v2_5",
+            fittype="curvefit",
+            gscontrol="mir",
+            maxit=500,
+            maxrestart=100,
+            out_dir=tedana_subj_dir,
+            prefix=prefix,
         )
+
+
+if __name__ == "__main__":
+    project_dir = "/home/data/nbc/misc-projects/Salo_PowerReplication/"
+    dsets = [
+        "dset-cambridge",
+        "dset-camcan",
+        "dset-cohen",
+        "dset-dalenberg",
+        "dset-dupre",
+    ]
+    for dset in dsets:
+        print(dset, flush=True)
+        run_tedana(project_dir, dset)
