@@ -445,7 +445,7 @@ def create_top_level_files(project_dir, dset):
         },
         "space-T1w_res-bold_desc-totalMaskNoCSF_dseg.tsv": pd.DataFrame(
             columns=["index", "name", "abbreviation", "mapping"],
-            values=[
+            data=[
                 [1, "Cortical Ribbon", "CORT", 8],
                 [2, "Subcortical Nuclei", "SUBCORT", 9],
                 [3, "Cerebellum", "CEREB", 11],
@@ -459,7 +459,7 @@ def create_top_level_files(project_dir, dset):
         },
         "space-T1w_res-bold_desc-totalMaskWithCSF_dseg.tsv": pd.DataFrame(
             columns=["index", "name", "abbreviation", "mapping"],
-            values=[
+            data=[
                 [1, "Cortical Ribbon", "CORT", 8],
                 [2, "Subcortical Nuclei", "SUBCORT", 9],
                 [3, "Cerebellum", "CEREB", 11],
