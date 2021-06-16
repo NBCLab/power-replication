@@ -389,6 +389,8 @@ def compile_metadata(project_dir, dset):
             )
             for f in base_filenames
         ]
+        # For dset-dupre
+        fmriprep_files = [f.replace("run-01", "run-1") for f in fmriprep_files]
         power_files = [
             op.join(
                 power_func_dir,
@@ -396,6 +398,7 @@ def compile_metadata(project_dir, dset):
             )
             for f in base_filenames
         ]
+        power_files = [f.replace("run-01", "run-1") for f in power_files]
         assert all(op.isfile(f) for f in fmriprep_files), fmriprep_files
         assert all(op.isfile(f) for f in power_files), power_files
         for i_file, raw_file in enumerate(raw_files):
@@ -492,10 +495,10 @@ def create_top_level_files(project_dir, dset):
         out_file = op.join(out_dir, k)
         print(f"\tCreating {out_file}", flush=True)
         if isinstance(v, dict):
-            with open(k, "w") as fo:
+            with open(out_file, "w") as fo:
                 json.dump(v, fo, indent=4, sort_keys=True)
         elif isinstance(v, pd.DataFrame):
-            v.to_csv(k, sep="\t", line_terminator="\n", index=False)
+            v.to_csv(out_file, sep="\t", line_terminator="\n", index=False)
         else:
             raise Exception(f"Type {type(v)} not understood.")
 
