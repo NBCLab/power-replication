@@ -516,5 +516,5 @@ if __name__ == "__main__":
     for dset in dsets:
         print(f"{dset}", flush=True)
         # preprocess(project_dir, dset)
-        compile_metadata(project_dir, dset)
-        create_top_level_files(project_dir, dset)
+        # compile_metadata(project_dir, dset)
+        # create_top_level_files(project_dir, dset)
