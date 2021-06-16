@@ -411,9 +411,10 @@ def compile_metadata(project_dir, dset):
                 with open(raw_json, "r") as fo:
                     raw_metadata = json.load(fo)
             else:
-                # Inheritance is used in dset-cohen
+                # Inheritance is used in dset-cohen and dset-dupre
                 raw_json = raw_json.replace(raw_func_dir, dset_dir)
                 raw_json = raw_json.replace(f"{subject}_", "")
+                raw_json = raw_json.replace("run-01_", "")
                 with open(raw_json, "r") as fo:
                     raw_metadata = json.load(fo)
 
