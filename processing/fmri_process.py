@@ -353,6 +353,11 @@ def preprocess(project_dir, dset):
 
 def create_segmentation_jsons(project_dir, dset):
     INFO = {
+        "space-T1w_res-bold_label-CGM_mask.json":
+            {
+                "Type": "ROI",
+                "Resolution": "Native BOLD resolution.",
+            },
         "space-T1w_res-bold_desc-totalMaskNoCSF_dseg.json":
             {
                 "Resolution": "Native BOLD resolution.",
