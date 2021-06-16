@@ -406,7 +406,7 @@ def compile_metadata(project_dir, dset):
             power_json = power_file.replace(".nii.gz", ".json")
             with open(raw_json, "r") as fo:
                 raw_metadata = json.load(fo)
-            raw_metadata = {k: v for k, v in raw_metadata if k in FROM_RAW_METADATA}
+            raw_metadata = {k: v for k, v in raw_metadata.items() if k in FROM_RAW_METADATA}
 
             if op.isfile(fmriprep_json):
                 with open(fmriprep_json, "r") as fo:
