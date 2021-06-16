@@ -375,7 +375,7 @@ def compile_metadata(project_dir, dset):
     for subject in subjects:
         raw_func_dir = op.join(dset_dir, subject, "func")
         fmriprep_func_dir = op.join(fmriprep_dir, subject, "func")
-        power_func_dir = op.join(fmriprep_dir, subject, "func")
+        power_func_dir = op.join(power_dir, subject, "func")
         raw_files = sorted(glob(op.join(raw_func_dir, "sub-*_bold.nii.gz")))
         a = "sub-04570_task-rest_echo-1_bold.nii.gz"
         b = "sub-04570_task-rest_echo-1_space-scanner_desc-partialPreproc_bold.nii.gz"
