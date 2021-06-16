@@ -404,8 +404,16 @@ def compile_metadata(project_dir, dset):
             raw_json = raw_file.replace(".nii.gz", ".json")
             fmriprep_json = fmriprep_file.replace(".nii.gz", ".json")
             power_json = power_file.replace(".nii.gz", ".json")
-            with open(raw_json, "r") as fo:
-                raw_metadata = json.load(fo)
+            if op.isfile(raw_json):
+                with open(raw_json, "r") as fo:
+                    raw_metadata = json.load(fo)
+            else:
+                # Inheritance is used in dset-cohen
+                raw_json = raw_json.replace(raw_func_dir, dset_dir)
+                raw_json = raw_json.replace(f"{subject}_", "")
+                with open(raw_json, "r") as fo:
+                    raw_metadata = json.load(fo)
+
             raw_metadata = {k: v for k, v in raw_metadata.items() if k in FROM_RAW_METADATA}
 
             if op.isfile(fmriprep_json):
@@ -482,6 +490,7 @@ def create_top_level_files(project_dir, dset):
     out_dir = op.join(project_dir, dset, "derivatives/power")
     for k, v in INFO.items():
         out_file = op.join(out_dir, k)
+        print(f"\tCreating {out_file}", flush=True)
         if isinstance(v, dict):
             with open(k, "w") as fo:
                 json.dump(v, fo, indent=4, sort_keys=True)
