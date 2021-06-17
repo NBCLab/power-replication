@@ -118,20 +118,14 @@ def run_rvreg():
     pass
 
 
-def run_nuisance():
-    """
-    Generate ICA denoised data after regressing out nuisance regressors
-    Regressors include mean white matter, mean CSF, 6 motion parameters, and
-    first temporal derivatives of motion parameters
+def run_nuisance(medn_file, mask_file, seg_file, confounds_file, out_dir):
+    """Clean MEDN data with nuisance model.
+
+    Regressors include mean deepest white matter, mean deepest CSF,
+    6 motion parameters, and first temporal derivatives of motion parameters.
 
     Parameters
     ----------
-    dset : {'ds000210', 'ds000254', 'ds000258'}
-    task : {'rest', 'fingertapping'}
-    method : {'meica_v2_5', 'fit'}
-    suffix : {'dn_ts_OC', 'hik_ts_OC', 't2s'}
-    in_dir : str
-        Path to analysis folder
 
     Used for:
     -   Carpet plots of ME-DN after regression of nuisance (S7)
@@ -144,10 +138,46 @@ def run_nuisance():
     -   Scatter plot of ME-HK-Nuis SD of global signal against
         SD of ventilatory envelope (RPV) (not in paper).
     """
-    pass
+    medn_name = op.basename(medn_file)
+    prefix = medn_name.split("desc-")[0].rstrip("_")
+    prefix = op.join(out_dir, prefix)
+    denoised_file = prefix + "_desc-NuisReg_bold.nii.gz"
+    noise_file = prefix + "_desc-NuisRegNoise_bold.nii.gz"
+
+    wm_img = image.math_img("img == 6", img=seg_file)
+    wm_img = image.math_img("wm_mask * brain_mask", wm_mask=wm_img, brain_mask=mask_file)
+    wm_data = masking.apply_mask(medn_file, wm_img)
+
+    csf_img = image.math_img("img == 8", img=seg_file)
+    csf_img = image.math_img("csf_mask * brain_mask", csf_mask=csf_img, brain_mask=mask_file)
+    csf_data = masking.apply_mask(medn_file, csf_img)
+
+    confounds_df = pd.read_table(confounds_file)
+    confounds_df["wm_data"] = wm_data
+    confounds_df["csf_data"] = csf_data
+    nuisance_regressors = confounds_df[[
+        "wm_data",
+        "csf_data",
+        "trans_x",
+        "trans_y",
+        "trans_z",
+        "rot_x",
+        "rot_y",
+        "rot_z",
+        "trans_x_derivative1",
+        "trans_y_derivative1",
+        "trans_z_derivative1",
+        "rot_x_derivative1",
+        "rot_y_derivative1",
+        "rot_z_derivative1",
+    ]].values
+
+    # Regress confounds out of MEDN data
+
+    # TODO: Create json files with Sources field.
 
 
-def run_dgsr(medn_file, confounds_file, out_dir):
+def run_dgsr(medn_file, mask_file, confounds_file, out_dir):
     """Run dynamic global signal regression with rapidtide.
 
     Parameters
@@ -192,16 +222,23 @@ def run_dgsr(medn_file, confounds_file, out_dir):
     dgsr_noise_file = f"{prefix}_desc-noise_bold.nii.gz"
 
     cmd = f"rapidtide --denoising --datatstep {t_r} --motionfile {confounds_file} {medn_file} {prefix}"
+    run_command(cmd)
+    assert op.isfile(dgsr_file)
+    assert op.isfile(dgsr_noise_file)
+    # Will the scale of the denoised data be correct? Or is it mean-centered or something?
     dgsr_noise_img = image.math_img("img1 - img2", img1=medn_file, img2=dgsr_file)
     dgsr_noise_img.to_filename(dgsr_noise_file)
 
+    # TODO: Create json files with Sources field.
 
-def run_gsr(medn_file, cgm_mask, out_dir):
+
+def run_gsr(medn_file, mask_file, cgm_mask, out_dir):
     """Run global signal regression.
 
     Parameters
     ----------
     medn_file
+    mask_file
     cgm_mask
     out_dir
 
@@ -233,13 +270,21 @@ def run_gsr(medn_file, cgm_mask, out_dir):
     gsr_noise_file = prefix + "_desc-GSRNoise_bold.nii.gz"
 
     # Extract global signal from cortical ribbon
+    cgm_mask = image.math_img("cgm_mask * brain_mask", cgm_mask=cgm_mask, brain_mask=mask_file)
     gsr_signal = masking.apply_mask(medn_file, cgm_mask)
     gsr_signal = np.mean(gsr_signal, axis=1)
 
+    # Mean-center and linearly detrend global signal
+
+    # Mean-center and linearly detrend MEDN data
+
+    # Regress global signal out of MEDN data
+
+    # TODO: Create json files with Sources field.
+
 
 def run_godec():
-    """
-    Not to be run
+    """Not to be run.
 
     Parameters
     ----------
@@ -274,17 +319,22 @@ def run_godec():
     pass
 
 
-def run_acompcor(medn_file, seg_file, out_dir):
+def run_acompcor(medn_file, mask_file, seg_file, out_dir):
     """Run anatomical compCor.
 
     Parameters
     ----------
-    dset : {'ds000210', 'ds000254', 'ds000258'}
-    task : {'rest', 'fingertapping'}
-    method : {'meica_v2_5'}
-    suffix : {'dn_ts_OC', 'hik_ts_OC', 't2s'}
-    in_dir : str
-        Path to analysis folder
+    medn_file
+    mask_file
+    seg_file
+    out_dir
+
+    Notes
+    -----
+    From the original paper's appendix (page 4):
+        > For the purposes of Figures S12 and S13, only white matter signals
+        > in the deepest mask were used (for these signals are the most isolated
+        > from and distinct from those of the gray matter).
 
     Used for:
     -   Carpet plots of ME-DN after aCompCor (3, S9, S12)
@@ -307,15 +357,32 @@ def run_acompcor(medn_file, seg_file, out_dir):
     -   Scatter plot of ME-HK-aCompCor SD of global signal against
         SD of ventilatory envelope (RPV) (not in paper).
     """
-    pass
+    medn_name = op.basename(medn_file)
+    prefix = medn_name.split("desc-")[0]
+    prefix = op.join(out_dir, prefix)
+    acompcor_file = prefix + "_desc-aCompCor_bold.nii.gz"
+    acompcor_noise_file = prefix + "_desc-aCompCorNoise_bold.nii.gz"
+
+    # Derive aCompCor components
+    wm_img = image.math_img("img == 6", img=seg_file)
+    wm_img = image.math_img("wm_mask * brain_mask", wm_mask=wm_img, brain_mask=mask_file)
+    wm_data = masking.apply_mask(medn_file, wm_img)
+    pca = sklearn.decomposition.PCA(n_components=5)
+    acompcor_components = pca.fit_transform(wm_data)
+
+    # Regress components out of MEDN data
+
+    # TODO: Create json files with Sources field.
 
 
 def main(project_dir, dset):
+    """TODO: Create dataset_description.json files."""
     dset_dir = op.join(project_dir, dset)
     deriv_dir = op.join(dset_dir, "derivatives")
     tedana_dir = op.join(deriv_dir, "tedana")
     preproc_dir = op.join(deriv_dir, "power")
 
+    acompcor_dir = op.join(deriv_dir, "acompcor")
     dgsr_dir = op.join(deriv_dir, "rapidtide")
     gsr_dir = op.join(deriv_dir, "gsr")
 
@@ -349,15 +416,25 @@ def main(project_dir, dset):
         assert len(medn_files) == 1
         medn_file = medn_files[0]
 
+        mask_files = glob(op.join(tedana_subj_dir, "*_desc-goodSignal_mask.nii.gz"))
+        assert len(mask_files) == 1
+        mask_file = mask_files[0]
+
+        # aCompCor
+        acompcor_subj_dir = op.join(acompcor_dir, subject, "func")
+        os.makedirs(acompcor_subj_dir, exist_ok=True)
+        run_acompcor(medn_file, mask_file, seg_file, acompcor_subj_dir)
+
         # dGSR
+        # TODO: Check settings with Blaise Frederick
         dgsr_subj_dir = op.join(dgsr_dir, subject, "func")
         os.makedirs(dgsr_subj_dir, exist_ok=True)
-        run_dgsr(medn_file, confounds_file, dgsr_subj_dir)
+        run_dgsr(medn_file, mask_file, confounds_file, dgsr_subj_dir)
 
         # GSR
         gsr_subj_dir = op.join(gsr_dir, subject, "func")
         os.makedirs(gsr_subj_dir, exist_ok=True)
-        run_gsr(medn_file, cgm_file, gsr_subj_dir)
+        run_gsr(medn_file, mask_file, cgm_file, gsr_subj_dir)
 
 
 

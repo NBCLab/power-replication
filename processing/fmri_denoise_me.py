@@ -60,6 +60,8 @@ def run_tedana(project_dir, dset):
         first_file = op.basename(first_file)
         prefix = first_file.split("_echo")[0]
 
+        # TODO: Derive mask from segmentation file with CSF
+
         # FIT denoised
         # We retain t2s and s0 timeseries from this method, but do not use
         # optcom or any MEICA derivatives.
@@ -73,6 +75,7 @@ def run_tedana(project_dir, dset):
             out_dir=t2smap_subj_dir,
             prefix=prefix,
         )
+        # TODO: Merge metadata into FIT T2/S0 jsons
 
         # TEDANA + MIR
         # We use MEDN, reconstructed MEDN-noise, MEHK,
@@ -89,6 +92,14 @@ def run_tedana(project_dir, dset):
             out_dir=tedana_subj_dir,
             prefix=prefix,
         )
+
+        # Derive binary mask from adaptive mask
+        adaptive_mask = op.join(tedana_subj_dir, prefix + "_desc-adaptiveGoodSignal_mask.nii.gz")
+        mask = image.math_img("img >= 1", img=adaptive_mask)
+        mask.to_filename(op.join(tedana_subj_dir, prefix + "_desc-goodSignal_mask.nii.gz"))
+
+        # TODO: Merge metadata into MEDN/OC jsons
+        # TODO: Move dataset_description.json to top level and remove from subject folders.
 
 
 if __name__ == "__main__":
