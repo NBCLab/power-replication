@@ -2,24 +2,26 @@
 Perform standard denoising (not TE-dependent denoising).
 
 Methods:
--   Global signal regression (integrated in tedana, but we do it for real here
-    because we want to use the cortical ribbon specifically)
--   Dynamic global signal regression
--   compCor
--   GODEC (integrated in tedana)
+-   Global signal regression with custom code
+    (integrated in tedana, but we do it separately here because the approach is very different)
+-   Dynamic global signal regression with rapidtide
+-   aCompCor with custom code
+-   GODEC
 -   RVT (with lags) regression
 -   RV (with lags) regression
 """
+import json
+import os
 import os.path as op
+from glob import glob
 
 import nibabel as nib
 import numpy as np
-from bids.grabbids import BIDSLayout
-from nilearn.masking import apply_mask, unmask
+from nilearn import image, masking
 
 
 def run_rvtreg(
-    dset, task, method, suffix, in_dir="/scratch/tsalo006/power-replication/"
+    dset, task, method, suffix, in_dir="/scratch/tsalo006/power-replication/",
 ):
     """
     Generate ICA denoised data after regressing out RVT and RVT convolved with
@@ -61,7 +63,7 @@ def run_rvtreg(
             power_subj_dir,
             "denoised",
             method,
-            "sub-{0}_task-{1}_run-01_{2}" ".nii.gz".format(subj, task, suffix),
+            "sub-{0}_task-{1}_run-01_{2}.nii.gz".format(subj, task, suffix),
         )
         mask_file = op.join(anat_dir, "cortical_mask.nii.gz")
         func_img = nib.load(func_file)
@@ -145,18 +147,14 @@ def run_nuisance():
     pass
 
 
-def run_dgsr():
-    """
-    Run dynamic global signal regression with rapidtide.
+def run_dgsr(medn_file, confounds_file, out_dir):
+    """Run dynamic global signal regression with rapidtide.
 
     Parameters
     ----------
-    dset : {'ds000210', 'ds000254', 'ds000258'}
-    task : {'rest', 'fingertapping'}
-    method : {'meica_v2_5'}
-    suffix : {'dn_ts_OC', 'hik_ts_OC', 't2s'}
-    in_dir : str
-        Path to analysis folder
+    medn_file
+    confounds_file
+    out_dir
 
     Used for:
     -   Carpet plots of ME-DN after dGSR (3, S12)
@@ -179,21 +177,33 @@ def run_dgsr():
     -   Scatter plot of ME-HK-dGSR SD of global signal against
         SD of ventilatory envelope (RPV) (not in paper).
     """
-    pass
+    # I don't trust that tedana will retain the TR in the nifti header,
+    # so will extract from json directly.
+    medn_json = medn_file.replace(".nii.gz", ".json")
+    with open(medn_json, "r") as fo:
+        metadata = json.load(fo)
+    t_r = metadata["RepetitionTime"]
+
+    medn_name = op.basename(medn_file)
+    prefix = medn_name.split("desc-")[0].rstrip("_")
+    prefix = op.join(out_dir, prefix)
+
+    dgsr_file = f"{prefix}_desc-lfofilterCleaned_bold.nii.gz"
+    dgsr_noise_file = f"{prefix}_desc-noise_bold.nii.gz"
+
+    cmd = f"rapidtide --denoising --datatstep {t_r} --motionfile {confounds_file} {medn_file} {prefix}"
+    dgsr_noise_img = image.math_img("img1 - img2", img1=medn_file, img2=dgsr_file)
+    dgsr_noise_img.to_filename(dgsr_noise_file)
 
 
-def run_gsr():
-    """
-    Run global signal regression.
+def run_gsr(medn_file, cgm_mask, out_dir):
+    """Run global signal regression.
 
     Parameters
     ----------
-    dset : {'ds000210', 'ds000254', 'ds000258'}
-    task : {'rest', 'fingertapping'}
-    method : {'meica_v2_5'}
-    suffix : {'dn_ts_OC', 'hik_ts_OC', 't2s'}
-    in_dir : str
-        Path to analysis folder
+    medn_file
+    cgm_mask
+    out_dir
 
     Used for:
     -   Carpet plots of ME-DN after GSR (3, S12)
@@ -216,7 +226,15 @@ def run_gsr():
     -   Scatter plot of ME-HK-GSR SD of global signal against
         SD of ventilatory envelope (RPV) (not in paper).
     """
-    pass
+    medn_name = op.basename(medn_file)
+    prefix = medn_name.split("desc-")[0]
+    prefix = op.join(out_dir, prefix)
+    gsr_file = prefix + "_desc-GSR_bold.nii.gz"
+    gsr_noise_file = prefix + "_desc-GSRNoise_bold.nii.gz"
+
+    # Extract global signal from cortical ribbon
+    gsr_signal = masking.apply_mask(medn_file, cgm_mask)
+    gsr_signal = np.mean(gsr_signal, axis=1)
 
 
 def run_godec():
@@ -256,9 +274,8 @@ def run_godec():
     pass
 
 
-def run_compcor():
-    """
-    Run anatomical compCor.
+def run_acompcor(medn_file, seg_file, out_dir):
+    """Run anatomical compCor.
 
     Parameters
     ----------
@@ -291,3 +308,68 @@ def run_compcor():
         SD of ventilatory envelope (RPV) (not in paper).
     """
     pass
+
+
+def main(project_dir, dset):
+    dset_dir = op.join(project_dir, dset)
+    deriv_dir = op.join(dset_dir, "derivatives")
+    tedana_dir = op.join(deriv_dir, "tedana")
+    preproc_dir = op.join(deriv_dir, "power")
+
+    dgsr_dir = op.join(deriv_dir, "rapidtide")
+    gsr_dir = op.join(deriv_dir, "gsr")
+
+    # Get list of participants with good data
+    participants_file = op.join(dset_dir, "participants.tsv")
+    participants_df = pd.read_table(participants_file)
+    subjects = participants_df.loc[
+        participants_df["exclude"] == 0, "participant_id"
+    ].tolist()
+
+    for subject in subjects:
+        print(f"\t{subject}", flush=True)
+        preproc_subj_func_dir = op.join(preproc_dir, subject, "func")
+        preproc_subj_anat_dir = op.join(preproc_dir, subject, "anat")
+        tedana_subj_dir = op.join(tedana_dir, subject, "func")
+
+        # Collect important files
+        confounds_files = glob(op.join(preproc_subj_func_dir, "*_desc-confounds_timeseries.tsv"))
+        assert len(confounds_files) == 1
+        confounds_file = confounds_files[0]
+
+        seg_files = glob(op.join(preproc_subj_anat_dir, "*_space-T1w_res-bold_desc-totalMaskWithCSF_mask.nii.gz"))
+        assert len(seg_files) == 1
+        seg_file = seg_files[0]
+
+        cgm_files = glob(op.join(preproc_subj_anat_dir, "*_space-T1w_res-bold_label-CGM_mask.nii.gz"))
+        assert len(cgm_files) == 1
+        cgm_file = cgm_files[0]
+
+        medn_files = glob(op.join(tedana_subj_dir, "*_desc-optcomDenoised_bold.nii.gz"))
+        assert len(medn_files) == 1
+        medn_file = medn_files[0]
+
+        # dGSR
+        dgsr_subj_dir = op.join(dgsr_dir, subject, "func")
+        os.makedirs(dgsr_subj_dir, exist_ok=True)
+        run_dgsr(medn_file, confounds_file, dgsr_subj_dir)
+
+        # GSR
+        gsr_subj_dir = op.join(gsr_dir, subject, "func")
+        os.makedirs(gsr_subj_dir, exist_ok=True)
+        run_gsr(medn_file, cgm_file, gsr_subj_dir)
+
+
+
+if __name__ == "__main__":
+    project_dir = "/home/data/nbc/misc-projects/Salo_PowerReplication/"
+    dsets = [
+        "dset-cambridge",
+        "dset-camcan",
+        "dset-cohen",
+        "dset-dalenberg",
+        "dset-dupre",
+    ]
+    for dset in dsets:
+        print(dset, flush=True)
+        main(project_dir, dset)
