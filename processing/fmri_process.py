@@ -1,6 +1,4 @@
-"""
-Additional, post-fMRIPrep preprocessing.
-"""
+"""Additional, post-fMRIPrep preprocessing."""
 import json
 import os
 import os.path as op
@@ -15,9 +13,8 @@ from scipy.ndimage.morphology import binary_erosion
 
 
 def preprocess(project_dir, dset):
-    """
-    Perform additional, post-fMRIPrep preprocessing of structural and
-    functional MRI data.
+    """Perform additional, post-fMRIPrep preprocessing of structural and functional MRI data.
+
     1) Create GM, WM, and CSF masks and resample to 3mm (functional) resolution
     2) Remove non-steady state volumes from each fMRI image
     """
@@ -377,8 +374,6 @@ def compile_metadata(project_dir, dset):
         fmriprep_func_dir = op.join(fmriprep_dir, subject, "func")
         power_func_dir = op.join(power_dir, subject, "func")
         raw_files = sorted(glob(op.join(raw_func_dir, "sub-*_bold.nii.gz")))
-        a = "sub-04570_task-rest_echo-1_bold.nii.gz"
-        b = "sub-04570_task-rest_echo-1_space-scanner_desc-partialPreproc_bold.nii.gz"
         base_filenames = [op.basename(f) for f in raw_files]
         fmriprep_files = [
             op.join(
@@ -418,7 +413,9 @@ def compile_metadata(project_dir, dset):
                 with open(raw_json, "r") as fo:
                     raw_metadata = json.load(fo)
 
-            raw_metadata = {k: v for k, v in raw_metadata.items() if k in FROM_RAW_METADATA}
+            raw_metadata = {
+                k: v for k, v in raw_metadata.items() if k in FROM_RAW_METADATA
+            }
 
             if op.isfile(fmriprep_json):
                 with open(fmriprep_json, "r") as fo:

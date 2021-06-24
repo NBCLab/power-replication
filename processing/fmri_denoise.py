@@ -21,7 +21,11 @@ from nilearn import image, masking
 
 
 def run_rvtreg(
-    dset, task, method, suffix, in_dir="/scratch/tsalo006/power-replication/",
+    dset,
+    task,
+    method,
+    suffix,
+    in_dir="/scratch/tsalo006/power-replication/",
 ):
     """
     Generate ICA denoised data after regressing out RVT and RVT convolved with
@@ -145,32 +149,38 @@ def run_nuisance(medn_file, mask_file, seg_file, confounds_file, out_dir):
     noise_file = prefix + "_desc-NuisRegNoise_bold.nii.gz"
 
     wm_img = image.math_img("img == 6", img=seg_file)
-    wm_img = image.math_img("wm_mask * brain_mask", wm_mask=wm_img, brain_mask=mask_file)
+    wm_img = image.math_img(
+        "wm_mask * brain_mask", wm_mask=wm_img, brain_mask=mask_file
+    )
     wm_data = masking.apply_mask(medn_file, wm_img)
 
     csf_img = image.math_img("img == 8", img=seg_file)
-    csf_img = image.math_img("csf_mask * brain_mask", csf_mask=csf_img, brain_mask=mask_file)
+    csf_img = image.math_img(
+        "csf_mask * brain_mask", csf_mask=csf_img, brain_mask=mask_file
+    )
     csf_data = masking.apply_mask(medn_file, csf_img)
 
     confounds_df = pd.read_table(confounds_file)
     confounds_df["wm_data"] = wm_data
     confounds_df["csf_data"] = csf_data
-    nuisance_regressors = confounds_df[[
-        "wm_data",
-        "csf_data",
-        "trans_x",
-        "trans_y",
-        "trans_z",
-        "rot_x",
-        "rot_y",
-        "rot_z",
-        "trans_x_derivative1",
-        "trans_y_derivative1",
-        "trans_z_derivative1",
-        "rot_x_derivative1",
-        "rot_y_derivative1",
-        "rot_z_derivative1",
-    ]].values
+    nuisance_regressors = confounds_df[
+        [
+            "wm_data",
+            "csf_data",
+            "trans_x",
+            "trans_y",
+            "trans_z",
+            "rot_x",
+            "rot_y",
+            "rot_z",
+            "trans_x_derivative1",
+            "trans_y_derivative1",
+            "trans_z_derivative1",
+            "rot_x_derivative1",
+            "rot_y_derivative1",
+            "rot_z_derivative1",
+        ]
+    ].values
 
     # Regress confounds out of MEDN data
 
@@ -270,7 +280,9 @@ def run_gsr(medn_file, mask_file, cgm_mask, out_dir):
     gsr_noise_file = prefix + "_desc-GSRNoise_bold.nii.gz"
 
     # Extract global signal from cortical ribbon
-    cgm_mask = image.math_img("cgm_mask * brain_mask", cgm_mask=cgm_mask, brain_mask=mask_file)
+    cgm_mask = image.math_img(
+        "cgm_mask * brain_mask", cgm_mask=cgm_mask, brain_mask=mask_file
+    )
     gsr_signal = masking.apply_mask(medn_file, cgm_mask)
     gsr_signal = np.mean(gsr_signal, axis=1)
 
@@ -365,7 +377,9 @@ def run_acompcor(medn_file, mask_file, seg_file, out_dir):
 
     # Derive aCompCor components
     wm_img = image.math_img("img == 6", img=seg_file)
-    wm_img = image.math_img("wm_mask * brain_mask", wm_mask=wm_img, brain_mask=mask_file)
+    wm_img = image.math_img(
+        "wm_mask * brain_mask", wm_mask=wm_img, brain_mask=mask_file
+    )
     wm_data = masking.apply_mask(medn_file, wm_img)
     pca = sklearn.decomposition.PCA(n_components=5)
     acompcor_components = pca.fit_transform(wm_data)
@@ -400,15 +414,24 @@ def main(project_dir, dset):
         tedana_subj_dir = op.join(tedana_dir, subject, "func")
 
         # Collect important files
-        confounds_files = glob(op.join(preproc_subj_func_dir, "*_desc-confounds_timeseries.tsv"))
+        confounds_files = glob(
+            op.join(preproc_subj_func_dir, "*_desc-confounds_timeseries.tsv")
+        )
         assert len(confounds_files) == 1
         confounds_file = confounds_files[0]
 
-        seg_files = glob(op.join(preproc_subj_anat_dir, "*_space-T1w_res-bold_desc-totalMaskWithCSF_mask.nii.gz"))
+        seg_files = glob(
+            op.join(
+                preproc_subj_anat_dir,
+                "*_space-T1w_res-bold_desc-totalMaskWithCSF_mask.nii.gz",
+            )
+        )
         assert len(seg_files) == 1
         seg_file = seg_files[0]
 
-        cgm_files = glob(op.join(preproc_subj_anat_dir, "*_space-T1w_res-bold_label-CGM_mask.nii.gz"))
+        cgm_files = glob(
+            op.join(preproc_subj_anat_dir, "*_space-T1w_res-bold_label-CGM_mask.nii.gz")
+        )
         assert len(cgm_files) == 1
         cgm_file = cgm_files[0]
 
@@ -435,7 +458,6 @@ def main(project_dir, dset):
         gsr_subj_dir = op.join(gsr_dir, subject, "func")
         os.makedirs(gsr_subj_dir, exist_ok=True)
         run_gsr(medn_file, mask_file, cgm_file, gsr_subj_dir)
-
 
 
 if __name__ == "__main__":

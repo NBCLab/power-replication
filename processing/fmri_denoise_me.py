@@ -11,6 +11,7 @@ from glob import glob
 
 import pandas as pd
 import tedana
+from nilearn import image
 
 
 def run_tedana(project_dir, dset):
@@ -39,14 +40,20 @@ def run_tedana(project_dir, dset):
 
     for subject in subjects:
         print(f"\t{subject}", flush=True)
-        preproc_subj_dir = op.join(preproc_dir, subject, "func")
+        preproc_subj_dir = op.join(preproc_dir, subject)
+        preproc_subj_anat_dir = op.join(preproc_subj_dir, "anat")
+        preproc_subj_func_dir = op.join(preproc_subj_dir, "func")
         t2smap_subj_dir = op.join(t2smap_dir, subject, "func")
         tedana_subj_dir = op.join(tedana_dir, subject, "func")
         os.makedirs(t2smap_subj_dir, exist_ok=True)
         os.makedirs(tedana_subj_dir, exist_ok=True)
 
         preproc_files = sorted(
-            glob(op.join(preproc_subj_dir, f"{subject}_*_desc-NSSRemoved_bold.nii.gz"))
+            glob(
+                op.join(
+                    preproc_subj_func_dir, f"{subject}_*_desc-NSSRemoved_bold.nii.gz"
+                )
+            )
         )
         json_files = [f.replace(".nii.gz", ".json") for f in preproc_files]
         echo_times = []
@@ -60,7 +67,12 @@ def run_tedana(project_dir, dset):
         first_file = op.basename(first_file)
         prefix = first_file.split("_echo")[0]
 
-        # TODO: Derive mask from segmentation file with CSF
+        # Derive brain mask from discrete segmentation
+        dseg_file = op.join(
+            preproc_subj_anat_dir,
+            f"{subject}_space-T1w_res-bold_desc-totalMaskWithCSF_dseg.nii.gz",
+        )
+        mask_img = image.math_img("img >= 1", img=dseg_file)
 
         # FIT denoised
         # We retain t2s and s0 timeseries from this method, but do not use
@@ -72,6 +84,7 @@ def run_tedana(project_dir, dset):
             combmode="t2s",
             fitmode="ts",
             fittype="curvefit",
+            mask=mask_img,  # The docs say str, but workflows should work fine with an img
             out_dir=t2smap_subj_dir,
             prefix=prefix,
         )
@@ -89,14 +102,19 @@ def run_tedana(project_dir, dset):
             gscontrol="mir",
             maxit=500,
             maxrestart=100,
+            mask=mask_img,  # The docs say str, but workflows should work fine with an img
             out_dir=tedana_subj_dir,
             prefix=prefix,
         )
 
         # Derive binary mask from adaptive mask
-        adaptive_mask = op.join(tedana_subj_dir, prefix + "_desc-adaptiveGoodSignal_mask.nii.gz")
-        mask = image.math_img("img >= 1", img=adaptive_mask)
-        mask.to_filename(op.join(tedana_subj_dir, prefix + "_desc-goodSignal_mask.nii.gz"))
+        adaptive_mask = op.join(
+            tedana_subj_dir, prefix + "_desc-adaptiveGoodSignal_mask.nii.gz"
+        )
+        updated_mask = image.math_img("img >= 1", img=adaptive_mask)
+        updated_mask.to_filename(
+            op.join(tedana_subj_dir, prefix + "_desc-goodSignal_mask.nii.gz")
+        )
 
         # TODO: Merge metadata into MEDN/OC jsons
         # TODO: Move dataset_description.json to top level and remove from subject folders.
