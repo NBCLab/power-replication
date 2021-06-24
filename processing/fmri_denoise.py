@@ -201,17 +201,15 @@ def run_nuisance(medn_file, mask_file, seg_file, confounds_file, out_dir):
             "rot_z_derivative1",
         ]
     ].values
-    # Mean-center and detrend regressors
-    # See "fMRI data: nuisance regressions" section of Power appendix (page 3).
-    nuisance_regressors = nuisance_regressors - np.mean(axis=0)
-    nuisance_regressors = signal._detrend(nuisance_regressors, type="linear")
 
     # Regress confounds out of MEDN data
+    # Note that confounds should be mean-centered and detrended, which the masker will do.
+    # See "fMRI data: nuisance regressions" section of Power appendix (page 3).
     regression_masker = input_data.NiftiMasker(
         mask_file,
         smoothing_fwhm=None,
         standardize=False,
-        standardize_confounds=True,
+        standardize_confounds=True,  # will mean-center them too
         high_variance_confounds=False,
         low_pass=None,
         high_pass=None,
@@ -230,6 +228,7 @@ def run_nuisance(medn_file, mask_file, seg_file, confounds_file, out_dir):
         medn_mean_centered_img,
         confounds=None,
     )
+    # Calculate residuals (both raw and denoised should have same scale)
     noise_data = raw_data - denoised_data
     denoised_img = regression_masker.inverse_transform(denoised_data)
     noise_img = regression_masker.inverse_transform(noise_data)
@@ -238,7 +237,7 @@ def run_nuisance(medn_file, mask_file, seg_file, confounds_file, out_dir):
     denoised_img.to_filename(denoised_file)
     noise_img.to_filename(noise_file)
 
-    # Create json files with Sources and Description fields.
+    # Create json files with Sources and Description fields
     json_info["Sources"] = [medn_file, mask_file, seg_file, confounds_file]
     json_info["Description"] = (
         "Multi-echo denoised data further denoised with a nuisance regression model including "
