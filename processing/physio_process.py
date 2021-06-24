@@ -9,7 +9,6 @@ import os.path as op
 
 import numpy as np
 import pandas as pd
-import utils
 from bids.grabbids import BIDSLayout
 
 # Local install of metco2, adapted to make RVT more flexible
@@ -17,6 +16,8 @@ from metco2.utils import physio
 from scipy.interpolate import interp1d
 from scipy.signal import convolve, detrend, resample
 from scipy.stats import zscore
+
+import utils
 
 
 def generate_physio_regs(dset, in_dir="/scratch/tsalo006/power-replication/"):
@@ -162,9 +163,21 @@ def compute_rvt(df, physio_dir, subject, tr=3.0, samplerate=50):
     return rvt_all, rvt_x_rrf_all
 
 
-def compute_rv(df, tr=3.0, samplerate=50):
-    """
-    Compute respiratory variance regressors
+def compute_rv(df, tr=3.0, samplerate=50, lags=None):
+    """Compute respiratory variance regressors.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        DataFrame containing physio data as columns.
+        Must have a "respiratory" column.
+    t_r : float
+        Repetition time of the fMRI data in seconds.
+        This is the target temporal resolution of the RV regressors.
+    samplerate : float
+        Sample rate of the physiological data in ``df``, in Hertz.
+    lags : list or None
+        List of lags, in seconds, to apply to regressors.
     """
     sr_sec = 1 / samplerate
     n_trs = int((df.shape[0] * sr_sec) / tr)

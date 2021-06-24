@@ -19,7 +19,9 @@ import nibabel as nib
 import numpy as np
 import pandas as pd
 import sklearn
-from nilearn import image, input_data, masking, signal
+from nilearn import image, input_data, masking
+from phys2denoise.metrics import chest_belt
+from scipy import signal
 
 
 def run_rvtreg(
@@ -94,7 +96,7 @@ def run_rvtreg(
         return resid_sds
 
 
-def run_rvreg():
+def run_rvreg(medn_file, mask_file, physio_file, confounds_file, out_dir):
     """Clean MEDN data with regression model including RV and RV*RRF (plus lags).
 
     Parameters
@@ -117,7 +119,122 @@ def run_rvreg():
     -   Scatter plot of ME-HK-RV+RV*RRF SD of global signal against
         SD of ventilatory envelope (RPV) (not in paper).
     """
-    pass
+    medn_name = op.basename(medn_file)
+    prefix = medn_name.split("desc-")[0].rstrip("_")
+    prefix = op.join(out_dir, prefix)
+    medn_json_file = medn_file.replace(".nii.gz", ".json")
+    physio_json_file = physio_file.replace(".tsv.gz", ".json")
+    denoised_file = prefix + "_desc-RVReg_bold.nii.gz"
+    denoised_json_file = denoised_file.replace(".nii.gz", ".json")
+    noise_file = prefix + "_desc-RVRegNoise_bold.nii.gz"
+    noise_json_file = noise_file.replace(".nii.gz", ".json")
+
+    # Calculate mean-centered version of MEDN data
+    mean_img = image.mean_img(medn_file)
+    medn_mean_centered_img = image.math_img(
+        "img - avg_img",
+        img=medn_file,
+        avg_img=mean_img,
+    )
+    n_vols = medn_mean_centered_img.shape[3]
+
+    # Load metadata for writing out later and TR now
+    with open(medn_json_file, "r") as fo:
+        json_info = json.load(fo)
+
+    with open(physio_json_file, "r") as fo:
+        physio_metadata = json.load(fo)
+
+    respiratory_column = physio_metadata["Columns"].index("respiratory")
+    physio_samplerate = physio_metadata["SamplingFrequency"]
+
+    # Calculate RV and RV*RRF regressors
+    # This includes -3 second and +3 second lags.
+    physio_data = np.genfromtxt(physio_file)
+    respiratory_data = physio_data[:, respiratory_column]
+
+    # Normally we'd offset the data by the start time, but in this dataset that's 0
+    assert physio_metadata["StartTime"] == 0
+
+    rv_regressors = chest_belt.rv(
+        respiratory_data,
+        samplerate=physio_samplerate,
+        out_samplerate=1 / physio_samplerate,
+        window=6,
+        lags=[-3 * physio_samplerate, 0, 3 * physio_samplerate],
+    )
+    n_physio_datapoints = n_vols * physio_samplerate
+    rv_regressors = rv_regressors[:n_physio_datapoints, :]
+    rv_regressors = signal.resample(rv_regressors, num=n_vols, axis=0)
+    rv_regressor_names = [
+        "RV-3s",
+        "RV",
+        "RV+3s",
+        "RV*RRF-3s",
+        "RV*RRF",
+        "RV*RRF+3s",
+    ]
+
+    # Load motion confounds
+    confounds_df = pd.read_table(confounds_file)
+    confounds_df[rv_regressor_names] = rv_regressors
+    nuisance_regressors = confounds_df[
+        [
+            "RV-3s",
+            "RV",
+            "RV+3s",
+            "RV*RRF-3s",
+            "RV*RRF",
+            "RV*RRF+3s",
+            "trans_x",
+            "trans_y",
+            "trans_z",
+            "rot_x",
+            "rot_y",
+            "rot_z",
+            "trans_x_derivative1",
+            "trans_y_derivative1",
+            "trans_z_derivative1",
+            "rot_x_derivative1",
+            "rot_y_derivative1",
+            "rot_z_derivative1",
+        ]
+    ].values
+
+    # Regress confounds out of MEDN data
+    # Note that confounds should be mean-centered and detrended, which the masker will do.
+    # See "fMRI data: nuisance regressions" section of Power appendix (page 3).
+    regression_masker = input_data.NiftiMasker(
+        mask_file,
+        smoothing_fwhm=None,
+        standardize=False,
+        standardize_confounds=True,  # will mean-center them too
+        high_variance_confounds=False,
+        low_pass=None,
+        high_pass=None,
+        detrend=True,  # linearly detrends both confounds and data
+        t_r=json_info["RepetitionTime"],
+        reports=False,
+    )
+    regression_masker.fit(medn_mean_centered_img)
+    # Mask + remove confounds
+    denoised_data = regression_masker.transform(
+        medn_mean_centered_img,
+        confounds=nuisance_regressors,
+    )
+    # Mask without removing confounds
+    raw_data = regression_masker.transform(
+        medn_mean_centered_img,
+        confounds=None,
+    )
+    # Calculate residuals (both raw and denoised should have same scale)
+    noise_data = raw_data - denoised_data
+    denoised_img = regression_masker.inverse_transform(denoised_data)
+    noise_img = regression_masker.inverse_transform(noise_data)
+
+    # Save output files
+    denoised_img.to_filename(denoised_file)
+    noise_img.to_filename(noise_file)
 
 
 def run_nuisance(medn_file, mask_file, seg_file, confounds_file, out_dir):
