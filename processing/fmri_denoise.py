@@ -17,7 +17,9 @@ from glob import glob
 
 import nibabel as nib
 import numpy as np
-from nilearn import image, masking
+import pandas as pd
+import sklearn
+from nilearn import image, input_data, masking, signal
 
 
 def run_rvtreg(
@@ -27,9 +29,7 @@ def run_rvtreg(
     suffix,
     in_dir="/scratch/tsalo006/power-replication/",
 ):
-    """
-    Generate ICA denoised data after regressing out RVT and RVT convolved with
-    RRF (including lags)
+    """Clean MEDN data with regression model including RVT and RVT*RRF (plus lags).
 
     Parameters
     ----------
@@ -83,7 +83,7 @@ def run_rvtreg(
         rvt_x_rrf = np.loadtxt(rvt_x_rrf_file)
         rvt = np.hstack((np.ones(func_img.shape[-1]), rvt, rvt_x_rrf))
 
-        func_data = apply_mask(func_img, mask_img)
+        func_data = masking.apply_mask(func_img, mask_img)
         lstsq_res = np.linalg.lstsq(rvt, func_data, rcond=None)
         pred = np.dot(rvt, lstsq_res[0])
         residuals = func_data - pred
@@ -95,9 +95,7 @@ def run_rvtreg(
 
 
 def run_rvreg():
-    """
-    Generate ICA denoised data after regressing out RV and RV convolved with
-    RRF (including lags)
+    """Clean MEDN data with regression model including RV and RV*RRF (plus lags).
 
     Parameters
     ----------
@@ -130,7 +128,14 @@ def run_nuisance(medn_file, mask_file, seg_file, confounds_file, out_dir):
 
     Parameters
     ----------
+    medn_file
+    mask_file
+    seg_file
+    confounds_file
+    out_dir
 
+    Notes
+    -----
     Used for:
     -   Carpet plots of ME-DN after regression of nuisance (S7)
     -   Carpet plots of FIT-R2 after regression of nuisance (S6)
@@ -145,8 +150,23 @@ def run_nuisance(medn_file, mask_file, seg_file, confounds_file, out_dir):
     medn_name = op.basename(medn_file)
     prefix = medn_name.split("desc-")[0].rstrip("_")
     prefix = op.join(out_dir, prefix)
+    medn_json_file = medn_file.replace(".nii.gz", ".json")
     denoised_file = prefix + "_desc-NuisReg_bold.nii.gz"
+    denoised_json_file = denoised_file.replace(".nii.gz", ".json")
     noise_file = prefix + "_desc-NuisRegNoise_bold.nii.gz"
+    noise_json_file = noise_file.replace(".nii.gz", ".json")
+
+    # Calculate mean-centered version of MEDN data
+    mean_img = image.mean_img(medn_file)
+    medn_mean_centered_img = image.math_img(
+        "img - avg_img",
+        img=medn_file,
+        avg_img=mean_img,
+    )
+
+    # Load metadata for writing out later and TR now
+    with open(medn_json_file, "r") as fo:
+        json_info = json.load(fo)
 
     wm_img = image.math_img("img == 6", img=seg_file)
     wm_img = image.math_img(
@@ -181,10 +201,61 @@ def run_nuisance(medn_file, mask_file, seg_file, confounds_file, out_dir):
             "rot_z_derivative1",
         ]
     ].values
+    # Mean-center and detrend regressors
+    # See "fMRI data: nuisance regressions" section of Power appendix (page 3).
+    nuisance_regressors = nuisance_regressors - np.mean(axis=0)
+    nuisance_regressors = signal._detrend(nuisance_regressors, type="linear")
 
     # Regress confounds out of MEDN data
+    regression_masker = input_data.NiftiMasker(
+        mask_file,
+        smoothing_fwhm=None,
+        standardize=False,
+        standardize_confounds=True,
+        high_variance_confounds=False,
+        low_pass=None,
+        high_pass=None,
+        detrend=True,  # linearly detrends both confounds and data
+        t_r=json_info["RepetitionTime"],
+        reports=False,
+    )
+    regression_masker.fit(medn_mean_centered_img)
+    # Mask + remove confounds
+    denoised_data = regression_masker.transform(
+        medn_mean_centered_img,
+        confounds=nuisance_regressors,
+    )
+    # Mask without removing confounds
+    raw_data = regression_masker.transform(
+        medn_mean_centered_img,
+        confounds=None,
+    )
+    noise_data = raw_data - denoised_data
+    denoised_img = regression_masker.inverse_transform(denoised_data)
+    noise_img = regression_masker.inverse_transform(noise_data)
 
-    # TODO: Create json files with Sources field.
+    # Save output files
+    denoised_img.to_filename(denoised_file)
+    noise_img.to_filename(noise_file)
+
+    # Create json files with Sources and Description fields.
+    json_info["Sources"] = [medn_file, mask_file, seg_file, confounds_file]
+    json_info["Description"] = (
+        "Multi-echo denoised data further denoised with a nuisance regression model including "
+        "signal from mean deepest white matter, mean deepest CSF, 6 motion parameters, and "
+        "first temporal derivatives of motion parameters."
+    )
+    with open(denoised_json_file, "w") as fo:
+        json.dump(json_info, fo, sort_keys=True, indent=4)
+
+    json_info["Description"] = (
+        "Residuals from nuisance regression model applied to multi-echo denoised data. "
+        "The nuisance regression model includes signal from mean deepest white matter, "
+        "mean deepest CSF, 6 motion parameters, and first temporal derivatives of motion "
+        "parameters."
+    )
+    with open(noise_json_file, "w") as fo:
+        json.dump(json_info, fo, sort_keys=True, indent=4)
 
 
 def run_dgsr(medn_file, mask_file, confounds_file, out_dir):
@@ -231,7 +302,10 @@ def run_dgsr(medn_file, mask_file, confounds_file, out_dir):
     dgsr_file = f"{prefix}_desc-lfofilterCleaned_bold.nii.gz"
     dgsr_noise_file = f"{prefix}_desc-noise_bold.nii.gz"
 
-    cmd = f"rapidtide --denoising --datatstep {t_r} --motionfile {confounds_file} {medn_file} {prefix}"
+    cmd = (
+        f"rapidtide --denoising --datatstep {t_r} "
+        f"--motionfile {confounds_file} {medn_file} {prefix}"
+    )
     run_command(cmd)
     assert op.isfile(dgsr_file)
     assert op.isfile(dgsr_noise_file)
