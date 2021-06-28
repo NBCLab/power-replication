@@ -11,13 +11,13 @@
                 {
                     "name": "factor",
                     "input": [
-                        "trial_type",
+                        "trial_type"
                     ]
-                },
+                }
             ],
             "model": {
                 "HRF_variables":[
-                    "finger",
+                    "finger"
                 ],
                 "variables": [
                     "finger",
@@ -34,7 +34,7 @@
                 {
                     "name": "finger_vs_rest",
                     "condition_list": [
-                        "finger",
+                        "finger"
                     ],
                     "weights": [1],
                     "type": "T"

@@ -13,7 +13,6 @@ from bids.grabbids import BIDSLayout
 
 # Local install of metco2, adapted to make RVT more flexible
 from metco2.utils import physio
-from scipy.interpolate import interp1d
 from scipy.signal import convolve, detrend, resample
 from scipy.stats import zscore
 
@@ -23,7 +22,6 @@ import utils
 def generate_physio_regs(dset, in_dir="/scratch/tsalo006/power-replication/"):
     tr = 3.0  # seconds
     samplerate = 50  # Hz
-    sr_sec = 1 / samplerate  # sample rate in seconds
 
     dset_dir = op.join(in_dir, dset)
     layout = BIDSLayout(dset_dir)
@@ -53,8 +51,6 @@ def generate_physio_regs(dset, in_dir="/scratch/tsalo006/power-replication/"):
         df = pd.read_csv(
             physio_tsv, sep="\t", header=None, names=["cardiac", "respiratory"]
         )
-        card = df["cardiac"].values
-        n_trs = int((df.shape[0] * sr_sec) / tr)
 
         # RV
         rv_regs, rv_x_rrf_regs = compute_rv(df, tr, samplerate)

@@ -2,7 +2,6 @@
 import os
 import subprocess
 
-import numpy as np
 from nilearn import image, input_data
 
 

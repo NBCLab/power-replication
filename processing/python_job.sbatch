@@ -11,6 +11,7 @@
 #SBATCH --output=/home/data/nbc/misc-projects/Salo_PowerReplication/code/jobs/python_stdout
 #SBATCH --error=/home/data/nbc/misc-projects/Salo_PowerReplication/code/jobs/python_stderr
 ########################################################
+# A generic Python job for the SLURM scheduler
 export NPROCS=`echo $LSB_HOSTS | wc -w`
 export OMP_NUM_THREADS=4
 . $MODULESHOME/../global/profile.modules
