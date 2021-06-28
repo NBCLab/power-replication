@@ -20,6 +20,7 @@ import numpy as np
 import pandas as pd
 import sklearn
 from nilearn import image, input_data, masking
+from peakdet import load_physio, operations
 from phys2denoise.metrics import chest_belt
 from scipy import signal
 
@@ -744,6 +745,7 @@ def compile_physio_regressors(
     confounds_json = confounds_file.replace(".tsv", ".json")
     medn_json_file = medn_file.replace(".nii.gz", ".json")
 
+    participants_df = pd.read_table(participants_file)
     confounds_df = pd.read_table(confounds_file)
     with open(confounds_json, "r") as fo:
         confounds_metadata = json.load(fo)
@@ -789,10 +791,72 @@ def compile_physio_regressors(
         "RVRegression_RV*RRF+3s",
     ]
     confounds_df[rv_regressor_names] = rv_regressors
+    temp_dict = {
+        "RVRegression_RV-3s": {
+            "Sources": [physio_file],
+            "Description": (
+                "Respiratory variance time-shifted 3 seconds backward and "
+                "downsampled to the repetition time of the fMRI data."
+            ),
+        },
+        "RVRegression_RV": {
+            "Sources": [physio_file],
+            "Description": (
+                "Respiratory variance downsampled to the repetition time of the fMRI data."
+            ),
+        },
+        "RVRegression_RV+3s": {
+            "Sources": [physio_file],
+            "Description": (
+                "Respiratory variance time-shifted 3 seconds forward and "
+                "downsampled to the repetition time of the fMRI data."
+            ),
+        },
+        "RVRegression_RV*RRF-3s": {
+            "Sources": [physio_file],
+            "Description": (
+                "Respiratory variance convolved with the respiratory response function, "
+                "time-shifted 3 seconds backward, "
+                "and downsampled to the repetition time of the fMRI data."
+            ),
+        },
+        "RVRegression_RV*RRF": {
+            "Sources": [physio_file],
+            "Description": (
+                "Respiratory variance convolved with the respiratory response function "
+                "and downsampled to the repetition time of the fMRI data."
+            ),
+        },
+        "RVRegression_RV*RRF+3s": {
+            "Sources": [physio_file],
+            "Description": (
+                "Respiratory variance convolved with the respiratory response function, "
+                "time-shifted 3 seconds forward, "
+                "and downsampled to the repetition time of the fMRI data."
+            ),
+        },
+    }
+    confounds_metadata = {**temp_dict, **confounds_metadata}
 
     # Calculate RVT regressors and add to confounds file
 
     # Calculate RPV values and add to participants tsv
+    window = physio_samplerate * 10  # window should be 10s
+    rpv = chest_belt.rpv(respiratory_data, window=window)
+    participants_df.loc[participants_df["participant_id"] == subject, "rpv"] = rpv
+
+    # Write out files
+    participants_df.to_csv(participants_file, sep="\t", index=False)
+    confounds_df.to_csv(confounds_file, sep="\t", index=False)
+    with open(confounds_json, "w") as fo:
+        json.dump(confounds_metadata, fo, sort_keys=True, indent=4)
+
+
+def run_peakdet(physio_file, sampling_rate):
+    data = load_physio(physio_file, fs=sampling_rate)
+    data = operations.interpolate_physio(data, target_fs=250)
+    data = operations.filter_physio(data, cutoffs=1.0, method="lowpass")
+    data = operations.peakfind_physio(data, thresh=0.1, dist=100)
 
 
 def main(project_dir, dset):
@@ -812,6 +876,9 @@ def main(project_dir, dset):
     subjects = participants_df.loc[
         participants_df["exclude"] == 0, "participant_id"
     ].tolist()
+
+    # Copy participants file to nuisance-regressions derivatives dir
+    nuis_participants_file = op.join(nuis_dir, "participants.tsv")
 
     for subject in subjects:
         print(f"\t{subject}", flush=True)
@@ -866,7 +933,7 @@ def main(project_dir, dset):
                 mask_file,
                 confounds_file,
                 physio_file,
-                participants_file,
+                nuis_participants_file,
                 nuis_dir,
                 subject,
             )
