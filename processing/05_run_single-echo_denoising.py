@@ -15,65 +15,18 @@ import os
 import os.path as op
 from glob import glob
 
-import nibabel as nib
 import numpy as np
 import pandas as pd
 import sklearn
-from nilearn import image, input_data, masking
+from nilearn import image, masking
 from peakdet import load_physio, operations
 from phys2denoise.metrics import chest_belt
 from scipy import signal
 
-
-def _generic_regression(medn_file, mask_file, nuisance_regressors, t_r):
-    # Calculate mean-centered version of MEDN data
-    mean_img = image.mean_img(medn_file)
-    medn_mean_centered_img = image.math_img(
-        "img - avg_img",
-        img=medn_file,
-        avg_img=mean_img,
-    )
-
-    # Regress confounds out of MEDN data
-    # Note that confounds should be mean-centered and detrended, which the masker will do.
-    # See "fMRI data: nuisance regressions" section of Power appendix (page 3).
-    regression_masker = input_data.NiftiMasker(
-        mask_file,
-        smoothing_fwhm=None,
-        standardize=False,
-        standardize_confounds=True,  # will mean-center them too
-        high_variance_confounds=False,
-        low_pass=None,
-        high_pass=None,
-        detrend=True,  # linearly detrends both confounds and data
-        t_r=t_r,
-        reports=False,
-    )
-    regression_masker.fit(medn_mean_centered_img)
-    # Mask + remove confounds
-    denoised_data = regression_masker.transform(
-        medn_mean_centered_img,
-        confounds=nuisance_regressors,
-    )
-    # Mask without removing confounds
-    raw_data = regression_masker.transform(
-        medn_mean_centered_img,
-        confounds=None,
-    )
-    # Calculate residuals (both raw and denoised should have same scale)
-    noise_data = raw_data - denoised_data
-    denoised_img = regression_masker.inverse_transform(denoised_data)
-    noise_img = regression_masker.inverse_transform(noise_data)
-    return denoised_img, noise_img
+from utils import _generic_regression, run_command
 
 
-def run_rvtreg(
-    dset,
-    task,
-    method,
-    suffix,
-    in_dir="/scratch/tsalo006/power-replication/",
-):
+def run_rvtreg(medn_file, mask_file, physio_file, confounds_file, out_dir):
     """Clean MEDN data with regression model including RVT and RVT*RRF (plus lags).
 
     Parameters
@@ -96,47 +49,85 @@ def run_rvtreg(
     -   Scatter plot of ME-HK-RVT+RVT*RRF SD of global signal against
         SD of ventilatory envelope (RPV) (not in paper).
     """
-    dset_dir = op.join(in_dir, dset)
-    layout = BIDSLayout(dset_dir)
-    subjects = layout.get_subjects()
+    # Parse input files
+    medn_name = op.basename(medn_file)
+    prefix = medn_name.split("desc-")[0].rstrip("_")
+    prefix = op.join(out_dir, prefix)
+    medn_json_file = medn_file.replace(".nii.gz", ".json")
 
-    power_dir = op.join(dset_dir, "derivatives/power")
+    # Determine output files
+    denoised_file = prefix + "_desc-RVTReg_bold.nii.gz"
+    denoised_json_file = denoised_file.replace(".nii.gz", ".json")
+    noise_file = prefix + "_desc-RVTRegNoise_bold.nii.gz"
+    noise_json_file = noise_file.replace(".nii.gz", ".json")
 
-    for subj in subjects:
-        power_subj_dir = op.join(power_dir, subj)
-        preproc_dir = op.join(power_subj_dir, "preprocessed")
-        physio_dir = op.join(preproc_dir, "physio")
-        anat_dir = op.join(preproc_dir, "anat")
+    confounds_df = pd.read_table(confounds_file)
 
-        func_file = op.join(
-            power_subj_dir,
-            "denoised",
-            method,
-            "sub-{0}_task-{1}_run-01_{2}.nii.gz".format(subj, task, suffix),
-        )
-        mask_file = op.join(anat_dir, "cortical_mask.nii.gz")
-        func_img = nib.load(func_file)
-        mask_img = nib.load(mask_file)
-        if subj == subjects[0]:
-            resid_sds = np.empty((len(subjects), func_img.shape[-1]))
+    # Load metadata for writing out later and TR now
+    with open(medn_json_file, "r") as fo:
+        json_info = json.load(fo)
 
-        rvt_file = op.join(physio_dir, "sub-{0}_task-rest_run-01_rvt.txt".format(subj))
-        rvt_x_rrf_file = op.join(
-            physio_dir, "sub-{0}_task-rest_run-01_rvtXrrf" ".txt".format(subj)
-        )
-        rvt = np.loadtxt(rvt_file)
-        rvt_x_rrf = np.loadtxt(rvt_x_rrf_file)
-        rvt = np.hstack((np.ones(func_img.shape[-1]), rvt, rvt_x_rrf))
+    nuisance_regressors = confounds_df[
+        [
+            "RVTRegression_RVT",
+            "RVTRegression_RVT+5s",
+            "RVTRegression_RVT+10s",
+            "RVTRegression_RVT+15s",
+            "RVTRegression_RVT+20s",
+            "RVTRegression_RVT*RRF",
+            "RVTRegression_RVT*RRF+5s",
+            "RVTRegression_RVT*RRF+10s",
+            "RVTRegression_RVT*RRF+15s",
+            "RVTRegression_RVT*RRF+20s",
+            "trans_x",
+            "trans_y",
+            "trans_z",
+            "rot_x",
+            "rot_y",
+            "rot_z",
+            "trans_x_derivative1",
+            "trans_y_derivative1",
+            "trans_z_derivative1",
+            "rot_x_derivative1",
+            "rot_y_derivative1",
+            "rot_z_derivative1",
+        ]
+    ].values
 
-        func_data = masking.apply_mask(func_img, mask_img)
-        lstsq_res = np.linalg.lstsq(rvt, func_data, rcond=None)
-        pred = np.dot(rvt, lstsq_res[0])
-        residuals = func_data - pred
+    denoised_img, noise_img = _generic_regression(
+        medn_file,
+        mask_file,
+        nuisance_regressors,
+        t_r=json_info["RepetitionTime"],
+    )
 
-        # Get volume-wise standard deviation
-        resid_sd = np.std(residuals, axis=0)
-        resid_sds[subj, :] = resid_sd
-        return resid_sds
+    # Save output files
+    denoised_img.to_filename(denoised_file)
+    noise_img.to_filename(noise_file)
+
+    # Create json files with Sources and Description fields
+    json_info["Sources"] = [medn_file, mask_file, confounds_file]
+    json_info["Description"] = (
+        "Multi-echo denoised data further denoised with a respiratory-volume-per-time-based "
+        "regression model. This model includes RVT lagged 0 seconds, 5 seconds forward, "
+        "10 seconds forward, 15 seconds forward, and 20 seconds forward, "
+        "along with those five RVT-based regressors convolved with "
+        "the respiratory response function, six realigment parameters, "
+        "and the realignment parameters' first derivatives."
+    )
+    with open(denoised_json_file, "w") as fo:
+        json.dump(json_info, fo, sort_keys=True, indent=4)
+
+    json_info["Description"] = (
+        "Residuals from respiratory-volume-per-time-based regression model applied to multi-echo "
+        "denoised data. This model includes RVT lagged 0 seconds, 5 seconds foward, "
+        "10 seconds forward, 15 seconds forward, and 20 seconds forward, "
+        "along with those three RV-based regressors convolved with "
+        "the respiratory response function, six realigment parameters, "
+        "and the realignment parameters' first derivatives."
+    )
+    with open(noise_json_file, "w") as fo:
+        json.dump(json_info, fo, sort_keys=True, indent=4)
 
 
 def run_rvreg(medn_file, mask_file, physio_file, confounds_file, out_dir):
@@ -742,6 +733,7 @@ def compile_physio_regressors(
     out_deriv_dir,
     subject,
 ):
+    """Generate and save physio-based regressors, including RPV, RV, RVT, and HRV."""
     confounds_json = confounds_file.replace(".tsv", ".json")
     medn_json_file = medn_file.replace(".nii.gz", ".json")
 
