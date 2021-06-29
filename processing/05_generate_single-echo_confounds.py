@@ -237,11 +237,47 @@ def compile_physio_regressors(
         json.dump(confounds_metadata, fo, sort_keys=True, indent=4)
 
 
-def run_peakdet(physio_file, sampling_rate):
-    data = load_physio(physio_file, fs=sampling_rate)
-    data = operations.interpolate_physio(data, target_fs=250)
-    data = operations.filter_physio(data, cutoffs=1.0, method="lowpass")
-    data = operations.peakfind_physio(data, thresh=0.1, dist=100)
+def run_peakdet(physio_file, physio_metadata, out_dir):
+    """Run peakdet to (1) identify peaks and troughs in data and (2) calculate HRV.
+
+    Notes
+    -----
+    Per discussion with Ross Markello:
+    -   40-50 Hz is sufficient for respiratory data, but upsampling is necessary for HRV
+        calculations.
+    -   Upsampling may introduce artifacts to cardiac data, so that is a big caveat that we should
+        include in our limitations.
+    """
+    sampling_rate = physio_metadata["SamplingRate"]
+    card_idx = physio_metadata["Columns"].index("cardiac")
+    resp_idx = physio_metadata["Columns"].index("respiratory")
+    physio_data = np.loadtxt(physio_file)
+    card_data = physio_data[:, card_idx]
+    resp_data = physio_data[:, resp_idx]
+
+    card_physio = load_physio(card_data, fs=sampling_rate)
+    resp_physio = load_physio(resp_data, fs=sampling_rate)
+
+    # Upsample cardiac signal to 250 Hz
+    # Respiratory data will remain at original resolution (40 Hz for 15 subs, 50 Hz for 16)
+    target_hz = 250
+    card_physio = operations.interpolate_physio(card_physio, target_fs=target_hz)
+    card_metadata = physio_metadata.copy()
+    card_metadata["SamplingRate"] = target_hz
+
+    # Temporal filtering
+    card_physio = operations.filter_physio(card_physio, cutoffs=1.0, method="lowpass")
+    resp_physio = operations.filter_physio(resp_physio, cutoffs=1.0, method="lowpass")
+
+    # Peak/trough detection
+    card_physio = operations.peakfind_physio(card_physio, thresh=0.1, dist=100)
+    resp_physio = operations.peakfind_physio(resp_physio, thresh=0.1, dist=100)
+
+    # Save processed physio to files
+
+    # Save peaks and troughs to files
+
+    # Save history
 
 
 def main(project_dir, dset):
