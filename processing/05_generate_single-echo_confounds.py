@@ -153,6 +153,10 @@ def compile_physio_regressors(
 
     # Normally we'd offset the data by the start time, but in this dataset that's 0
     assert physio_metadata["StartTime"] == 0
+    # TODO: Account for dropped non-steady state volumes in regressors!
+    # This should require the image's metadata
+    # (to extract number of volumes dropped from description) and the TR
+    # OR just grab # vols from the tsv I wrote out!
 
     # Calculate RV regressors and add to confounds file
     # Calculate RV and RV*RRF regressors
