@@ -128,20 +128,28 @@ def compile_physio_regressors(
     confounds_file,
     physio_file,
     participants_file,
+    nss_file,
     subject,
 ):
     """Generate and save physio-based regressors, including RPV, RV, RVT, and HRV."""
+    medn_json = medn_file.replace(".nii.gz", ".json")
     confounds_json = confounds_file.replace(".tsv", ".json")
+    physio_json_file = physio_file.replace(".tsv.gz", ".json")
 
     participants_df = pd.read_table(participants_file)
     confounds_df = pd.read_table(confounds_file)
+    nss_df = pd.read_table(nss_file)
+    physio_data = np.genfromtxt(physio_file)
+
     with open(confounds_json, "r") as fo:
         confounds_metadata = json.load(fo)
 
-    physio_json_file = physio_file.replace(".tsv.gz", ".json")
-    physio_data = np.genfromtxt(physio_file)
+    with open(medn_json, "r") as fo:
+        medn_metadata = json.load(fo)
 
     n_vols = confounds_df.shape[0]
+    t_r = medn_metadata["RepetitionTime"]
+    nss_count = nss_df.loc[nss_df["participant_id"] == subject, "nss_count"]
 
     # Load metadata
     with open(physio_json_file, "r") as fo:
@@ -154,9 +162,10 @@ def compile_physio_regressors(
     # Normally we'd offset the data by the start time, but in this dataset that's 0
     assert physio_metadata["StartTime"] == 0
     # TODO: Account for dropped non-steady state volumes in regressors!
-    # This should require the image's metadata
-    # (to extract number of volumes dropped from description) and the TR
-    # OR just grab # vols from the tsv I wrote out!
+    sec_to_drop = nss_count * t_r
+    data_start = sec_to_drop * physio_samplerate
+    data_end = (n_vols + nss_count) * t_r * physio_samplerate
+    assert respiratory_data.shape[0] >= data_end
 
     # Calculate RV regressors and add to confounds file
     # Calculate RV and RV*RRF regressors
@@ -168,9 +177,12 @@ def compile_physio_regressors(
         window=6,
         lags=[-3 * physio_samplerate, 0, 3 * physio_samplerate],
     )
-    n_physio_datapoints = n_vols * physio_samplerate
-    rv_regressors = rv_regressors[:n_physio_datapoints, :]
+    # Crop out non-steady-state volumes *and* any trailing time
+    rv_regressors = rv_regressors[data_start:data_end, :]
+
+    # Resample to TR
     rv_regressors = signal.resample(rv_regressors, num=n_vols, axis=0)
+
     rv_regressor_names = [
         "RVRegression_RV-3s",
         "RVRegression_RV",
@@ -227,11 +239,18 @@ def compile_physio_regressors(
     }
     confounds_metadata = {**temp_dict, **confounds_metadata}
 
-    # Calculate RVT regressors and add to confounds file
+    # TODO: Calculate RVT regressors and add to confounds file
+    rvt_regressors = None
+
+    # Crop out non-steady-state volumes *and* any trailing time
+    rvt_regressors = rvt_regressors[data_start:data_end, :]
+
+    # Resample to TR
+    rvt_regressors = signal.resample(rvt_regressors, num=n_vols, axis=0)
 
     # Calculate RPV values and add to participants tsv
     window = physio_samplerate * 10  # window should be 10s
-    rpv = chest_belt.rpv(respiratory_data, window=window)
+    rpv = chest_belt.rpv(respiratory_data[data_start:data_end], window=window)
     participants_df.loc[participants_df["participant_id"] == subject, "rpv"] = rpv
 
     # Write out files
@@ -298,6 +317,9 @@ def main(project_dir, dset):
         participants_df["exclude"] == 0, "participant_id"
     ].tolist()
 
+    # Also get non-steady-state volume information
+    nss_file = op.join(preproc_dir, "nss_removed.tsv")
+
     for subject in subjects:
         print(f"\t{subject}", flush=True)
         preproc_subj_func_dir = op.join(preproc_dir, subject, "func")
@@ -349,6 +371,7 @@ def main(project_dir, dset):
                 confounds_file,
                 physio_file,
                 participants_file,
+                nss_file,
                 subject,
             )
 
