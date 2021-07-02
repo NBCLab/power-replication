@@ -304,7 +304,18 @@ def run_peakdet(physio_file, physio_metadata, out_dir):
 
 
 def main(project_dir, dset):
-    """TODO: Create dataset_description.json files."""
+    """Run the confound-generation workflow.
+
+    TODO: Create dataset_description.json files.
+    TODO: Run peakdet on raw physio files, then output them and metadata to power dir.
+
+    Notes
+    -----
+    Example physio file: /home/data/nbc/misc-projects/Salo_PowerReplication/dset-dupre/sub-01/\
+        func/sub-01_task-rest_run-01_physio.tsv.gz
+    Example physio metadata file: /home/data/nbc/misc-projects/Salo_PowerReplication/dset-dupre/\
+        sub-01/sub-01_task-rest_physio.json
+    """
     dset_dir = op.join(project_dir, dset)
     deriv_dir = op.join(dset_dir, "derivatives")
     tedana_dir = op.join(deriv_dir, "tedana")
