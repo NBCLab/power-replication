@@ -437,7 +437,6 @@ def main(project_dir, dset):
     """Run the confound-generation workflow.
 
     TODO: Create dataset_description.json files.
-    TODO: Run peakdet on raw physio files, then output them and metadata to power dir.
 
     Notes
     -----
@@ -508,6 +507,7 @@ def main(project_dir, dset):
             confounds_file,
         )
         if dset == "dset-dupre":
+            # Get physio data
             physio_metadata_file = op.join(dset_subj_dir, f"{subject}_task-rest_physio.json")
             assert op.isfile(physio_metadata_file)
             physio_file = op.join(dset_subj_func_dir, f"{subject}_task-rest_run-01_physio.tsv.gz")

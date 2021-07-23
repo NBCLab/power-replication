@@ -283,16 +283,11 @@ def run_dgsr(medn_file, mask_file, confounds_file, out_dir):
 
 
 def run_godec():
-    """Not to be run.
+    """Not to be run yet.
 
     Parameters
     ----------
-    dset : {'ds000210', 'ds000254', 'ds000258'}
-    task : {'rest', 'fingertapping'}
-    method : {'meica_v2_5'}
-    suffix : {'dn_ts_OC', 'hik_ts_OC', 't2s'}
-    in_dir : str
-        Path to analysis folder
+    medn_file
 
     Used for:
     -   Carpet plots of ME-DN after GODEC (3, S9, S12)

@@ -1,8 +1,7 @@
 """
 Perform multi-echo denoising strategies with tedana.
 
-Also included in this (because it is implemented in tedana) is wavelet
-denoising.
+This includes tedana, MIR, and FIT (via t2smap).
 """
 import json
 import os
@@ -74,7 +73,9 @@ def run_tedana(project_dir, dset):
         )
         mask_img = image.math_img("img >= 1", img=dseg_file)
 
+        # ############
         # FIT denoised
+        # ############
         # We retain t2s and s0 timeseries from this method, but do not use
         # optcom or any MEICA derivatives.
         print("\t\tt2smap", flush=True)
@@ -90,7 +91,9 @@ def run_tedana(project_dir, dset):
         )
         # TODO: Merge metadata into FIT T2/S0 jsons
 
+        # ############
         # TEDANA + MIR
+        # ############
         # We use MEDN, reconstructed MEDN-noise, MEHK,
         # reconstructed MEHK-noise, optcom, mmix (component timeseries), and
         # comptable (classifications of components)
