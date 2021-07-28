@@ -1,272 +1,15 @@
 """Run GODEC."""
+import argparse
 import os
-import sys
-from optparse import OptionParser
 
-import nibabel as nib
 import numpy as np
+import pywt
+from nilearn._utils.niimg import load_niimg
+from nilearn.masking import apply_mask, unmask
 from scipy.linalg import qr
 from scipy.sparse.linalg import svds
 
 __version__ = "0.1"
-
-
-def eimask(dd, ees=None):
-    if ees is None:
-        ees = range(dd.shape[1])
-    imask = np.zeros([dd.shape[0], len(ees)])
-    for ee in ees:
-        print(ee)
-        lthr = 0.001 * scoreatpercentile(dd[:, ee, :].flatten(), 98)
-        hthr = 5 * scoreatpercentile(dd[:, ee, :].flatten(), 98)
-        print(lthr, hthr)
-        imask[dd[:, ee, :].mean(1) > lthr, ee] = 1
-        imask[dd[:, ee, :].mean(1) > hthr, ee] = 0
-    return imask
-
-
-def scoreatpercentile(a, per, limit=(), interpolation_method="lower"):
-    """
-    This function is grabbed from scipy
-
-    """
-    values = np.sort(a, axis=0)
-    if limit:
-        values = values[(limit[0] <= values) & (values <= limit[1])]
-
-    idx = per / 100.0 * (values.shape[0] - 1)
-    if idx % 1 == 0:
-        score = values[idx]
-    else:
-        if interpolation_method == "fraction":
-            score = np._interpolate(values[int(idx)], values[int(idx) + 1], idx % 1)
-        elif interpolation_method == "lower":
-            score = values[np.floor(idx)]
-        elif interpolation_method == "higher":
-            score = values[np.ceil(idx)]
-        else:
-            raise ValueError(
-                "interpolation_method can only be 'fraction', " "'lower' or 'higher'"
-            )
-    return score
-
-
-def niwrite(data, affine, name, header=None):
-    sys.stdout.write(" + Writing file: %s ...." % name)
-
-    thishead = header
-    if thishead is None:
-        thishead = head.copy()
-        thishead.set_data_shape(list(data.shape))
-
-    outni = nib.Nifti1Image(data, affine, header=thishead)
-    outni.to_filename(name)
-    print("done.")
-
-
-def cat2echos(data, Ne):
-    """
-    cat2echos(data,Ne)
-
-    Input:
-    data shape is (nx,ny,Ne*nz,nt)
-    """
-    nx, ny = data.shape[0:2]
-    nz = data.shape[2] / Ne
-    if len(data.shape) > 3:
-        nt = data.shape[3]
-    else:
-        nt = 1
-    return np.reshape(data, (nx, ny, nz, Ne, nt), order="F")
-
-
-def uncat2echos(data, Ne):
-    """
-    uncat2echos(data,Ne)
-
-    Input:
-    data shape is (nx,ny,Ne,nz,nt)
-    """
-    nx, ny = data.shape[0:2]
-    nz = data.shape[2] * Ne
-    if len(data.shape) > 4:
-        nt = data.shape[4]
-    else:
-        nt = 1
-    return np.reshape(data, (nx, ny, nz, nt), order="F")
-
-
-def makemask(cdat):
-
-    nx, ny, nz, Ne, nt = cdat.shape
-
-    mask = np.ones((nx, ny, nz), dtype=np.bool)
-
-    for i in range(Ne):
-        tmpmask = (cdat[:, :, :, i, :] != 0).prod(axis=-1, dtype=np.bool)
-        mask = mask & tmpmask
-
-    return mask
-
-
-def fmask(data, mask):
-    """
-    fmask(data,mask)
-
-    Input:
-    data shape is (nx,ny,nz,...)
-    mask shape is (nx,ny,nz)
-
-    Output:
-    out shape is (Nm,...)
-    """
-
-    s = data.shape
-    sm = mask.shape
-
-    N = s[0] * s[1] * s[2]
-    news = []
-    news.append(N)
-
-    if len(s) > 3:
-        news.extend(s[3:])
-
-    tmp1 = np.reshape(data, news)
-    fdata = tmp1.compress((mask > 0).ravel(), axis=0)
-
-    return fdata.squeeze()
-
-
-def unmask(data, mask):
-    """
-    unmask (data,mask)
-
-    Input:
-
-    data has shape (Nm,nt)
-    mask has shape (nx,ny,nz)
-
-    """
-    M = (mask != 0).ravel()
-    Nm = M.sum()
-
-    nx, ny, nz = mask.shape
-
-    if len(data.shape) > 1:
-        nt = data.shape[1]
-    else:
-        nt = 1
-
-    out = np.zeros((nx * ny * nz, nt), dtype=data.dtype)
-    out[M, :] = np.reshape(data, (Nm, nt))
-
-    return np.reshape(out, (nx, ny, nz, nt))
-
-
-def t2smap(catd, mask, tes):
-    """
-    t2smap(catd,mask,tes)
-
-    Input:
-
-    catd  has shape (nx,ny,nz,Ne,nt)
-    mask  has shape (nx,ny,nz)
-    tes   is a 1d numpy array
-    """
-    nx, ny, nz, Ne, nt = catd.shape
-    N = nx * ny * nz
-
-    echodata = fmask(catd, mask)
-    Nm = echodata.shape[0]
-
-    # Do Log Linear fit
-    B = np.reshape(np.abs(echodata), (Nm, Ne * nt)).transpose()
-    B = np.log(B)
-    x = np.array([np.ones(Ne), -tes])
-    X = np.tile(x, (1, nt))
-    X = np.sort(X)[:, ::-1].transpose()
-
-    beta, res, rank, sing = np.linalg.lstsq(X, B)
-    t2s = 1 / beta[1, :].transpose()
-    s0 = np.exp(beta[0, :]).transpose()
-
-    # Goodness of fit
-    alpha = (np.abs(B) ** 2).sum(axis=0)
-    t2s_fit = blah = (alpha - res) / (2 * res)
-
-    out = unmask(t2s, mask), unmask(s0, mask), unmask(t2s_fit, mask)
-
-    return out
-
-
-def get_coeffs(data, mask, X, add_const=False):
-    """
-    get_coeffs(data,X)
-
-    Input:
-
-    data has shape (nx,ny,nz,nt)
-    mask has shape (nx,ny,nz)
-    X    has shape (nt,nc)
-
-    Output:
-
-    out  has shape (nx,ny,nz,nc)
-    """
-    mdata = fmask(data, mask).transpose()
-
-    X = np.atleast_2d(X)
-    if X.shape[0] == 1:
-        X = X.T
-    Xones = np.atleast_2d(np.ones(np.min(mdata.shape))).T
-    if add_const:
-        X = np.hstack([X, Xones])
-
-    tmpbetas = np.linalg.lstsq(X, mdata)[0].transpose()
-    if add_const:
-        tmpbetas = tmpbetas[:, :-1]
-    out = unmask(tmpbetas, mask)
-
-    return out
-
-
-def andb(arrs):
-    result = np.zeros(arrs[0].shape)
-    for aa in arrs:
-        result += np.array(aa, dtype=np.int)
-    return result
-
-
-def optcom(data, t2s, tes, mask):
-    """
-    out = optcom(data,t2s)
-
-
-    Input:
-
-    data.shape = (nx,ny,nz,Ne,Nt)
-    t2s.shape  = (nx,ny,nz)
-    tes.shape  = (Ne,)
-
-    Output:
-
-    out.shape = (nx,ny,nz,Nt)
-    """
-    nx, ny, nz, Ne, Nt = data.shape
-
-    fdat = fmask(data, mask)
-    ft2s = fmask(t2s, mask)
-
-    tes = tes[np.newaxis, :]
-    ft2s = ft2s[:, np.newaxis]
-
-    alpha = tes * np.exp(-tes / ft2s)
-    alpha = np.tile(alpha[:, :, np.newaxis], (1, 1, Nt))
-
-    fout = np.average(fdat, axis=1, weights=alpha)
-    out = unmask(fout, mask)
-    print("Out shape is ", out.shape)
-    return out
 
 
 def wthresh(a, thresh):
@@ -290,9 +33,7 @@ def ipsh():
 """
 
 
-# Default threshold of .03 is assumed to be for input in the range 0-1...
-# original matlab had 8 out of 255, which is about .03 scaled to 0-1 range
-def go_dec(
+def godec(
     X,
     thresh=0.03,
     rank=2,
@@ -302,6 +43,11 @@ def go_dec(
     random_seed=0,
     verbose=True,
 ):
+    """Run GODEC.
+
+    Default threshold of .03 is assumed to be for input in the range 0-1...
+    original matlab had 8 out of 255, which is about .03 scaled to 0-1 range
+    """
     print("++Starting Go Decomposition")
     m, n = X.shape
     if m < n:
@@ -327,18 +73,22 @@ def go_dec(
             break
         L += T
         itr += 1
+
     # Is this even useful in soft GoDec? May be a display issue...
     G = X - L - S
     if m < n:
         L = L.T
         S = S.T
         G = G.T
+
     if verbose:
         print("Finished at iteration %d" % (itr))
+
     return L, S, G
 
 
 def dwtmat(mmix):
+    """Apply a discrete wavelet transform to a matrix."""
     # ipdb.set_trace()
     print("++Wavelet transforming data")
     lt = len(np.hstack(pywt.dwt(mmix[0], "db2")))
@@ -351,6 +101,7 @@ def dwtmat(mmix):
 
 
 def idwtmat(mmix_wt, cAl):
+    """Apply a discrete inverse wavelet transform to a matrix."""
     print("++Inverse wavelet transforming")
     lt = len(pywt.idwt(mmix_wt[0, :cAl], mmix_wt[0, cAl:], "db2", correct_size=True))
     mmix_iwt = np.zeros([mmix_wt.shape[0], lt])
@@ -361,44 +112,40 @@ def idwtmat(mmix_wt, cAl):
     return mmix_iwt
 
 
-def wgo_dec(
-    X, thresh=0.03, rank=2, power=1, tol=1e-3, max_iter=100, random_seed=0, verbose=True
-):
-    # mmix_gd = go_dec(mmix,thresh=mmix.std()*2.5,power=8,rank=2)
-    # mmix_dn = mmix_gd[2]
-    X_wt, cal = dwtmat(X)
-    X_wgd = go_dec(
-        X_wt, X_wt.std() * thresh, rank, power, tol, max_iter, random_seed, verbose
-    )
-    return idwtmat(X_wgd[0], cal), idwtmat(X_wgd[1], cal), idwtmat(X_wgd[2], cal)
+def greedy_semisoft_godec(D, ranks, tau, tol, inpower, k):
+    """Run the Greedy Semi-Soft GoDec Algorithm (GreBsmo).
 
+    Parameters
+    ----------
+    D : array
+        nxp data matrix with n samples and p features
+    rank : int
+        rank(L)<=rank
+    tau : float
+        soft thresholding
+    inpower : float
+        >=0, power scheme modification, increasing it lead to better accuracy and more time cost
+    k : int
+        rank stepsize
 
-def GreGoDec(D, ranks, tau, tol, inpower, k):
+    Returns
+    -------
+    L
+        Low-rank part
+    S
+        Sparse part
+    RMSE
+        error
+    error
+        ||X-L-S||/||X||
 
-    """
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %                 Greedy Semi-Soft GoDec Algotithm (GreBsmo)
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %INPUTS:
-    %X: nxp data matrix with n samples and p features
-    %rank: rank(L)<=rank
-    %tau: soft thresholding
-    %inpower: >=0, power scheme modification, increasing it lead to better
-    %k: rank stepsize
-    %accuracy and more time cost
-    %OUTPUTS:
-    %L:Low-rank part
-    %S:Sparse part
-    %RMSE: error
-    %error: ||X-L-S||/||X||
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %REFERENCE:
-    % Tianyi Zhou and Dacheng Tao, "GoDec: Randomized Lo-rank & Sparse Matrix
-    % Decomposition in Noisy Case", ICML 2011
-    % Tianyi Zhou and Dacheng Tao, "Greedy Bilateral Sketch, Completion and
-    % Smoothing", AISTATS 2013.
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %Tianyi Zhou, 2013, All rights reserved.
+    References
+    ----------
+    Tianyi Zhou and Dacheng Tao, "GoDec: Randomized Lo-rank & Sparse Matrix Decomposition in
+        Noisy Case", ICML 2011
+    Tianyi Zhou and Dacheng Tao, "Greedy Bilateral Sketch, Completion and Smoothing", AISTATS 2013.
+
+    Tianyi Zhou, 2013, All rights reserved.
     """
 
     def rank_estimator_adaptive(inv):
@@ -431,10 +178,11 @@ def GreGoDec(D, ranks, tau, tol, inpower, k):
     if m < n:
         D = D.T
         # ok
-    normD = np.linalg.norm(D[:])
-    # CHECK np.linalg.norm types
 
-    # initialization of L and S by discoverying a low-rank sparse SVD and recombining
+    # To match MATLAB's norm on a matrix, you need an order of 2.
+    normD = np.linalg.norm(D, ord=2)
+
+    # initialization of L and S by discovering a low-rank sparse SVD and recombining
     rankk = int(np.round(rankmax / k))
     # ok
     error = np.zeros(max(rankk * inpower, 1) + 1)
@@ -443,7 +191,7 @@ def GreGoDec(D, ranks, tau, tol, inpower, k):
     X, s, Y = svds(D, k, which="LM")
     # CHECK svds
     s = np.diag(s)
-    # embed()
+
     X = X.dot(s)
     # CHECK dot notation
     L = X.dot(Y)
@@ -474,6 +222,7 @@ def GreGoDec(D, ranks, tau, tol, inpower, k):
         maxitr_reduce_rank = 50
         if iii == inpower * (r - 2) + 1:
             iii = iii + inpower
+
         for iteri in range(inpower + 1):
             print("r %i, iteri %i, rrank %i, alf %i" % (r, iteri, rrank, alf))
             # Update of X
@@ -587,7 +336,8 @@ def GreGoDec(D, ranks, tau, tol, inpower, k):
 
 
 def tedgodec(
-    ste=0,
+    img,
+    mask,
     ranks=[2],
     drank=2,
     inpower=2,
@@ -595,68 +345,71 @@ def tedgodec(
     max_iter=500,
     rmu_data=None,
     norm_mode=None,
+    wavelet=False,
 ):
-    nx, ny, nz, ne, nt = catd.shape
-    if ne == 1:
-        ste = 1
-    ste = np.array([int(ee) for ee in str(ste).split(",")])
-    if len(ste) == 1 and ste[0] == -1:
-        print("-Computing PCA of optimally combined multi-echo data")
-        OCcatd = optcom(catd, t2s, tes, mask)
-        OCmask = makemask(OCcatd[:, :, :, np.newaxis, :])
-        d = fmask(OCcatd, OCmask)
-        eim = eimask(d[:, np.newaxis, :])
-        eim = eim[:, 0] == 1
-        d = d[eim, :]
-        # ipdb.set_trace()
-    elif len(ste) == 1 and ste[0] == 0:
-        print("-Computing PCA of spatially concatenated multi-echo data")
-        ste = np.arange(ne)
-        d = np.float64(fmask(catd, mask))
-        eim = eimask(d) == 1
-        d = d[eim]
-    else:
-        print("-Computing PCA of TE #%s" % ",".join([str(ee) for ee in ste]))
-        d = np.float64(
-            np.concatenate(
-                [fmask(catd[:, :, :, ee, :], mask)[:, np.newaxis, :] for ee in ste - 1],
-                axis=1,
-            )
-        )
-        eim = eimask(d) == 1
-        eim = np.squeeze(eim)
-        d = np.squeeze(d[eim])
+    """
+    norm_mode : {None, "psc", "dm", "vn"}, optional
+        Default is None.
+    """
+    nx, ny, nz, nt = img.shape
+    masked_data = apply_mask(img, mask)
+    _, n_voxels = masked_data.shape
 
-    # Make the unmask
-    eimum = np.atleast_2d(eim)
-    eimum = np.transpose(eimum, np.argsort(np.atleast_2d(eim).shape)[::-1])
-    eimum = np.array(np.squeeze(unmask(eimum.prod(1), mask)), dtype=np.bool)
+    # Transpose to match ME-ICA convention (SxT instead of TxS)
+    masked_data = masked_data.T
 
     if norm_mode == "psc":
         # Convert to PSC
-        rmu = rmu_data[eimum].mean(-1)
-        dnorm = ((d / rmu[:, np.newaxis]) - 1) * 100
+        rmu = rmu_data.mean(-1)
+        dnorm = ((masked_data / rmu[:, np.newaxis]) - 1) * 100
         thresh = 0.1
     elif norm_mode == "dm":
         # Demean
-        rmu = d.mean(-1)
-        dnorm = d - rmu[:, np.newaxis]
+        rmu = masked_data.mean(-1)
+        dnorm = masked_data - rmu[:, np.newaxis]
     elif norm_mode == "vn":
-        rmu = d.mean(-1)
-        rstd = d.std(-1)
-        dnorm = (d - rmu[:, np.newaxis]) / rstd[:, np.newaxis]
+        rmu = masked_data.mean(-1)
+        rstd = masked_data.std(-1)
+        dnorm = (masked_data - rmu[:, np.newaxis]) / rstd[:, np.newaxis]
     else:
-        dnorm = d
+        dnorm = masked_data
 
     # GoDec
     out = {}
-    if options.wavelet:
-        out[ranks[0]] = list(wgo_dec(dnorm, rank=ranks[0], thresh=thresh))
+    if wavelet:
+        # Apply wavelet transform
+        X_wt, cal = dwtmat(dnorm)
+        # Run GODEC
+        X_L, X_S, X_G = godec(
+            X_wt,
+            thresh=X_wt.std() * thresh,
+            rank=ranks[0],
+            power=1,
+            tol=1e-3,
+            max_iter=max_iter,
+            random_seed=0,
+            verbose=True,
+        )
+        # Apply inverse wavelet transform to outputs
+        X_L = idwtmat(X_L, cal)
+        X_S = idwtmat(X_S, cal)
+        X_G = idwtmat(X_G, cal)
     else:
-        out[ranks[0]] = list(go_dec(dnorm, rank=ranks[0], thresh=thresh))
+        X_L, X_S, X_G = godec(
+            dnorm,
+            thresh=thresh,
+            rank=ranks[0],
+            power=1,
+            tol=1e-3,
+            max_iter=max_iter,
+            random_seed=0,
+            verbose=True,
+        )
+
+    out[ranks[0]] = [X_L, X_S, X_G]
 
     # GreGoDec
-    # out = GreGoDec(dnorm,ranks,1,1e-7,inpower,drank)
+    # out = greedy_semisoft_godec(dnorm,ranks,1,1e-7,inpower,drank)
 
     if norm_mode == "psc":
         for ii in range(len(out)):
@@ -670,76 +423,143 @@ def tedgodec(
             out[rr][1] = out[rr][1] * rstd[:, np.newaxis]
             out[rr][2] = out[rr][2] * rstd[:, np.newaxis]
 
-    return out, eimum
+    return out
 
 
-def dogs(ranks, norm_mode=None, drank=2, inpower=2):
-    gdoutm, eimum = tedgodec(
-        ste=0,
+def run_godec_denoising(
+    in_file,
+    mask,
+    out_dir=".",
+    prefix="",
+    ranks=[2],
+    norm_mode=None,
+    thresh=None,
+    drank=2,
+    inpower=2,
+    wavelet=False,
+):
+    """Run GODEC denoising.
+
+    Notes
+    -----
+    - Prantik mentioned that GODEC is run on outputs (e.g., High-Kappa), not inputs.
+      https://github.com/ME-ICA/me-ica/issues/4#issuecomment-369058732
+    - The paper tested ranks of 1-4. See page 5 of online supplemental methods.
+    - The paper used a discrete Daubechies wavelet transform before and after GODEC,
+      with rank-1 approximation and 100 iterations. See page 4 of online supplemental methods.
+    """
+    img = load_niimg(in_file)
+    mask = load_niimg(mask)
+
+    if thresh is None:
+        masked_data = apply_mask(img, mask).T
+        mu = masked_data.mean(axis=-1)
+        thresh = np.median(mu[mu != 0]) * 0.01
+
+    godec_outputs = tedgodec(
+        img,
+        mask,
         ranks=ranks,
+        drank=drank,
         inpower=inpower,
         thresh=thresh,
         max_iter=500,
         norm_mode=norm_mode,
+        wavelet=wavelet,
     )
-    for rank in sorted(gdoutm.keys()):
-        gdout = gdoutm[rank]
-        artout = unmask(gdout[0], eimum)
-        sparseout = unmask(gdout[1], eimum)
-        noiseout = unmask(gdout[2], eimum)
 
-        if options.norm_mode is None:
+    for rank, outputs in godec_outputs.items():
+        lowrank_img = unmask(outputs[0], mask)
+        sparse_img = unmask(outputs[1], mask)
+        noise_img = unmask(outputs[2], mask)
+
+        if norm_mode is None:
             name_norm_mode = ""
         else:
-            name_norm_mode = "n%s" % options.norm_mode
-        if options.wavelet:
-            name_norm_mode = "w%s" % name_norm_mode
-        suffix = "%sr%ik%ip%it%i" % (name_norm_mode, rank, drank, inpower, thresh)
-        # niwrite(dnout,aff,'dn_%s.nii' % suffix)
-        niwrite(artout, aff, "lowrank_%s.nii" % suffix)
-        niwrite(sparseout, aff, "sparse_%s.nii" % suffix)
-        niwrite(noiseout, aff, "noise_%s.nii" % suffix)
+            name_norm_mode = f"n{norm_mode}"
+
+        if wavelet:
+            name_norm_mode = f"w{name_norm_mode}"
+
+        suffix = f"{name_norm_mode}r{rank}k{drank}p{inpower}t{thresh}"
+
+        lowrank_img.to_filename(op.join(out_dir, f"{prefix}lowrank_{suffix}.nii.gz"))
+        sparse_img.to_filename(op.join(out_dir, f"{prefix}sparse_{suffix}.nii.gz"))
+        noise_img.to_filename(op.join(out_dir, f"{prefix}noise_{suffix}.nii.gz"))
 
 
-if __name__ == "__main__":
+def is_valid_file(parser, arg):
+    """
+    Check if argument is existing file.
+    """
+    if (arg is not None) and (not os.path.isfile(arg)):
+        parser.error(f"The file {arg} does not exist!")
 
-    parser = OptionParser()
-    parser.add_option(
+    return arg
+
+
+def _get_parser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
         "-d",
-        "--orig_data",
-        dest="data",
-        help="Spatially Concatenated Multi-Echo Dataset",
-        default=None,
+        "--data",
+        dest="in_file",
+        metavar="FILE",
+        type=lambda x: is_valid_file(parser, x),
+        help="File to denoise with GODEC.",
+        required=True,
     )
-    parser.add_option(
-        "-e",
-        "--TEs",
-        dest="tes",
-        help="Echo times (in ms) ex: 15,39,63",
-        default=None,
+    parser.add_argument(
+        "-m",
+        "--mask",
+        dest="mask",
+        metavar="FILE",
+        type=lambda x: is_valid_file(parser, x),
+        help="Binary mask to apply to data.",
+        required=True,
     )
-    parser.add_option(
+    parser.add_argument(
+        "--out-dir",
+        dest="out_dir",
+        type=str,
+        metavar="PATH",
+        help="Output directory.",
+        default=".",
+    )
+    parser.add_argument(
+        "--prefix",
+        dest="prefix",
+        type=str,
+        help="Prefix for filenames generated.",
+        default="",
+    )
+    parser.add_argument(
         "-r",
         "--rank",
         dest="rank",
-        help="Rank of low rank component",
-        default=2,
+        metavar='INT',
+        type=int,
+        nargs='+',
+        help="Rank(s) of low rank component",
+        default=[2],
     )
-    parser.add_option(
+    parser.add_argument(
         "-k",
         "--increment",
         dest="drank",
+        type=int,
         help="Rank search step size",
         default=2,
     )
-    parser.add_option(
+    parser.add_argument(
         "-p",
         "--power",
         dest="power",
+        type=int,
         help="Power for power method",
         default=2,
     )
-    parser.add_option(
+    parser.add_argument(
         "-w",
         "--wavelet",
         dest="wavelet",
@@ -747,72 +567,26 @@ if __name__ == "__main__":
         default=False,
         action="store_true",
     )
-    parser.add_option(
+    parser.add_argument(
         "-t",
         "--thresh",
         dest="thresh",
-        help="Poewr for power method",
+        type=float,
+        help="Threshold of some kind.",
         default=2,
     )
-    parser.add_option(
+    parser.add_argument(
         "-n",
         "--norm_mode",
         dest="norm_mode",
         help="Normalization mode",
         default="vn",
-    )
-    parser.add_option(
-        "",
-        "--label",
-        dest="label",
-        help="Label for output directory.",
-        default=None,
+        choices=["vn", "psc", "dm", "none"],
     )
 
-    (options, args) = parser.parse_args()
+    return parser
 
-    print("-- GoDec fMRI Denoising %s--" % __version__)
 
-    if options.data is None:
-        print("*+ Need dataset name, use -h for help.")
-        sys.exit()
-
-    if options.tes is None:
-        tes = [30.0]
-        ne = 1
-    else:
-        tes = np.fromstring(options.tes, sep=",", dtype=np.float32)
-        ne = tes.shape[0]
-
-    if options.wavelet:
-        import pywt
-
-    print("++ Loading Data")
-    catim = nib.load(options.data)
-    head = catim.get_header()
-    head.extensions = []
-    head.set_sform(head.get_sform(), code=1)
-    aff = catim.get_affine()
-    catd = cat2echos(catim.get_data(), ne)
-    nx, ny, nz, Ne, nt = catd.shape
-
-    mu = catd.mean(axis=-1)
-    sig = catd.std(axis=-1)
-    mask = makemask(catd)
-
-    """Parse options, prepare output directory"""
-    if options.label is not None:
-        dirname = "%s" % ".".join(["GD", options.label])
-    else:
-        dirname = "GD"
-    os.system("mkdir %s" % dirname)
-
-    # Set threshold
-    if not options.thresh:
-        thresh = np.median(mu[mu != 0]) * 0.01
-    else:
-        thresh = float(options.thresh)
-    ranks = [int(rr) for rr in options.rank.split(",")]
-    drank = int(options.drank)
-    inpower = int(options.power)
-    dogs(ranks, drank=drank, inpower=inpower, norm_mode=options.norm_mode)
+def _main(argv=None):
+    options = _get_parser().parse_args(argv)
+    run_godec_denoising(**options)
