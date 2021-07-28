@@ -14,9 +14,7 @@ __version__ = "0.1"
 
 
 def is_valid_file(parser, arg):
-    """
-    Check if argument is existing file.
-    """
+    """Check if argument is existing file."""
     if (arg is not None) and (not os.path.isfile(arg)):
         parser.error(f"The file {arg} does not exist!")
 
@@ -138,7 +136,6 @@ def greedy_semisoft_godec(D, ranks, tau, tol, inpower, k):
 
     Tianyi Zhou, 2013, All rights reserved.
     """
-
     # set rankmax and sampling dictionary
     rankmax = max(ranks)
     outdict = {}
@@ -324,7 +321,7 @@ def run_godec_denoising(
     out_dir=".",
     prefix="",
     method="greedy",
-    ranks=[2],
+    ranks=[4],
     norm_mode=None,
     thresh=None,
     drank=2,
@@ -432,17 +429,17 @@ def run_godec_denoising(
             "p": inpower,
             "t": thresh,
         }
-        metadata_file = os.path.join(out_dir, f"{prefix}_bold.json")
+        metadata_file = os.path.join(out_dir, "dataset_description.json")
         with open(metadata_file, "w") as fo:
             json.dump(metadata, fo, sort_keys=True, indent=4)
         lowrank_img.to_filename(
-            os.path.join(out_dir, f"{prefix}desc-lowrank_rank-{rank}_bold.nii.gz")
+            os.path.join(out_dir, f"{prefix}desc-GODEC_rank-{rank}_lowrankts.nii.gz")
         )
         sparse_img.to_filename(
-            os.path.join(out_dir, f"{prefix}desc-sparse_rank-{rank}_bold.nii.gz")
+            os.path.join(out_dir, f"{prefix}desc-GODEC_rank-{rank}_bold.nii.gz")
         )
         noise_img.to_filename(
-            os.path.join(out_dir, f"{prefix}desc-noise_rank-{rank}_bold.nii.gz")
+            os.path.join(out_dir, f"{prefix}desc-GODEC_rank-{rank}_errorts.nii.gz")
         )
 
 
@@ -518,7 +515,7 @@ def _get_parser():
         "-w",
         "--wavelet",
         dest="wavelet",
-        help="Wavelet transform before GoDec",
+        help="Wavelet transform before GODEC",
         default=False,
         action="store_true",
     )
@@ -534,7 +531,10 @@ def _get_parser():
         "-n",
         "--norm_mode",
         dest="norm_mode",
-        help="Normalization mode",
+        help=(
+            "Normalization mode: variance normalization (vn), mean-centering (dm), "
+            "or None (none)."
+        ),
         default="vn",
         choices=["vn", "dm", "none"],
     )
