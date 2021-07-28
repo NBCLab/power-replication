@@ -18,7 +18,7 @@ def wthresh(a, thresh):
     return np.sign(a) * ((res > 0) * res)
 
 
-def godec(
+def standard_godec(
     X,
     thresh=0.03,
     rank=2,
@@ -47,7 +47,7 @@ def godec(
         for i in range(power + 1):
             Y1 = np.dot(L, Y2)
             Y2 = np.dot(L.T, Y1)
-        Q, R = qr(Y2)
+        Q, R = qr(Y2, mode="full")
         L_new = np.dot(np.dot(L, Q), Q.T)
         T = L - L_new + S
         L = L_new
@@ -220,7 +220,7 @@ def greedy_semisoft_godec(D, ranks, tau, tol, inpower, k):
             # 	X = qro[0];
             # 	R = qro[1];
             # else:
-            X, R = qr(X, mode="reduced")
+            X, R = qr(X, mode="economic")
             # CHECK qr output formats
 
             # Update of Y
@@ -325,6 +325,7 @@ def greedy_semisoft_godec(D, ranks, tau, tol, inpower, k):
 def tedgodec(
     img,
     mask,
+    method="greedy",
     ranks=[2],
     drank=2,
     inpower=2,
@@ -360,45 +361,47 @@ def tedgodec(
     out = {}
     if wavelet:
         # Apply wavelet transform
-        X_wt, cal = dwtmat(dnorm)
-        # Run GODEC
-        X_L, X_S, X_G = godec(
-            X_wt,
-            thresh=X_wt.std() * thresh,
-            rank=ranks[0],
-            power=1,
-            tol=1e-3,
-            max_iter=max_iter,
-            random_seed=0,
-            verbose=True,
-        )
-        # Apply inverse wavelet transform to outputs
-        X_L = idwtmat(X_L, cal)
-        X_S = idwtmat(X_S, cal)
-        X_G = idwtmat(X_G, cal)
+        temp_data, cal = dwtmat(dnorm)
+        thresh_ = temp_data.std() * thresh
     else:
-        X_L, X_S, X_G = godec(
-            dnorm,
-            thresh=thresh,
-            rank=ranks[0],
-            power=1,
-            tol=1e-3,
-            max_iter=max_iter,
-            random_seed=0,
-            verbose=True,
+        temp_data = dnorm.copy()
+        thresh_ = thresh
+
+    if method == "greedy":
+        # GreGoDec
+        out = greedy_semisoft_godec(
+            temp_data,
+            ranks=ranks,
+            tau=1,
+            tol=1e-7,
+            inpower=inpower,
+            k=drank,
         )
+    else:
+        for rank in ranks:
+            X_L, X_S, X_G = standard_godec(
+                temp_data,
+                thresh=thresh_,
+                rank=rank,
+                power=1,
+                tol=1e-3,
+                max_iter=max_iter,
+                random_seed=0,
+                verbose=True,
+            )
 
-    out[ranks[0]] = [X_L, X_S, X_G]
+            out[rank] = [X_L, X_S, X_G]
 
-    # GreGoDec
-    # out = greedy_semisoft_godec(dnorm, ranks, 1, 1e-7, inpower, drank)
+    if wavelet:
+        for rr in out.keys():
+            out[rr] = [idwtmat(arr, cal) for arr in out[rr]]
 
     if norm_mode == "dm":
-        # Remean
-        out[0] = out[0] + rmu[:, np.newaxis]
+        for rr in out.keys():
+            out[rr][0] = out[rr][0] + rmu[:, np.newaxis]
     elif norm_mode == "vn":
         for rr in out.keys():
-            out[rr][0] = out[rr][0] * rstd[:, np.newaxis] + rmu[:, np.newaxis]
+            out[rr][0] = (out[rr][0] * rstd[:, np.newaxis]) + rmu[:, np.newaxis]
             out[rr][1] = out[rr][1] * rstd[:, np.newaxis]
             out[rr][2] = out[rr][2] * rstd[:, np.newaxis]
 
@@ -410,6 +413,7 @@ def run_godec_denoising(
     mask,
     out_dir=".",
     prefix="",
+    method="greedy",
     rank=[2],
     norm_mode=None,
     thresh=None,
@@ -438,6 +442,7 @@ def run_godec_denoising(
     godec_outputs = tedgodec(
         img,
         mask,
+        method=method,
         ranks=rank,
         drank=drank,
         inpower=inpower,
@@ -513,6 +518,13 @@ def _get_parser():
         type=str,
         help="Prefix for filenames generated.",
         default="",
+    )
+    parser.add_argument(
+        "--method",
+        dest="method",
+        help="GODEC method.",
+        default="greedy",
+        choices=["greedy", "standard"],
     )
     parser.add_argument(
         "-r",
