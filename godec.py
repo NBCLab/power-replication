@@ -74,8 +74,6 @@ def standard_godec(
 
 def dwtmat(mmix):
     """Apply a discrete wavelet transform to a matrix."""
-    # ipdb.set_trace()
-    print("++Wavelet transforming data")
     lt = len(np.hstack(pywt.dwt(mmix[0], "db2")))
     mmix_wt = np.zeros([mmix.shape[0], lt])
     for ii in range(mmix_wt.shape[0]):
@@ -87,7 +85,6 @@ def dwtmat(mmix):
 
 def idwtmat(mmix_wt, cAl):
     """Apply a discrete inverse wavelet transform to a matrix."""
-    print("++Inverse wavelet transforming")
     lt = len(pywt.idwt(mmix_wt[0, :cAl], mmix_wt[0, cAl:], "db2"))
     mmix_iwt = np.zeros([mmix_wt.shape[0], lt])
     for ii in range(mmix_iwt.shape[0]):
@@ -130,24 +127,6 @@ def greedy_semisoft_godec(D, ranks, tau, tol, inpower, k):
 
     Tianyi Zhou, 2013, All rights reserved.
     """
-
-    def rank_estimator_adaptive(inv):
-        if inv["estrank"] == 1:
-            dR = abs(np.diag(R))
-            drops = dR[:-1] / dR[1:]
-            print(dR.shape)
-            dmx = max(drops)
-            imx = np.argmax(drops)
-            rel_drp = (inv["rankmax"] - 1) * dmx / (sum(drops) - dmx)
-            # ipdb.set_trace()
-            if (rel_drp > rk_jump and itr_rank > minitr_reduce_rank) or inv[
-                "itr_rank"
-            ] > maxitr_reduce_rank:  # %bar(drops); pause;
-                inv["rrank"] = max([imx, np.floor(0.1 * inv["rankmax"]), rank_min])
-                # inv['error'][ii] = np.linalg.norm(res)/normz;
-                inv["estrank"] = 0
-                inv["itr_rank"] = 0
-            return inv
 
     # set rankmax and sampling dictionary
     rankmax = max(ranks)
@@ -247,27 +226,33 @@ def greedy_semisoft_godec(D, ranks, tau, tol, inpower, k):
                 break
 
             # adjust estrank
-            if estrank >= 1:
-                outr = rank_estimator_adaptive(locals())
-                estrank, rankmax, itr_rank, error, rrank = [
-                    outr["estrank"],
-                    outr["rankmax"],
-                    outr["itr_rank"],
-                    outr["error"],
-                    outr["rrank"],
-                ]
+            if estrank == 1:
+                dR = abs(np.diag(R))
+                drops = dR[:-1] / dR[1:]
+                # print(dR.shape)
+                dmx = max(drops)
+                imx = np.argmax(drops)
+                rel_drp = (rankmax - 1) * dmx / (sum(drops) - dmx)
 
-            if rrank != rankmax:
-                rankmax = rrank
-                if estrank == 0:
-                    alf = 0
-                    continue
+                if (rel_drp > rk_jump and itr_rank > minitr_reduce_rank) or (
+                    itr_rank > maxitr_reduce_rank
+                ):
+                    rrank = max([imx, np.floor(0.1 * rankmax), rank_min])
+                    estrank = 0
+                    itr_rank = 0
+
+                    if rrank != rankmax:
+                        rankmax = rrank
+                        if estrank == 0:
+                            alf = 0
+                            continue
 
             # adjust alf
             ratio = error[ii] / error[ii - 1]
             if np.isinf(ratio):
                 ratio = 0
-            print(ii, error, ratio)
+            # print(ii, error, ratio)
+
             if ratio >= 1.1:
                 increment = max(0.1 * alf, 0.1 * increment)
                 X = X1
@@ -282,7 +267,7 @@ def greedy_semisoft_godec(D, ranks, tau, tol, inpower, k):
                 alf = alf + increment
 
             # Update of L
-            print("updating L")
+            # print("updating L")
             X1 = X
             Y1 = Y
             L1 = L
@@ -360,7 +345,7 @@ def tedgodec(
     # GoDec
     out = {}
     if wavelet:
-        # Apply wavelet transform
+        print("++Wavelet transforming data")
         temp_data, cal = dwtmat(dnorm)
         thresh_ = temp_data.std() * thresh
     else:
@@ -393,17 +378,18 @@ def tedgodec(
             out[rank] = [X_L, X_S, X_G]
 
     if wavelet:
-        for rr in out.keys():
-            out[rr] = [idwtmat(arr, cal) for arr in out[rr]]
+        print("++Inverse wavelet transforming outputs")
+        for rank in out.keys():
+            out[rank] = [idwtmat(arr, cal) for arr in out[rank]]
 
     if norm_mode == "dm":
         for rr in out.keys():
-            out[rr][0] = out[rr][0] + rmu[:, np.newaxis]
+            out[rank][0] = out[rank][0] + rmu[:, np.newaxis]
     elif norm_mode == "vn":
-        for rr in out.keys():
-            out[rr][0] = (out[rr][0] * rstd[:, np.newaxis]) + rmu[:, np.newaxis]
-            out[rr][1] = out[rr][1] * rstd[:, np.newaxis]
-            out[rr][2] = out[rr][2] * rstd[:, np.newaxis]
+        for rank in out.keys():
+            out[rank][0] = (out[rank][0] * rstd[:, np.newaxis]) + rmu[:, np.newaxis]
+            out[rank][1] = out[rank][1] * rstd[:, np.newaxis]
+            out[rank][2] = out[rank][2] * rstd[:, np.newaxis]
 
     return out
 
@@ -457,21 +443,16 @@ def run_godec_denoising(
         sparse_img = unmask(outputs[1].T, mask)
         noise_img = unmask(outputs[2].T, mask)
 
-        if norm_mode is None:
-            name_norm_mode = ""
-        else:
-            name_norm_mode = f"n{norm_mode}"
-
         if wavelet:
-            name_norm_mode = f"w{name_norm_mode}"
+            norm_mode = "w" + norm_mode
 
-        suffix = f"{name_norm_mode}r{rank}k{drank}p{inpower}t{thresh}"
+        suffix = f"norm b -{norm_mode}_rank-{rank}_k-{drank}_p-{inpower}_t-{thresh}"
 
         lowrank_img.to_filename(
-            os.path.join(out_dir, f"{prefix}lowrank_{suffix}.nii.gz")
+            os.path.join(out_dir, f"{prefix}desc-lowrank_{suffix}.nii.gz")
         )
-        sparse_img.to_filename(os.path.join(out_dir, f"{prefix}sparse_{suffix}.nii.gz"))
-        noise_img.to_filename(os.path.join(out_dir, f"{prefix}noise_{suffix}.nii.gz"))
+        sparse_img.to_filename(os.path.join(out_dir, f"{prefix}desc-sparse_{suffix}.nii.gz"))
+        noise_img.to_filename(os.path.join(out_dir, f"{prefix}desc-noise_{suffix}.nii.gz"))
 
 
 def is_valid_file(parser, arg):
