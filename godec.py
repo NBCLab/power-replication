@@ -1,5 +1,6 @@
 """Run GODEC."""
 import argparse
+import json
 import os
 
 import numpy as np
@@ -10,6 +11,36 @@ from scipy.linalg import qr
 from scipy.sparse.linalg import svds
 
 __version__ = "0.1"
+
+
+def is_valid_file(parser, arg):
+    """
+    Check if argument is existing file.
+    """
+    if (arg is not None) and (not os.path.isfile(arg)):
+        parser.error(f"The file {arg} does not exist!")
+
+    return arg
+
+
+def dwtmat(mmix):
+    """Apply a discrete wavelet transform to a matrix."""
+    lt = len(np.hstack(pywt.dwt(mmix[0], "db2")))
+    mmix_wt = np.zeros([mmix.shape[0], lt])
+    for ii in range(mmix_wt.shape[0]):
+        wtx = pywt.dwt(mmix[ii], "db2")
+        cAlen = len(wtx[0])
+        mmix_wt[ii] = np.hstack(wtx)
+    return mmix_wt, cAlen
+
+
+def idwtmat(mmix_wt, cAl):
+    """Apply a discrete inverse wavelet transform to a matrix."""
+    lt = len(pywt.idwt(mmix_wt[0, :cAl], mmix_wt[0, cAl:], "db2"))
+    mmix_iwt = np.zeros([mmix_wt.shape[0], lt])
+    for ii in range(mmix_iwt.shape[0]):
+        mmix_iwt[ii] = pywt.idwt(mmix_wt[ii, :cAl], mmix_wt[ii, cAl:], "db2")
+    return mmix_iwt
 
 
 def wthresh(a, thresh):
@@ -70,26 +101,6 @@ def standard_godec(
         print(f"Finished at iteration {itr}")
 
     return L, S, G
-
-
-def dwtmat(mmix):
-    """Apply a discrete wavelet transform to a matrix."""
-    lt = len(np.hstack(pywt.dwt(mmix[0], "db2")))
-    mmix_wt = np.zeros([mmix.shape[0], lt])
-    for ii in range(mmix_wt.shape[0]):
-        wtx = pywt.dwt(mmix[ii], "db2")
-        cAlen = len(wtx[0])
-        mmix_wt[ii] = np.hstack(wtx)
-    return mmix_wt, cAlen
-
-
-def idwtmat(mmix_wt, cAl):
-    """Apply a discrete inverse wavelet transform to a matrix."""
-    lt = len(pywt.idwt(mmix_wt[0, :cAl], mmix_wt[0, cAl:], "db2"))
-    mmix_iwt = np.zeros([mmix_wt.shape[0], lt])
-    for ii in range(mmix_iwt.shape[0]):
-        mmix_iwt[ii] = pywt.idwt(mmix_wt[ii, :cAl], mmix_wt[ii, cAl:], "db2")
-    return mmix_iwt
 
 
 def greedy_semisoft_godec(D, ranks, tau, tol, inpower, k):
@@ -307,100 +318,13 @@ def greedy_semisoft_godec(D, ranks, tau, tol, inpower, k):
     return outdict
 
 
-def tedgodec(
-    img,
-    mask,
-    method="greedy",
-    ranks=[2],
-    drank=2,
-    inpower=2,
-    thresh=10,
-    max_iter=500,
-    norm_mode=None,
-    wavelet=False,
-):
-    """Run TE-Dependent GODEC.
-
-    norm_mode : {None, "dm", "vn"}, optional
-        Default is None.
-    """
-    nx, ny, nz, nt = img.shape
-    masked_data = apply_mask(img, mask)
-    _, n_voxels = masked_data.shape
-
-    # Transpose to match ME-ICA convention (SxT instead of TxS)
-    masked_data = masked_data.T
-
-    if norm_mode == "dm":
-        # Demean
-        rmu = masked_data.mean(-1)
-        dnorm = masked_data - rmu[:, np.newaxis]
-    elif norm_mode == "vn":
-        rmu = masked_data.mean(-1)
-        rstd = masked_data.std(-1)
-        dnorm = (masked_data - rmu[:, np.newaxis]) / rstd[:, np.newaxis]
-    else:
-        dnorm = masked_data
-
-    # GoDec
-    out = {}
-    if wavelet:
-        print("++Wavelet transforming data")
-        temp_data, cal = dwtmat(dnorm)
-        thresh_ = temp_data.std() * thresh
-    else:
-        temp_data = dnorm.copy()
-        thresh_ = thresh
-
-    if method == "greedy":
-        # GreGoDec
-        out = greedy_semisoft_godec(
-            temp_data,
-            ranks=ranks,
-            tau=1,
-            tol=1e-7,
-            inpower=inpower,
-            k=drank,
-        )
-    else:
-        for rank in ranks:
-            X_L, X_S, X_G = standard_godec(
-                temp_data,
-                thresh=thresh_,
-                rank=rank,
-                power=1,
-                tol=1e-3,
-                max_iter=max_iter,
-                random_seed=0,
-                verbose=True,
-            )
-
-            out[rank] = [X_L, X_S, X_G]
-
-    if wavelet:
-        print("++Inverse wavelet transforming outputs")
-        for rank in out.keys():
-            out[rank] = [idwtmat(arr, cal) for arr in out[rank]]
-
-    if norm_mode == "dm":
-        for rr in out.keys():
-            out[rank][0] = out[rank][0] + rmu[:, np.newaxis]
-    elif norm_mode == "vn":
-        for rank in out.keys():
-            out[rank][0] = (out[rank][0] * rstd[:, np.newaxis]) + rmu[:, np.newaxis]
-            out[rank][1] = out[rank][1] * rstd[:, np.newaxis]
-            out[rank][2] = out[rank][2] * rstd[:, np.newaxis]
-
-    return out
-
-
 def run_godec_denoising(
     in_file,
     mask,
     out_dir=".",
     prefix="",
     method="greedy",
-    rank=[2],
+    ranks=[2],
     norm_mode=None,
     thresh=None,
     drank=2,
@@ -425,44 +349,101 @@ def run_godec_denoising(
         mu = masked_data.mean(axis=-1)
         thresh = np.median(mu[mu != 0]) * 0.01
 
-    godec_outputs = tedgodec(
-        img,
-        mask,
-        method=method,
-        ranks=rank,
-        drank=drank,
-        inpower=inpower,
-        thresh=thresh,
-        max_iter=500,
-        norm_mode=norm_mode,
-        wavelet=wavelet,
-    )
+    nx, ny, nz, nt = img.shape
+    masked_data = apply_mask(img, mask)
+    _, n_voxels = masked_data.shape
+
+    # Transpose to match ME-ICA convention (SxT instead of TxS)
+    masked_data = masked_data.T
+
+    if norm_mode == "dm":
+        # Demean
+        rmu = masked_data.mean(-1)
+        dnorm = masked_data - rmu[:, np.newaxis]
+    elif norm_mode == "vn":
+        rmu = masked_data.mean(-1)
+        rstd = masked_data.std(-1)
+        dnorm = (masked_data - rmu[:, np.newaxis]) / rstd[:, np.newaxis]
+    else:
+        dnorm = masked_data
+
+    # GoDec
+    godec_outputs = {}
+    if wavelet:
+        print("++Wavelet transforming data")
+        temp_data, cal = dwtmat(dnorm)
+        thresh_ = temp_data.std() * thresh
+        print(f"Setting threshold to {thresh_}")
+    else:
+        temp_data = dnorm.copy()
+        thresh_ = thresh
+
+    if method == "greedy":
+        # GreGoDec
+        godec_outputs = greedy_semisoft_godec(
+            temp_data,
+            ranks=ranks,
+            tau=1,
+            tol=1e-7,
+            inpower=inpower,
+            k=drank,
+        )
+    else:
+        for rank in ranks:
+            X_L, X_S, X_G = standard_godec(
+                temp_data,
+                thresh=thresh_,
+                rank=rank,
+                power=1,
+                tol=1e-3,
+                max_iter=500,
+                random_seed=0,
+                verbose=True,
+            )
+
+            godec_outputs[rank] = [X_L, X_S, X_G]
+
+    if wavelet:
+        print("++Inverse wavelet transforming outputs")
+        for rank in godec_outputs.keys():
+            godec_outputs[rank] = [idwtmat(arr, cal) for arr in godec_outputs[rank]]
+
+    if norm_mode == "dm":
+        for rank in godec_outputs.keys():
+            godec_outputs[rank][0] = godec_outputs[rank][0] + rmu[:, np.newaxis]
+    elif norm_mode == "vn":
+        for rank in godec_outputs.keys():
+            godec_outputs[rank][0] = (
+                godec_outputs[rank][0] * rstd[:, np.newaxis]
+            ) + rmu[:, np.newaxis]
+            godec_outputs[rank][1] = godec_outputs[rank][1] * rstd[:, np.newaxis]
+            godec_outputs[rank][2] = godec_outputs[rank][2] * rstd[:, np.newaxis]
 
     for rank, outputs in godec_outputs.items():
         lowrank_img = unmask(outputs[0].T, mask)
         sparse_img = unmask(outputs[1].T, mask)
         noise_img = unmask(outputs[2].T, mask)
 
-        if wavelet:
-            norm_mode = "w" + norm_mode
-
-        suffix = f"norm b -{norm_mode}_rank-{rank}_k-{drank}_p-{inpower}_t-{thresh}"
-
+        metadata = {
+            "normalization": norm_mode,
+            "wavelet": wavelet,
+            "rank": rank,
+            "k": drank,
+            "p": inpower,
+            "t": thresh,
+        }
+        metadata_file = os.path.join(out_dir, f"{prefix}_bold.json")
+        with open(metadata_file, "w") as fo:
+            json.dump(metadata, fo, sort_keys=True, indent=4)
         lowrank_img.to_filename(
-            os.path.join(out_dir, f"{prefix}desc-lowrank_{suffix}.nii.gz")
+            os.path.join(out_dir, f"{prefix}desc-lowrank_rank-{rank}_bold.nii.gz")
         )
-        sparse_img.to_filename(os.path.join(out_dir, f"{prefix}desc-sparse_{suffix}.nii.gz"))
-        noise_img.to_filename(os.path.join(out_dir, f"{prefix}desc-noise_{suffix}.nii.gz"))
-
-
-def is_valid_file(parser, arg):
-    """
-    Check if argument is existing file.
-    """
-    if (arg is not None) and (not os.path.isfile(arg)):
-        parser.error(f"The file {arg} does not exist!")
-
-    return arg
+        sparse_img.to_filename(
+            os.path.join(out_dir, f"{prefix}desc-sparse_rank-{rank}_bold.nii.gz")
+        )
+        noise_img.to_filename(
+            os.path.join(out_dir, f"{prefix}desc-noise_rank-{rank}_bold.nii.gz")
+        )
 
 
 def _get_parser():
@@ -509,13 +490,13 @@ def _get_parser():
     )
     parser.add_argument(
         "-r",
-        "--rank",
-        dest="rank",
+        "--ranks",
+        dest="ranks",
         metavar="INT",
         type=int,
         nargs="+",
         help="Rank(s) of low rank component",
-        default=[2],
+        default=[4],
     )
     parser.add_argument(
         "-k",
