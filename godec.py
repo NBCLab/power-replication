@@ -13,24 +13,9 @@ __version__ = "0.1"
 
 
 def wthresh(a, thresh):
-    # Soft wavelet threshold
+    """Determine soft wavelet threshold."""
     res = np.abs(a) - thresh
     return np.sign(a) * ((res > 0) * res)
-
-
-"""
-# Wrap it in a function that gives me more context:
-def ipsh():
-    from IPython.terminal.embed import InteractiveShellEmbed
-    ipshell = InteractiveShellEmbed(config=cfg, banner1=banner_msg, exit_msg=exit_msg)
-
-    frame = inspect.currentframe().f_back
-    msg   = 'Stopped at {0.f_code.co_filename} at line {0.f_lineno}'.format(frame)
-
-    # Go back one level!
-    # This is needed because the call to ipshell is inside the function ipsh()
-    ipshell(msg,stack_depth=2)
-"""
 
 
 def godec(
@@ -82,7 +67,7 @@ def godec(
         G = G.T
 
     if verbose:
-        print("Finished at iteration %d" % (itr))
+        print(f"Finished at iteration {itr}")
 
     return L, S, G
 
@@ -103,12 +88,10 @@ def dwtmat(mmix):
 def idwtmat(mmix_wt, cAl):
     """Apply a discrete inverse wavelet transform to a matrix."""
     print("++Inverse wavelet transforming")
-    lt = len(pywt.idwt(mmix_wt[0, :cAl], mmix_wt[0, cAl:], "db2", correct_size=True))
+    lt = len(pywt.idwt(mmix_wt[0, :cAl], mmix_wt[0, cAl:], "db2"))
     mmix_iwt = np.zeros([mmix_wt.shape[0], lt])
     for ii in range(mmix_iwt.shape[0]):
-        mmix_iwt[ii] = pywt.idwt(
-            mmix_wt[ii, :cAl], mmix_wt[ii, cAl:], "db2", correct_size=True
-        )
+        mmix_iwt[ii] = pywt.idwt(mmix_wt[ii, :cAl], mmix_wt[ii, cAl:], "db2")
     return mmix_iwt
 
 
@@ -207,6 +190,9 @@ def greedy_semisoft_godec(D, ranks, tau, tol, inpower, k):
     alf = 0
     estrank = -1
 
+    # Define some variables that shouldn't be touched before they're updated.
+    X1 = Y1 = L1 = S1 = T1 = None
+
     # tic;
     # for r=1:rankk
     for r in range(1, rankk + 1):  # CHECK iterator range
@@ -223,8 +209,9 @@ def greedy_semisoft_godec(D, ranks, tau, tol, inpower, k):
         if iii == inpower * (r - 2) + 1:
             iii = iii + inpower
 
-        for iteri in range(inpower + 1):
-            print("r %i, iteri %i, rrank %i, alf %i" % (r, iteri, rrank, alf))
+        for i_iter in range(inpower + 1):
+            print(f"r {r}, i_iter {i_iter}, rrank {rrank}, alf {alf}")
+
             # Update of X
             X = L.dot(Y.T)
             # CHECK dot notation
@@ -251,7 +238,7 @@ def greedy_semisoft_godec(D, ranks, tau, tol, inpower, k):
             # Error, stopping criteria
             T = T - S
             # ok
-            ii = iii + iteri - 1
+            ii = iii + i_iter - 1
             # ok
             # embed()
             error[ii] = np.linalg.norm(T[:]) / normD
@@ -305,7 +292,7 @@ def greedy_semisoft_godec(D, ranks, tau, tol, inpower, k):
             L = L + ((1 + alf) * (T))
 
             # Add coreset
-            if iteri > 8:
+            if i_iter > 8:
                 if np.mean(error[ii - 7 : ii + 1]) / error[ii - 8] > 0.92:
                     iii = ii
                     sf = X.shape[1]
@@ -343,12 +330,12 @@ def tedgodec(
     inpower=2,
     thresh=10,
     max_iter=500,
-    rmu_data=None,
     norm_mode=None,
     wavelet=False,
 ):
-    """
-    norm_mode : {None, "psc", "dm", "vn"}, optional
+    """Run TE-Dependent GODEC.
+
+    norm_mode : {None, "dm", "vn"}, optional
         Default is None.
     """
     nx, ny, nz, nt = img.shape
@@ -358,12 +345,7 @@ def tedgodec(
     # Transpose to match ME-ICA convention (SxT instead of TxS)
     masked_data = masked_data.T
 
-    if norm_mode == "psc":
-        # Convert to PSC
-        rmu = rmu_data.mean(-1)
-        dnorm = ((masked_data / rmu[:, np.newaxis]) - 1) * 100
-        thresh = 0.1
-    elif norm_mode == "dm":
+    if norm_mode == "dm":
         # Demean
         rmu = masked_data.mean(-1)
         dnorm = masked_data - rmu[:, np.newaxis]
@@ -409,12 +391,9 @@ def tedgodec(
     out[ranks[0]] = [X_L, X_S, X_G]
 
     # GreGoDec
-    # out = greedy_semisoft_godec(dnorm,ranks,1,1e-7,inpower,drank)
+    # out = greedy_semisoft_godec(dnorm, ranks, 1, 1e-7, inpower, drank)
 
-    if norm_mode == "psc":
-        for ii in range(len(out)):
-            out[ii] = ((out[ii] / 100) + 1) * rmu[:, np.newaxis]
-    elif norm_mode == "dm":
+    if norm_mode == "dm":
         # Remean
         out[0] = out[0] + rmu[:, np.newaxis]
     elif norm_mode == "vn":
@@ -431,7 +410,7 @@ def run_godec_denoising(
     mask,
     out_dir=".",
     prefix="",
-    ranks=[2],
+    rank=[2],
     norm_mode=None,
     thresh=None,
     drank=2,
@@ -459,7 +438,7 @@ def run_godec_denoising(
     godec_outputs = tedgodec(
         img,
         mask,
-        ranks=ranks,
+        ranks=rank,
         drank=drank,
         inpower=inpower,
         thresh=thresh,
@@ -469,9 +448,9 @@ def run_godec_denoising(
     )
 
     for rank, outputs in godec_outputs.items():
-        lowrank_img = unmask(outputs[0], mask)
-        sparse_img = unmask(outputs[1], mask)
-        noise_img = unmask(outputs[2], mask)
+        lowrank_img = unmask(outputs[0].T, mask)
+        sparse_img = unmask(outputs[1].T, mask)
+        noise_img = unmask(outputs[2].T, mask)
 
         if norm_mode is None:
             name_norm_mode = ""
@@ -483,9 +462,11 @@ def run_godec_denoising(
 
         suffix = f"{name_norm_mode}r{rank}k{drank}p{inpower}t{thresh}"
 
-        lowrank_img.to_filename(op.join(out_dir, f"{prefix}lowrank_{suffix}.nii.gz"))
-        sparse_img.to_filename(op.join(out_dir, f"{prefix}sparse_{suffix}.nii.gz"))
-        noise_img.to_filename(op.join(out_dir, f"{prefix}noise_{suffix}.nii.gz"))
+        lowrank_img.to_filename(
+            os.path.join(out_dir, f"{prefix}lowrank_{suffix}.nii.gz")
+        )
+        sparse_img.to_filename(os.path.join(out_dir, f"{prefix}sparse_{suffix}.nii.gz"))
+        noise_img.to_filename(os.path.join(out_dir, f"{prefix}noise_{suffix}.nii.gz"))
 
 
 def is_valid_file(parser, arg):
@@ -537,9 +518,9 @@ def _get_parser():
         "-r",
         "--rank",
         dest="rank",
-        metavar='INT',
+        metavar="INT",
         type=int,
-        nargs='+',
+        nargs="+",
         help="Rank(s) of low rank component",
         default=[2],
     )
@@ -554,7 +535,7 @@ def _get_parser():
     parser.add_argument(
         "-p",
         "--power",
-        dest="power",
+        dest="inpower",
         type=int,
         help="Power for power method",
         default=2,
@@ -573,7 +554,7 @@ def _get_parser():
         dest="thresh",
         type=float,
         help="Threshold of some kind.",
-        default=2,
+        default=0.03,
     )
     parser.add_argument(
         "-n",
@@ -581,7 +562,7 @@ def _get_parser():
         dest="norm_mode",
         help="Normalization mode",
         default="vn",
-        choices=["vn", "psc", "dm", "none"],
+        choices=["vn", "dm", "none"],
     )
 
     return parser
@@ -589,4 +570,8 @@ def _get_parser():
 
 def _main(argv=None):
     options = _get_parser().parse_args(argv)
-    run_godec_denoising(**options)
+    run_godec_denoising(**vars(options))
+
+
+if __name__ == "__main__":
+    _main()
