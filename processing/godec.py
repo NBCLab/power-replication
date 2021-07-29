@@ -322,8 +322,8 @@ def run_godec_denoising(
     prefix="",
     method="greedy",
     ranks=[4],
-    norm_mode=None,
-    thresh=None,
+    norm_mode="vn",
+    thresh=0.03,
     drank=2,
     inpower=2,
     wavelet=False,
@@ -338,6 +338,9 @@ def run_godec_denoising(
     - The paper used a discrete Daubechies wavelet transform before and after GODEC,
       with rank-1 approximation and 100 iterations. See page 4 of online supplemental methods.
     """
+    if not prefix.endswith("_"):
+        prefix = prefix + "_"
+
     img = load_niimg(in_file)
     mask = load_niimg(mask)
 
