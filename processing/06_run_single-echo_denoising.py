@@ -21,7 +21,7 @@ from nilearn import image
 from utils import _generic_regression, run_command
 
 
-def run_rvtreg(medn_file, mask_file, physio_file, confounds_file, out_dir):
+def run_rvtreg(medn_file, fit_file, mask_file, physio_file, confounds_file, out_dir):
     """Clean MEDN data with regression model including RVT and RVT*RRF (plus lags).
 
     Parameters
@@ -34,15 +34,9 @@ def run_rvtreg(medn_file, mask_file, physio_file, confounds_file, out_dir):
         Path to analysis folder
 
     Used for:
-    -   Carpet plots of ME-DN after regression of RVT + RVT*RRF (S5)
-    -   Carpet plots of FIT-R2 after regression of RVT + RVT*RRF (not in paper)
-    -   Carpet plots of ME-HK after regression of RVT + RVT*RRF (not in paper)
-    -   Scatter plot of ME-DN-RVT+RVT*RRF SD of global signal against
+    -   Carpet plots of MEDN after regression of RVT + RVT*RRF (S5)
+    -   Scatter plot of MEDN-RVT+RVT*RRF SD of global signal against
         SD of ventilatory envelope (RPV) (S8).
-    -   Scatter plot of FIT-R2-RVT+RVT*RRF SD of global signal against
-        SD of ventilatory envelope (RPV) (not in paper).
-    -   Scatter plot of ME-HK-RVT+RVT*RRF SD of global signal against
-        SD of ventilatory envelope (RPV) (not in paper).
     """
     # Parse input files
     medn_name = op.basename(medn_file)
@@ -125,7 +119,7 @@ def run_rvtreg(medn_file, mask_file, physio_file, confounds_file, out_dir):
         json.dump(json_info, fo, sort_keys=True, indent=4)
 
 
-def run_rvreg(medn_file, mask_file, physio_file, confounds_file, out_dir):
+def run_rvreg(medn_file, fit_file, mask_file, physio_file, confounds_file, out_dir):
     """Clean MEDN data with regression model including RV and RV*RRF (plus lags).
 
     Parameters
@@ -139,15 +133,9 @@ def run_rvreg(medn_file, mask_file, physio_file, confounds_file, out_dir):
     Notes
     -----
     Used for:
-    -   Carpet plots of ME-DN after regression of RV + RV*RRF (S5)
-    -   Carpet plots of FIT-R2 after regression of RV + RV*RRF (not in paper)
-    -   Carpet plots of ME-HK after regression of RV + RV*RRF (not in paper)
-    -   Scatter plot of ME-DN-RV+RV*RRF SD of global signal against
+    -   Carpet plots of MEDN after regression of RV + RV*RRF (S5)
+    -   Scatter plot of MEDN-RV+RV*RRF SD of global signal against
         SD of ventilatory envelope (RPV) (S8).
-    -   Scatter plot of FIT-R2-RV+RV*RRF SD of global signal against
-        SD of ventilatory envelope (RPV) (not in paper).
-    -   Scatter plot of ME-HK-RV+RV*RRF SD of global signal against
-        SD of ventilatory envelope (RPV) (not in paper).
     """
     # Parse input files
     medn_name = op.basename(medn_file)
@@ -230,28 +218,22 @@ def run_dgsr(medn_file, mask_file, confounds_file, out_dir):
     Parameters
     ----------
     medn_file
+    mask_file
     confounds_file
     out_dir
 
     Used for:
-    -   Carpet plots of ME-DN after dGSR (3, S12)
-    -   Carpet plots of ME-HK after dGSR (not in paper)
-    -   QC:RSFC plot of ME-DN after dGSR with motion as QC (4, 5, S10, S13)
+    -   Carpet plots of MEDN after dGSR (3, S12)
+    -   QC:RSFC plot of MEDN after dGSR with motion as QC (4, 5, S10, S13)
         - S10 involves censoring FD>0.2mm
-    -   QC:RSFC plot of ME-HK after dGSR with motion as QC (not in paper)
-    -   QC:RSFC plot of ME-DN after dGSR with RPV as QC (5)
-    -   QC:RSFC plot of ME-HK after dGSR with RPV as QC (not in paper)
-    -   High-low motion plot of ME-DN after dGSR (4, S10)
+    -   QC:RSFC plot of MEDN after dGSR with RPV as QC (5)
+    -   High-low motion plot of MEDN after dGSR (4, S10)
         - S10 involves censoring FD>0.2mm
-    -   High-low motion plot of ME-HK after dGSR (not in paper)
-    -   Scrubbing plot of ME-DN after dGSR (4)
-    -   Scrubbing plot of ME-HK after dGSR (not in paper)
-    -   Mean correlation matrix and histogram of ME-DN after dGSR (S13)
-    -   Correlation scatterplot of ME-DN after dGSR against other ME-DN
+    -   Scrubbing plot of MEDN after dGSR (4)
+    -   Mean correlation matrix and histogram of MEDN after dGSR (S13)
+    -   Correlation scatterplot of MEDN after dGSR against other MEDN
         outputs (S13)
-    -   Scatter plot of ME-DN-dGSR SD of global signal against
-        SD of ventilatory envelope (RPV) (not in paper).
-    -   Scatter plot of ME-HK-dGSR SD of global signal against
+    -   Scatter plot of MEDN-dGSR SD of global signal against
         SD of ventilatory envelope (RPV) (not in paper).
     """
     # I don't trust that tedana will retain the TR in the nifti header,
@@ -290,25 +272,18 @@ def run_godec():
     medn_file
 
     Used for:
-    -   Carpet plots of ME-DN after GODEC (3, S9, S12)
-    -   Carpet plots of ME-HK after GODEC (not in paper)
-    -   QC:RSFC plot of ME-DN after GODEC with motion as QC (4, 5, S10, S13)
+    -   Carpet plots of MEDN after GODEC (3, S9, S12)
+    -   QC:RSFC plot of MEDN after GODEC with motion as QC (4, 5, S10, S13)
         - S10 involves censoring FD>0.2mm
-    -   QC:RSFC plot of ME-HK after GODEC with motion as QC (not in paper)
-    -   QC:RSFC plot of ME-DN after GODEC with RPV as QC (5)
-    -   QC:RSFC plot of ME-HK after GODEC with RPV as QC (not in paper)
-    -   High-low motion plot of ME-DN after GODEC (4, S10)
+    -   QC:RSFC plot of MEDN after GODEC with RPV as QC (5)
+    -   High-low motion plot of MEDN after GODEC (4, S10)
         - S10 involves censoring FD>0.2mm
-    -   High-low motion plot of ME-HK after GODEC (not in paper)
-    -   Scrubbing plot of ME-DN after GODEC (4)
-    -   Scrubbing plot of ME-HK after GODEC (not in paper)
-    -   Mean correlation matrix and histogram of ME-DN after GODEC (S13)
-    -   Correlation scatterplot of ME-DN after GODEC against other ME-DN
+    -   Scrubbing plot of MEDN after GODEC (4)
+    -   Mean correlation matrix and histogram of MEDN after GODEC (S13)
+    -   Correlation scatterplot of MEDN after GODEC against other MEDN
         outputs (S13)
-    -   Scatter plot of ME-DN-GODEC SD of global signal against
+    -   Scatter plot of MEDN-GODEC SD of global signal against
         SD of ventilatory envelope (RPV) (2).
-    -   Scatter plot of ME-HK-GODEC SD of global signal against
-        SD of ventilatory envelope (RPV) (not in paper).
     """
     pass
 
@@ -324,24 +299,17 @@ def run_gsr(medn_file, mask_file, confounds_file, out_dir):
     out_dir
 
     Used for:
-    -   Carpet plots of ME-DN after GSR (3, S12)
-    -   Carpet plots of ME-HK after GSR (not in paper)
-    -   QC:RSFC plot of ME-DN after GSR with motion as QC (4, 5, S10, S13)
+    -   Carpet plots of MEDN after GSR (3, S12)
+    -   QC:RSFC plot of MEDN after GSR with motion as QC (4, 5, S10, S13)
         - S10 involves censoring FD>0.2mm
-    -   QC:RSFC plot of ME-HK after GSR with motion as QC (not in paper)
-    -   QC:RSFC plot of ME-DN after GSR with RPV as QC (5)
-    -   QC:RSFC plot of ME-HK after GSR with RPV as QC (not in paper)
-    -   High-low motion plot of ME-DN after GSR (4, S10)
+    -   QC:RSFC plot of MEDN after GSR with RPV as QC (5)
+    -   High-low motion plot of MEDN after GSR (4, S10)
         - S10 involves censoring FD>0.2mm
-    -   High-low motion plot of ME-HK after GSR (not in paper)
-    -   Scrubbing plot of ME-DN after GSR (4)
-    -   Scrubbing plot of ME-HK after GSR (not in paper)
-    -   Mean correlation matrix and histogram of ME-DN after GSR (S13)
-    -   Correlation scatterplot of ME-DN after GSR against other ME-DN
+    -   Scrubbing plot of MEDN after GSR (4)
+    -   Mean correlation matrix and histogram of MEDN after GSR (S13)
+    -   Correlation scatterplot of MEDN after GSR against other MEDN
         outputs (S13)
-    -   Scatter plot of ME-DN-GSR SD of global signal against
-        SD of ventilatory envelope (RPV) (not in paper).
-    -   Scatter plot of ME-HK-GSR SD of global signal against
+    -   Scatter plot of MEDN-GSR SD of global signal against
         SD of ventilatory envelope (RPV) (not in paper).
     """
     # Parse input files
@@ -426,25 +394,18 @@ def run_acompcor(medn_file, mask_file, confounds_file, out_dir):
         > from and distinct from those of the gray matter).
 
     Used for:
-    -   Carpet plots of ME-DN after aCompCor (3, S9, S12)
-    -   Carpet plots of ME-HK after aCompCor (not in paper)
-    -   QC:RSFC plot of ME-DN after aCompCor with motion as QC (4, 5, S10, S13)
+    -   Carpet plots of MEDN after aCompCor (3, S9, S12)
+    -   QC:RSFC plot of MEDN after aCompCor with motion as QC (4, 5, S10, S13)
         - S10 involves censoring FD>0.2mm
-    -   QC:RSFC plot of ME-HK after aCompCor with motion as QC (not in paper)
-    -   QC:RSFC plot of ME-DN after aCompCor with RPV as QC (5)
-    -   QC:RSFC plot of ME-HK after aCompCor with RPV as QC (not in paper)
-    -   High-low motion plot of ME-DN after aCompCor (4, S10)
+    -   QC:RSFC plot of MEDN after aCompCor with RPV as QC (5)
+    -   High-low motion plot of MEDN after aCompCor (4, S10)
         - S10 involves censoring FD>0.2mm
-    -   High-low motion plot of ME-HK after aCompCor (not in paper)
-    -   Scrubbing plot of ME-DN after aCompCor (4)
-    -   Scrubbing plot of ME-HK after aCompCor (not in paper)
-    -   Mean correlation matrix and histogram of ME-DN after aCompCor (S13)
-    -   Correlation scatterplot of ME-DN after aCompCor against other ME-DN
+    -   Scrubbing plot of MEDN after aCompCor (4)
+    -   Mean correlation matrix and histogram of MEDN after aCompCor (S13)
+    -   Correlation scatterplot of MEDN after aCompCor against other MEDN
         outputs (S13)
-    -   Scatter plot of ME-DN-aCompCor SD of global signal against
+    -   Scatter plot of MEDN-aCompCor SD of global signal against
         SD of ventilatory envelope (RPV) (2).
-    -   Scatter plot of ME-HK-aCompCor SD of global signal against
-        SD of ventilatory envelope (RPV) (not in paper).
     """
     # Parse input files
     medn_name = op.basename(medn_file)
@@ -533,14 +494,11 @@ def run_nuisance(medn_file, mask_file, seg_file, confounds_file, out_dir):
     Notes
     -----
     Used for:
-    -   Carpet plots of ME-DN after regression of nuisance (S7)
+    -   Carpet plots of MEDN after regression of nuisance (S7)
     -   Carpet plots of FIT-R2 after regression of nuisance (S6)
-    -   Carpet plots of ME-HK after regression of nuisance (not in paper)
-    -   Scatter plot of ME-DN-Nuis SD of global signal against
+    -   Scatter plot of MEDN-Nuis SD of global signal against
         SD of ventilatory envelope (RPV) (S8).
     -   Scatter plot of FIT-R2-Nuis SD of global signal against
-        SD of ventilatory envelope (RPV) (not in paper).
-    -   Scatter plot of ME-HK-Nuis SD of global signal against
         SD of ventilatory envelope (RPV) (not in paper).
     """
     # Parse input files
