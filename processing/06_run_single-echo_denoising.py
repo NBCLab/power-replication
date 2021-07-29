@@ -264,8 +264,8 @@ def run_dgsr(medn_file, mask_file, confounds_file, out_dir):
     # TODO: Create json files with Sources field.
 
 
-def run_godec():
-    """Not to be run yet.
+def run_godec(medn_file, mask_file, out_dir):
+    """Still need to test a bit.
 
     Parameters
     ----------
@@ -285,7 +285,26 @@ def run_godec():
     -   Scatter plot of MEDN-GODEC SD of global signal against
         SD of ventilatory envelope (RPV) (2).
     """
-    pass
+    from godec import run_godec_denoising
+
+    # Parse input files
+    medn_name = op.basename(medn_file)
+    prefix = medn_name.split("desc-")[0].rstrip("_")
+    # medn_json_file = medn_file.replace(".nii.gz", ".json")
+
+    run_godec_denoising(
+        medn_file,
+        mask_file,
+        out_dir,
+        prefix=prefix,
+        method="greedy",
+        ranks=[4],
+        norm_mode="vn",
+        thresh=0.03,
+        drank=2,
+        inpower=2,
+        wavelet=True,
+    )
 
 
 def run_gsr(medn_file, mask_file, confounds_file, out_dir):
@@ -578,7 +597,7 @@ def main(project_dir, dset):
 
     nuis_dir = op.join(deriv_dir, "nuisance-regressions")
     dgsr_dir = op.join(deriv_dir, "rapidtide")
-    # godec_dir = op.join(deriv_dir, "godec")
+    godec_dir = op.join(deriv_dir, "godec")
 
     # Get list of participants with good data
     participants_file = op.join(preproc_dir, "participants.tsv")
@@ -623,10 +642,9 @@ def main(project_dir, dset):
         run_dgsr(medn_file, mask_file, confounds_file, dgsr_subj_dir)
 
         # GODEC
-        # TODO: Implement
-        # godec_subj_dir = op.join(godec_dir, subject, "func")
-        # os.makedirs(godec_subj_dir, exist_ok=True)
-        # run_godec(medn_file, mask_file, confounds_file, godec_subj_dir)
+        godec_subj_dir = op.join(godec_dir, subject, "func")
+        os.makedirs(godec_subj_dir, exist_ok=True)
+        run_godec(medn_file, mask_file, godec_subj_dir)
 
         if dset == "dset-dupre":
             run_rvtreg(medn_file, mask_file, confounds_file)
