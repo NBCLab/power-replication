@@ -5,4 +5,5 @@ source activate conda_env/
 conda install pip numpy scipy libgfortran sympy ply funcsigs cython matplotlib seaborn pandas numexpr scikit-learn tornado accelerate Biopython dateutil
 /home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/bin/pip install pip -U
 /home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/bin/pip install ipython jupyterlab ipywidgets nibabel nilearn
+/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/bin/pip install git+https://github.com/ME-ICA/godec.git@094129688775e0c07ad81e946974fa0ef72f34c4
 conda list > python_requirements.txt

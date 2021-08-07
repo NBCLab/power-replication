@@ -300,9 +300,8 @@ def run_godec(medn_file, mask_file, out_dir):
         method="greedy",
         ranks=[4],
         norm_mode="vn",
-        thresh=0.03,
-        drank=2,
-        inpower=2,
+        rank_step_size=2,
+        iterated_power=2,
         wavelet=True,
     )
 

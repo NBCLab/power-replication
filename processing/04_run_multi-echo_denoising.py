@@ -7,6 +7,7 @@ import json
 import os
 import os.path as op
 from glob import glob
+from shutil import copyfile
 
 import pandas as pd
 import tedana
@@ -120,7 +121,14 @@ def run_tedana(project_dir, dset):
         )
 
         # TODO: Merge metadata into MEDN/OC jsons
-        # TODO: Move dataset_description.json to top level and remove from subject folders.
+        if subject == subjects[0]:
+            copyfile(
+                op.join(tedana_subj_dir, "dataset_description.json"),
+                op.join(tedana_dir, "dataset_description.json"),
+            )
+
+        if op.isfile(op.join(tedana_dir, "dataset_description.json")):
+            os.remove(op.join(tedana_subj_dir, "dataset_description.json"))
 
 
 if __name__ == "__main__":

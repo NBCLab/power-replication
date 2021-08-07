@@ -184,7 +184,8 @@ def compile_physio_regressors(
 
     # Normally we'd offset the data by the start time, but in this dataset that's 0
     assert resp_metadata["StartTime"] == 0
-    # TODO: Account for dropped non-steady state volumes in regressors!
+
+    # Account for dropped non-steady state volumes in regressors
     sec_to_drop = nss_count * t_r
     resp_data_start = sec_to_drop * resp_samplerate
     resp_data_end = (n_vols + nss_count) * t_r * resp_samplerate
