@@ -14,6 +14,7 @@ import json
 import os
 import os.path as op
 from glob import glob
+from shutil import copyfile
 
 import pandas as pd
 from nilearn import image
@@ -26,12 +27,12 @@ def run_rvtreg(medn_file, fit_file, mask_file, physio_file, confounds_file, out_
 
     Parameters
     ----------
-    dset : {'ds000210', 'ds000254', 'ds000258'}
-    task : {'rest', 'fingertapping'}
-    method : {'meica_v2_5', 'fit'}
-    suffix : {'dn_ts_OC', 'hik_ts_OC', 't2s'}
-    in_dir : str
-        Path to analysis folder
+    medn_file
+    fit_file
+    mask_file
+    physio_file
+    confounds_file
+    out_dir
 
     Used for:
     -   Carpet plots of MEDN after regression of RVT + RVT*RRF (S5)
@@ -41,14 +42,11 @@ def run_rvtreg(medn_file, fit_file, mask_file, physio_file, confounds_file, out_
     # Parse input files
     medn_name = op.basename(medn_file)
     prefix = medn_name.split("desc-")[0].rstrip("_")
-    prefix = op.join(out_dir, prefix)
     medn_json_file = medn_file.replace(".nii.gz", ".json")
 
     # Determine output files
-    denoised_file = prefix + "_desc-RVTReg_bold.nii.gz"
-    denoised_json_file = denoised_file.replace(".nii.gz", ".json")
-    noise_file = prefix + "_desc-RVTRegNoise_bold.nii.gz"
-    noise_json_file = noise_file.replace(".nii.gz", ".json")
+    denoised_file = op.join(out_dir, f"{prefix}_desc-RVTReg_bold.nii.gz")
+    noise_file = op.join(out_dir, f"{prefix}_desc-RVTRegNoise_bold.nii.gz")
 
     confounds_df = pd.read_table(confounds_file)
 
@@ -96,27 +94,33 @@ def run_rvtreg(medn_file, fit_file, mask_file, physio_file, confounds_file, out_
 
     # Create json files with Sources and Description fields
     json_info["Sources"] = [medn_file, mask_file, confounds_file]
-    json_info["Description"] = (
-        "Multi-echo denoised data further denoised with a respiratory-volume-per-time-based "
-        "regression model. This model includes RVT lagged 0 seconds, 5 seconds forward, "
-        "10 seconds forward, 15 seconds forward, and 20 seconds forward, "
-        "along with those five RVT-based regressors convolved with "
-        "the respiratory response function, six realigment parameters, "
-        "and the realignment parameters' first derivatives."
-    )
-    with open(denoised_json_file, "w") as fo:
-        json.dump(json_info, fo, sort_keys=True, indent=4)
 
-    json_info["Description"] = (
-        "Residuals from respiratory-volume-per-time-based regression model applied to multi-echo "
-        "denoised data. This model includes RVT lagged 0 seconds, 5 seconds foward, "
-        "10 seconds forward, 15 seconds forward, and 20 seconds forward, "
-        "along with those three RV-based regressors convolved with "
-        "the respiratory response function, six realigment parameters, "
-        "and the realignment parameters' first derivatives."
-    )
-    with open(noise_json_file, "w") as fo:
-        json.dump(json_info, fo, sort_keys=True, indent=4)
+    SUFFIXES = {
+        "desc-RVTReg_bold": (
+            "Multi-echo denoised data further denoised with a respiratory-volume-per-time-based "
+            "regression model. This model includes RVT lagged 0 seconds, 5 seconds forward, "
+            "10 seconds forward, 15 seconds forward, and 20 seconds forward, "
+            "along with those five RVT-based regressors convolved with "
+            "the respiratory response function, six realigment parameters, "
+            "and the realignment parameters' first derivatives."
+        ),
+        "desc-RVTRegNoise_bold": (
+            "Residuals from respiratory-volume-per-time-based regression model applied to "
+            "multi-echo denoised data. This model includes RVT lagged 0 seconds, "
+            "5 seconds forward, 10 seconds forward, 15 seconds forward, and 20 seconds forward, "
+            "along with those three RV-based regressors convolved with "
+            "the respiratory response function, six realigment parameters, "
+            "and the realignment parameters' first derivatives."
+        ),
+    }
+    for suffix, description in SUFFIXES.items():
+        nii_file = op.join(out_dir, f"{prefix}_{suffix}.nii.gz")
+        assert op.isfile(nii_file)
+
+        suff_json_file = op.join(out_dir, f"{prefix}_{suffix}.json")
+        json_info["Description"] = description
+        with open(suff_json_file, "w") as fo:
+            json.dump(fo, json_info, sort_keys=True, indent=4)
 
 
 def run_rvreg(medn_file, fit_file, mask_file, physio_file, confounds_file, out_dir):
@@ -125,6 +129,7 @@ def run_rvreg(medn_file, fit_file, mask_file, physio_file, confounds_file, out_d
     Parameters
     ----------
     medn_file
+    fit_file
     mask_file
     physio_file
     confounds_file
@@ -140,14 +145,11 @@ def run_rvreg(medn_file, fit_file, mask_file, physio_file, confounds_file, out_d
     # Parse input files
     medn_name = op.basename(medn_file)
     prefix = medn_name.split("desc-")[0].rstrip("_")
-    prefix = op.join(out_dir, prefix)
     medn_json_file = medn_file.replace(".nii.gz", ".json")
 
     # Determine output files
-    denoised_file = prefix + "_desc-RVReg_bold.nii.gz"
-    denoised_json_file = denoised_file.replace(".nii.gz", ".json")
-    noise_file = prefix + "_desc-RVRegNoise_bold.nii.gz"
-    noise_json_file = noise_file.replace(".nii.gz", ".json")
+    denoised_file = op.join(out_dir, f"{prefix}_desc-RVReg_bold.nii.gz")
+    noise_file = op.join(out_dir, f"{prefix}_desc-RVRegNoise_bold.nii.gz")
 
     confounds_df = pd.read_table(confounds_file)
 
@@ -191,25 +193,31 @@ def run_rvreg(medn_file, fit_file, mask_file, physio_file, confounds_file, out_d
 
     # Create json files with Sources and Description fields
     json_info["Sources"] = [medn_file, mask_file, confounds_file]
-    json_info["Description"] = (
-        "Multi-echo denoised data further denoised with a respiratory variance-based "
-        "regression model. This model includes RV lagged 3 seconds back, 0 seconds, "
-        "3 seconds forward, along with those three RV-based regressors convolved with "
-        "the respiratory response function, six realigment parameters, "
-        "and the realignment parameters' first derivatives."
-    )
-    with open(denoised_json_file, "w") as fo:
-        json.dump(json_info, fo, sort_keys=True, indent=4)
 
-    json_info["Description"] = (
-        "Residuals from respiratory variance-based regression model applied to multi-echo "
-        "denoised data. This model includes RV lagged 3 seconds back, 0 seconds, "
-        "3 seconds forward, along with those three RV-based regressors convolved with "
-        "the respiratory response function, six realigment parameters, "
-        "and the realignment parameters' first derivatives."
-    )
-    with open(noise_json_file, "w") as fo:
-        json.dump(json_info, fo, sort_keys=True, indent=4)
+    SUFFIXES = {
+        "desc-RVReg_bold": (
+            "Multi-echo denoised data further denoised with a respiratory variance-based "
+            "regression model. This model includes RV lagged 3 seconds back, 0 seconds, "
+            "3 seconds forward, along with those three RV-based regressors convolved with "
+            "the respiratory response function, six realigment parameters, "
+            "and the realignment parameters' first derivatives."
+        ),
+        "desc-RVRegNoise_bold": (
+            "Residuals from respiratory variance-based regression model applied to multi-echo "
+            "denoised data. This model includes RV lagged 3 seconds back, 0 seconds, "
+            "3 seconds forward, along with those three RV-based regressors convolved with "
+            "the respiratory response function, six realigment parameters, "
+            "and the realignment parameters' first derivatives."
+        ),
+    }
+    for suffix, description in SUFFIXES.items():
+        nii_file = op.join(out_dir, f"{prefix}_{suffix}.nii.gz")
+        assert op.isfile(nii_file)
+
+        suff_json_file = op.join(out_dir, f"{prefix}_{suffix}.json")
+        json_info["Description"] = description
+        with open(suff_json_file, "w") as fo:
+            json.dump(fo, json_info, sort_keys=True, indent=4)
 
 
 def run_dgsr(medn_file, mask_file, confounds_file, out_dir):
@@ -238,30 +246,45 @@ def run_dgsr(medn_file, mask_file, confounds_file, out_dir):
     """
     # I don't trust that tedana will retain the TR in the nifti header,
     # so will extract from json directly.
-    medn_json = medn_file.replace(".nii.gz", ".json")
-    with open(medn_json, "r") as fo:
-        metadata = json.load(fo)
-    t_r = metadata["RepetitionTime"]
+    medn_json_file = medn_file.replace(".nii.gz", ".json")
+    with open(medn_json_file, "r") as fo:
+        json_info = json.load(fo)
+    t_r = json_info["RepetitionTime"]
 
     medn_name = op.basename(medn_file)
     prefix = medn_name.split("desc-")[0].rstrip("_")
-    prefix = op.join(out_dir, prefix)
 
-    dgsr_file = f"{prefix}_desc-lfofilterCleaned_bold.nii.gz"
-    dgsr_noise_file = f"{prefix}_desc-noise_bold.nii.gz"
+    dgsr_file = op.join(out_dir, f"{prefix}_desc-lfofilterCleaned_bold.nii.gz")
+    dgsr_noise_file = op.join(out_dir, f"{prefix}_desc-noise_bold.nii.gz")
 
     cmd = (
         f"rapidtide --denoising --datatstep {t_r} "
         f"--motionfile {confounds_file} {medn_file} {prefix}"
     )
     run_command(cmd)
-    assert op.isfile(dgsr_file)
-    assert op.isfile(dgsr_noise_file)
+
     # Will the scale of the denoised data be correct? Or is it mean-centered or something?
     dgsr_noise_img = image.math_img("img1 - img2", img1=medn_file, img2=dgsr_file)
     dgsr_noise_img.to_filename(dgsr_noise_file)
 
-    # TODO: Create json files with Sources field.
+    # Create json files with Sources and Description fields
+    json_info["Sources"] = [medn_file, confounds_file]
+
+    SUFFIXES = {
+        "desc-lfofilterCleaned_bold": "Multi-echo denoised data further denoised with rapidtide.",
+        "desc-noise_bold": (
+            "Noise time series retained from further denoising "
+            "multi-echo denoised data with rapidtide."
+        ),
+    }
+    for suffix, description in SUFFIXES.items():
+        nii_file = op.join(out_dir, f"{prefix}_{suffix}.nii.gz")
+        assert op.isfile(nii_file)
+
+        suff_json_file = op.join(out_dir, f"{prefix}_{suffix}.json")
+        json_info["Description"] = description
+        with open(suff_json_file, "w") as fo:
+            json.dump(fo, json_info, sort_keys=True, indent=4)
 
 
 def run_godec(medn_file, mask_file, out_dir):
@@ -270,6 +293,21 @@ def run_godec(medn_file, mask_file, out_dir):
     Parameters
     ----------
     medn_file
+    mask_file
+        Brain mask.
+    out_dir
+
+    Notes
+    -----
+    From the original paper's appendix (page 4):
+        > Our implementation of GODEC is Python-based (godec.py), and included a random sampling
+        > method to estimate the covariance matrix iteratively with a power method as described
+        > below. We also included steps of discrete wavelet transform before and after GODEC to
+        > conserve autocorrelation in the final solution, using the Daubechies wavelet.
+        > A rank-1 approximation was used, with 100 iterations.
+        > ...
+        > We used parameters that returned low-rank spaces with rank approximately of 1-4 to
+        > minimize removal of signals associated with resting state networks.
 
     Used for:
     -   Carpet plots of MEDN after GODEC (3, S9, S12)
@@ -290,7 +328,7 @@ def run_godec(medn_file, mask_file, out_dir):
     # Parse input files
     medn_name = op.basename(medn_file)
     prefix = medn_name.split("desc-")[0].rstrip("_")
-    # medn_json_file = medn_file.replace(".nii.gz", ".json")
+    medn_json_file = medn_file.replace(".nii.gz", ".json")
 
     run_godec_denoising(
         medn_file,
@@ -300,10 +338,33 @@ def run_godec(medn_file, mask_file, out_dir):
         method="greedy",
         ranks=[4],
         norm_mode="vn",
-        rank_step_size=2,
-        iterated_power=2,
+        rank_step_size=1,
+        iterated_power=100,
         wavelet=True,
     )
+
+    # Load metadata
+    with open(medn_json_file, "r") as fo:
+        json_info = json.load(fo)
+
+    # Create json files with Sources and Description fields
+    json_info["Sources"] = [medn_file, mask_file]
+
+    SUFFIXES = {
+        "desc-GODEC_rank-4_bold": "Multi-echo denoised data further denoised with GODEC.",
+        "desc-GODEC_rank-4_lowrankts": (
+            "Low-rank time series retained from further denoising multi-echo denoised data with "
+            "GODEC."
+        ),
+    }
+    for suffix, description in SUFFIXES.items():
+        nii_file = op.join(out_dir, f"{prefix}_{suffix}.nii.gz")
+        assert op.isfile(nii_file)
+
+        suff_json_file = op.join(out_dir, f"{prefix}_{suffix}.json")
+        json_info["Description"] = description
+        with open(suff_json_file, "w") as fo:
+            json.dump(fo, json_info, sort_keys=True, indent=4)
 
 
 def run_gsr(medn_file, mask_file, confounds_file, out_dir):
@@ -333,14 +394,11 @@ def run_gsr(medn_file, mask_file, confounds_file, out_dir):
     # Parse input files
     medn_name = op.basename(medn_file)
     prefix = medn_name.split("desc-")[0].rstrip("_")
-    prefix = op.join(out_dir, prefix)
     medn_json_file = medn_file.replace(".nii.gz", ".json")
 
     # Determine output files
-    denoised_file = prefix + "_desc-GSR_bold.nii.gz"
-    denoised_json_file = denoised_file.replace(".nii.gz", ".json")
-    noise_file = prefix + "_desc-GSRNoise_bold.nii.gz"
-    noise_json_file = noise_file.replace(".nii.gz", ".json")
+    denoised_file = op.join(out_dir, f"{prefix}_desc-GSR_bold.nii.gz")
+    noise_file = op.join(out_dir, f"{prefix}_desc-GSRNoise_bold.nii.gz")
 
     confounds_df = pd.read_table(confounds_file)
 
@@ -379,19 +437,25 @@ def run_gsr(medn_file, mask_file, confounds_file, out_dir):
 
     # Create json files with Sources and Description fields
     json_info["Sources"] = [medn_file, mask_file, confounds_file]
-    json_info["Description"] = (
-        "Multi-echo denoised data further denoised with a GSR regression model including "
-        "mean signal from the cortical gray matter ribbon."
-    )
-    with open(denoised_json_file, "w") as fo:
-        json.dump(json_info, fo, sort_keys=True, indent=4)
 
-    json_info["Description"] = (
-        "Residuals from GSR regression model applied to multi-echo denoised data. "
-        "The GSR regression model includes mean signal from the cortical gray matter ribbon."
-    )
-    with open(noise_json_file, "w") as fo:
-        json.dump(json_info, fo, sort_keys=True, indent=4)
+    SUFFIXES = {
+        "desc-GSR_bold": (
+            "Multi-echo denoised data further denoised with a GSR regression model including "
+            "mean signal from the cortical gray matter ribbon."
+        ),
+        "desc-GSRNoise_bold": (
+            "Residuals from GSR regression model applied to multi-echo denoised data. "
+            "The GSR regression model includes mean signal from the cortical gray matter ribbon."
+        ),
+    }
+    for suffix, description in SUFFIXES.items():
+        nii_file = op.join(out_dir, f"{prefix}_{suffix}.nii.gz")
+        assert op.isfile(nii_file)
+
+        suff_json_file = op.join(out_dir, f"{prefix}_{suffix}.json")
+        json_info["Description"] = description
+        with open(suff_json_file, "w") as fo:
+            json.dump(fo, json_info, sort_keys=True, indent=4)
 
 
 def run_acompcor(medn_file, mask_file, confounds_file, out_dir):
@@ -428,14 +492,11 @@ def run_acompcor(medn_file, mask_file, confounds_file, out_dir):
     # Parse input files
     medn_name = op.basename(medn_file)
     prefix = medn_name.split("desc-")[0].rstrip("_")
-    prefix = op.join(out_dir, prefix)
     medn_json_file = medn_file.replace(".nii.gz", ".json")
 
     # Determine output files
-    denoised_file = prefix + "_desc-aCompCor_bold.nii.gz"
-    denoised_json_file = denoised_file.replace(".nii.gz", ".json")
-    noise_file = prefix + "_desc-aCompCorNoise_bold.nii.gz"
-    noise_json_file = noise_file.replace(".nii.gz", ".json")
+    denoised_file = op.join(out_dir, f"{prefix}_desc-aCompCor_bold.nii.gz")
+    noise_file = op.join(out_dir, f"{prefix}_desc-aCompCorNoise_bold.nii.gz")
 
     confounds_df = pd.read_table(confounds_file)
 
@@ -478,21 +539,27 @@ def run_acompcor(medn_file, mask_file, confounds_file, out_dir):
 
     # Create json files with Sources and Description fields
     json_info["Sources"] = [medn_file, mask_file, confounds_file]
-    json_info["Description"] = (
-        "Multi-echo denoised data further denoised with an aCompCor regression model including "
-        "5 PCA components from deepest white matter, 6 motion parameters, and "
-        "first temporal derivatives of motion parameters."
-    )
-    with open(denoised_json_file, "w") as fo:
-        json.dump(json_info, fo, sort_keys=True, indent=4)
 
-    json_info["Description"] = (
-        "Residuals from aCompCor regression model applied to multi-echo denoised data. "
-        "The aCompCor regression model includes 5 PCA components from deepest white matter, "
-        "6 motion parameters, and first temporal derivatives of motion parameters."
-    )
-    with open(noise_json_file, "w") as fo:
-        json.dump(json_info, fo, sort_keys=True, indent=4)
+    SUFFIXES = {
+        "desc-aCompCor_bold": (
+            "Multi-echo denoised data further denoised with an aCompCor regression model "
+            "including 5 PCA components from deepest white matter, 6 motion parameters, and "
+            "first temporal derivatives of motion parameters."
+        ),
+        "desc-aCompCorNoise_bold": (
+            "Residuals from aCompCor regression model applied to multi-echo denoised data. "
+            "The aCompCor regression model includes 5 PCA components from deepest white matter, "
+            "6 motion parameters, and first temporal derivatives of motion parameters."
+        ),
+    }
+    for suffix, description in SUFFIXES.items():
+        nii_file = op.join(out_dir, f"{prefix}_{suffix}.nii.gz")
+        assert op.isfile(nii_file)
+
+        suff_json_file = op.join(out_dir, f"{prefix}_{suffix}.json")
+        json_info["Description"] = description
+        with open(suff_json_file, "w") as fo:
+            json.dump(fo, json_info, sort_keys=True, indent=4)
 
 
 def run_nuisance(medn_file, mask_file, seg_file, confounds_file, out_dir):
@@ -522,14 +589,11 @@ def run_nuisance(medn_file, mask_file, seg_file, confounds_file, out_dir):
     # Parse input files
     medn_name = op.basename(medn_file)
     prefix = medn_name.split("desc-")[0].rstrip("_")
-    prefix = op.join(out_dir, prefix)
     medn_json_file = medn_file.replace(".nii.gz", ".json")
 
     # Determine output files
-    denoised_file = prefix + "_desc-NuisReg_bold.nii.gz"
-    denoised_json_file = denoised_file.replace(".nii.gz", ".json")
-    noise_file = prefix + "_desc-NuisRegNoise_bold.nii.gz"
-    noise_json_file = noise_file.replace(".nii.gz", ".json")
+    denoised_file = op.join(out_dir, f"{prefix}_desc-NuisReg_bold.nii.gz")
+    noise_file = op.join(out_dir, f"{prefix}_desc-NuisRegNoise_bold.nii.gz")
 
     confounds_df = pd.read_table(confounds_file)
 
@@ -569,22 +633,28 @@ def run_nuisance(medn_file, mask_file, seg_file, confounds_file, out_dir):
 
     # Create json files with Sources and Description fields
     json_info["Sources"] = [medn_file, mask_file, confounds_file]
-    json_info["Description"] = (
-        "Multi-echo denoised data further denoised with a nuisance regression model including "
-        "signal from mean deepest white matter, mean deepest CSF, 6 motion parameters, and "
-        "first temporal derivatives of motion parameters."
-    )
-    with open(denoised_json_file, "w") as fo:
-        json.dump(json_info, fo, sort_keys=True, indent=4)
 
-    json_info["Description"] = (
-        "Residuals from nuisance regression model applied to multi-echo denoised data. "
-        "The nuisance regression model includes signal from mean deepest white matter, "
-        "mean deepest CSF, 6 motion parameters, and first temporal derivatives of motion "
-        "parameters."
-    )
-    with open(noise_json_file, "w") as fo:
-        json.dump(json_info, fo, sort_keys=True, indent=4)
+    SUFFIXES = {
+        "desc-NuisReg_bold": (
+            "Multi-echo denoised data further denoised with a nuisance regression model including "
+            "signal from mean deepest white matter, mean deepest CSF, 6 motion parameters, and "
+            "first temporal derivatives of motion parameters."
+        ),
+        "desc-NuisRegNoise_bold": (
+            "Residuals from nuisance regression model applied to multi-echo denoised data. "
+            "The nuisance regression model includes signal from mean deepest white matter, "
+            "mean deepest CSF, 6 motion parameters, and first temporal derivatives of motion "
+            "parameters."
+        ),
+    }
+    for suffix, description in SUFFIXES.items():
+        nii_file = op.join(out_dir, f"{prefix}_{suffix}.nii.gz")
+        assert op.isfile(nii_file)
+
+        suff_json_file = op.join(out_dir, f"{prefix}_{suffix}.json")
+        json_info["Description"] = description
+        with open(suff_json_file, "w") as fo:
+            json.dump(fo, json_info, sort_keys=True, indent=4)
 
 
 def main(project_dir, dset):
@@ -640,10 +710,30 @@ def main(project_dir, dset):
         os.makedirs(dgsr_subj_dir, exist_ok=True)
         run_dgsr(medn_file, mask_file, confounds_file, dgsr_subj_dir)
 
+        # Clean up dataset description files
+        if subject == subjects[0]:
+            copyfile(
+                op.join(dgsr_subj_dir, "dataset_description.json"),
+                op.join(dgsr_dir, "dataset_description.json"),
+            )
+
+        if op.isfile(op.join(dgsr_dir, "dataset_description.json")):
+            os.remove(op.join(dgsr_subj_dir, "dataset_description.json"))
+
         # GODEC
         godec_subj_dir = op.join(godec_dir, subject, "func")
         os.makedirs(godec_subj_dir, exist_ok=True)
         run_godec(medn_file, mask_file, godec_subj_dir)
+
+        # Clean up dataset description files
+        if subject == subjects[0]:
+            copyfile(
+                op.join(godec_subj_dir, "dataset_description.json"),
+                op.join(godec_dir, "dataset_description.json"),
+            )
+
+        if op.isfile(op.join(godec_dir, "dataset_description.json")):
+            os.remove(op.join(godec_subj_dir, "dataset_description.json"))
 
         if dset == "dset-dupre":
             run_rvtreg(medn_file, mask_file, confounds_file)

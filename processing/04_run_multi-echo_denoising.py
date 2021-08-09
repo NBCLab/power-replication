@@ -62,6 +62,9 @@ def run_tedana(project_dir, dset):
                 metadata = json.load(fo)
                 echo_times.append(metadata["EchoTime"] * 1000)
 
+        # Remove EchoTime for future use
+        metadata.pop("EchoTime")
+
         # Get prefix from first filename
         first_file = preproc_files[0]
         first_file = op.basename(first_file)
@@ -78,7 +81,7 @@ def run_tedana(project_dir, dset):
         # FIT denoised
         # ############
         # We retain t2s and s0 timeseries from this method, but do not use
-        # optcom or any MEICA derivatives.
+        # optcom or any other derivatives.
         print("\t\tt2smap", flush=True)
         tedana.workflows.t2smap_workflow(
             preproc_files,
@@ -90,7 +93,30 @@ def run_tedana(project_dir, dset):
             out_dir=t2smap_subj_dir,
             prefix=prefix,
         )
-        # TODO: Merge metadata into FIT T2/S0 jsons
+        metadata["Sources"] = preproc_files + [dseg_file]
+
+        # Merge metadata into FIT T2/S0 jsons
+        SUFFIXES = {
+            "desc-full_T2starmap": "Volume-wise T2* estimated with tedana's t2smap workflow.",
+            "desc-full_S0map": "Volume-wise S0 estimated with tedana's t2smap workflow.",
+        }
+        for suffix, description in SUFFIXES.items():
+            nii_file = op.join(t2smap_subj_dir, f"{prefix}_{suffix}.nii.gz")
+            assert op.isfile(nii_file)
+
+            suff_json_file = op.join(t2smap_subj_dir, f"{prefix}_{suffix}.json")
+            metadata["Description"] = description
+            with open(suff_json_file, "w") as fo:
+                json.dump(fo, metadata, sort_keys=True, indent=4)
+
+        if subject == subjects[0]:
+            copyfile(
+                op.join(t2smap_subj_dir, "dataset_description.json"),
+                op.join(t2smap_dir, "dataset_description.json"),
+            )
+
+        if op.isfile(op.join(t2smap_dir, "dataset_description.json")):
+            os.remove(op.join(t2smap_subj_dir, "dataset_description.json"))
 
         # ############
         # TEDANA + MIR
@@ -113,14 +139,37 @@ def run_tedana(project_dir, dset):
 
         # Derive binary mask from adaptive mask
         adaptive_mask = op.join(
-            tedana_subj_dir, prefix + "_desc-adaptiveGoodSignal_mask.nii.gz"
+            tedana_subj_dir, f"{prefix}_desc-adaptiveGoodSignal_mask.nii.gz"
         )
         updated_mask = image.math_img("img >= 1", img=adaptive_mask)
         updated_mask.to_filename(
-            op.join(tedana_subj_dir, prefix + "_desc-goodSignal_mask.nii.gz")
+            op.join(tedana_subj_dir, f"{prefix}_desc-goodSignal_mask.nii.gz")
         )
 
-        # TODO: Merge metadata into MEDN/OC jsons
+        # Merge metadata into relevant jsons
+        SUFFIXES = {
+            "desc-goodSignal_mask": "Mask of voxels with good signal in at least the first echo.",
+            "desc-optcomDenoised_bold": "Multi-echo denoised data from tedana.",
+            "desc-optcomAccepted_bold": (
+                "Multi-echo high Kappa data from tedana, compiled from accepted components."
+            ),
+            "desc-optcom_bold": "Optimally combined data from tedana.",
+            "desc-optcomMIRDenoised_bold": (
+                "Multi-echo denoised data, further denoised with minimum image regression."
+            ),
+            "desc-optcomAcceptedMIRDenoised_bold": (
+                "Multi-echo high Kappa data, further denoised with minimum image regression."
+            ),
+        }
+        for suffix, description in SUFFIXES.items():
+            nii_file = op.join(tedana_subj_dir, f"{prefix}_{suffix}.nii.gz")
+            assert op.isfile(nii_file)
+
+            suff_json_file = op.join(tedana_subj_dir, f"{prefix}_{suffix}.json")
+            metadata["Description"] = description
+            with open(suff_json_file, "w") as fo:
+                json.dump(fo, metadata, sort_keys=True, indent=4)
+
         if subject == subjects[0]:
             copyfile(
                 op.join(tedana_subj_dir, "dataset_description.json"),
