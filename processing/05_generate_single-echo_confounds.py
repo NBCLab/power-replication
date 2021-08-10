@@ -46,11 +46,19 @@ def compile_nuisance_regressors(
     # #########################
     # Extract white matter and CSF signals for nuisance regression
     wm_img = image.math_img("img == 6", img=seg_file)
-    wm_img = image.math_img("wm_mask * brain_mask", wm_mask=wm_img, brain_mask=mask_file)
+    wm_img = image.math_img(
+        "wm_mask * brain_mask",
+        wm_mask=wm_img,
+        brain_mask=mask_file,
+    )
     wm_data = masking.apply_mask(medn_file, wm_img)
 
     csf_img = image.math_img("img == 8", img=seg_file)
-    csf_img = image.math_img("csf_mask * brain_mask", csf_mask=csf_img, brain_mask=mask_file)
+    csf_img = image.math_img(
+        "csf_mask * brain_mask",
+        csf_mask=csf_img,
+        brain_mask=mask_file,
+    )
     csf_data = masking.apply_mask(medn_file, csf_img)
 
     confounds_df["NuisanceRegression_WhiteMatter"] = wm_data
@@ -69,7 +77,11 @@ def compile_nuisance_regressors(
     # ##############
     # Extract and run PCA on white matter for aCompCor
     wm_img = image.math_img("img == 6", img=seg_file)
-    wm_img = image.math_img("wm_mask * brain_mask", wm_mask=wm_img, brain_mask=mask_file)
+    wm_img = image.math_img(
+        "wm_mask * brain_mask",
+        wm_mask=wm_img,
+        brain_mask=mask_file,
+    )
     wm_data = masking.apply_mask(medn_file, wm_img)
     pca = sklearn.decomposition.PCA(n_components=5)
     acompcor_components = pca.fit_transform(wm_data)
@@ -230,27 +242,39 @@ def compile_physio_regressors(
     confounds_df[rv_regressor_names] = rv_regressors
     temp_dict = {
         "RVRegression_RV-3s": {
-            "Sources": [physio_files["respiratory-data"]],
+            "Sources": [
+                physio_files["respiratory-data"],
+                physio_files["respiratory-metadata"],
+            ],
             "Description": (
                 "Respiratory variance time-shifted 3 seconds backward and "
                 "downsampled to the repetition time of the fMRI data."
             ),
         },
         "RVRegression_RV": {
-            "Sources": [physio_files["respiratory-data"]],
+            "Sources": [
+                physio_files["respiratory-data"],
+                physio_files["respiratory-metadata"],
+            ],
             "Description": (
                 "Respiratory variance downsampled to the repetition time of the fMRI data."
             ),
         },
         "RVRegression_RV+3s": {
-            "Sources": [physio_files["respiratory-data"]],
+            "Sources": [
+                physio_files["respiratory-data"],
+                physio_files["respiratory-metadata"],
+            ],
             "Description": (
                 "Respiratory variance time-shifted 3 seconds forward and "
                 "downsampled to the repetition time of the fMRI data."
             ),
         },
         "RVRegression_RV*RRF-3s": {
-            "Sources": [physio_files["respiratory-data"]],
+            "Sources": [
+                physio_files["respiratory-data"],
+                physio_files["respiratory-metadata"],
+            ],
             "Description": (
                 "Respiratory variance convolved with the respiratory response function, "
                 "time-shifted 3 seconds backward, "
@@ -258,14 +282,20 @@ def compile_physio_regressors(
             ),
         },
         "RVRegression_RV*RRF": {
-            "Sources": [physio_files["respiratory-data"]],
+            "Sources": [
+                physio_files["respiratory-data"],
+                physio_files["respiratory-metadata"],
+            ],
             "Description": (
                 "Respiratory variance convolved with the respiratory response function "
                 "and downsampled to the repetition time of the fMRI data."
             ),
         },
         "RVRegression_RV*RRF+3s": {
-            "Sources": [physio_files["respiratory-data"]],
+            "Sources": [
+                physio_files["respiratory-data"],
+                physio_files["respiratory-metadata"],
+            ],
             "Description": (
                 "Respiratory variance convolved with the respiratory response function, "
                 "time-shifted 3 seconds forward, "
@@ -278,9 +308,12 @@ def compile_physio_regressors(
     # ###########################
     # Respiratory Volume-per-Time
     # ###########################
-    # TODO: Calculate RVT and RVT*RRF regressors
-    # This includes lags
-    rvt_regressors = chest_belt.rvt(resp_data, resp_peaks, resp_troughs, resp_samplerate)
+    rvt_regressors = chest_belt.rvt(
+        resp_data,
+        resp_peaks,
+        resp_troughs,
+        resp_samplerate,
+    )
 
     # Apply lags
     rvt_regressors_all = []
@@ -316,48 +349,83 @@ def compile_physio_regressors(
     confounds_df[rvt_regressor_names] = rvt_regressors
     temp_dict = {
         "RVTRegression_RVT": {
-            "Sources": [physio_files["respiratory-data"]],
+            "Sources": [
+                physio_files["respiratory-data"],
+                physio_files["respiratory-metadata"],
+                physio_files["respiratory-peaks"],
+                physio_files["respiratory-troughs"],
+            ],
             "Description": (
                 "Respiratory volume-per-time downsampled to the repetition time of the fMRI data."
             ),
         },
         "RVTRegression_RVT+5s": {
-            "Sources": [physio_files["respiratory-data"]],
+            "Sources": [
+                physio_files["respiratory-data"],
+                physio_files["respiratory-metadata"],
+                physio_files["respiratory-peaks"],
+                physio_files["respiratory-troughs"],
+            ],
             "Description": (
                 "Respiratory volume-per-time time-shifted 5 seconds forward and "
                 "downsampled to the repetition time of the fMRI data."
             ),
         },
         "RVTRegression_RVT+10s": {
-            "Sources": [physio_files["respiratory-data"]],
+            "Sources": [
+                physio_files["respiratory-data"],
+                physio_files["respiratory-metadata"],
+                physio_files["respiratory-peaks"],
+                physio_files["respiratory-troughs"],
+            ],
             "Description": (
                 "Respiratory volume-per-time time-shifted 10 seconds forward and "
                 "downsampled to the repetition time of the fMRI data."
             ),
         },
         "RVTRegression_RVT+15s": {
-            "Sources": [physio_files["respiratory-data"]],
+            "Sources": [
+                physio_files["respiratory-data"],
+                physio_files["respiratory-metadata"],
+                physio_files["respiratory-peaks"],
+                physio_files["respiratory-troughs"],
+            ],
             "Description": (
                 "Respiratory volume-per-time time-shifted 15 seconds forward and "
                 "downsampled to the repetition time of the fMRI data."
             ),
         },
         "RVTRegression_RVT+20s": {
-            "Sources": [physio_files["respiratory-data"]],
+            "Sources": [
+                physio_files["respiratory-data"],
+                physio_files["respiratory-metadata"],
+                physio_files["respiratory-peaks"],
+                physio_files["respiratory-troughs"],
+            ],
             "Description": (
                 "Respiratory volume-per-time time-shifted 20 seconds forward and "
                 "downsampled to the repetition time of the fMRI data."
             ),
         },
         "RVTRegression_RVT*RRF": {
-            "Sources": [physio_files["respiratory-data"]],
+            "Sources": [
+                physio_files["respiratory-data"],
+                physio_files["respiratory-metadata"],
+                physio_files["respiratory-peaks"],
+                physio_files["respiratory-troughs"],
+            ],
             "Description": (
                 "Respiratory volume-per-time convolved with the respiratory response function "
                 "and downsampled to the repetition time of the fMRI data."
             ),
         },
         "RVTRegression_RVT*RRF+5s": {
-            "Sources": [physio_files["respiratory-data"]],
+            "Sources": [
+                physio_files["respiratory-data"],
+                physio_files["respiratory-metadata"],
+                physio_files["respiratory-peaks"],
+                physio_files["respiratory-troughs"],
+            ],
             "Description": (
                 "Respiratory volume-per-time convolved with the respiratory response function, "
                 "time-shifted 5 seconds forward, "
@@ -365,7 +433,12 @@ def compile_physio_regressors(
             ),
         },
         "RVTRegression_RVT*RRF+10s": {
-            "Sources": [physio_files["respiratory-data"]],
+            "Sources": [
+                physio_files["respiratory-data"],
+                physio_files["respiratory-metadata"],
+                physio_files["respiratory-peaks"],
+                physio_files["respiratory-troughs"],
+            ],
             "Description": (
                 "Respiratory volume-per-time convolved with the respiratory response function, "
                 "time-shifted 10 seconds forward, "
@@ -373,7 +446,12 @@ def compile_physio_regressors(
             ),
         },
         "RVTRegression_RVT*RRF+15s": {
-            "Sources": [physio_files["respiratory-data"]],
+            "Sources": [
+                physio_files["respiratory-data"],
+                physio_files["respiratory-metadata"],
+                physio_files["respiratory-peaks"],
+                physio_files["respiratory-troughs"],
+            ],
             "Description": (
                 "Respiratory volume-per-time convolved with the respiratory response function, "
                 "time-shifted 15 seconds forward, "
@@ -381,7 +459,12 @@ def compile_physio_regressors(
             ),
         },
         "RVTRegression_RVT*RRF+20s": {
-            "Sources": [physio_files["respiratory-data"]],
+            "Sources": [
+                physio_files["respiratory-data"],
+                physio_files["respiratory-metadata"],
+                physio_files["respiratory-peaks"],
+                physio_files["respiratory-troughs"],
+            ],
             "Description": (
                 "Respiratory volume-per-time convolved with the respiratory response function, "
                 "time-shifted 20 seconds forward, "
@@ -413,8 +496,31 @@ def compile_physio_regressors(
     hrv_regressors = signal.resample(hrv_regressors, num=n_vols, axis=0)
 
     # Add regressors to confounds and update metadata
+    hrv_regressor_names = [
+        "HRVRegression_HRV",
+    ]
+    confounds_df[hrv_regressor_names] = hrv_regressors
 
+    temp_dict = {
+        "HRVRegression_HRV": {
+            "Sources": [
+                physio_files["cardiac-data"],
+                physio_files["cardiac-metadata"],
+                physio_files["cardiac-peaks"],
+                physio_files["cardiac-troughs"],
+            ],
+            "Description": (
+                "Heart-rate variability calculated from cardiac data upsampled to "
+                f"{card_samplerate} Hertz, then downsampled to the repetition time of the "
+                "fMRI data."
+            ),
+        },
+    }
+    confounds_metadata = {**temp_dict, **confounds_metadata}
+
+    # ###############
     # Write out files
+    # ###############
     participants_df.to_csv(participants_file, sep="\t", index=False)
     confounds_df.to_csv(confounds_file, sep="\t", index=False)
     with open(confounds_json, "w") as fo:
@@ -484,7 +590,10 @@ def run_peakdet(physio_file, physio_metadata, out_dir):
     # Upsample cardiac signal to 250 Hz
     # Respiratory data will remain at original resolution (40 Hz for 15 subs, 50 Hz for 16)
     TARGET_SAMPLING_RATE = 250
-    card_physio = operations.interpolate_physio(card_physio, target_fs=TARGET_SAMPLING_RATE)
+    card_physio = operations.interpolate_physio(
+        card_physio,
+        target_fs=TARGET_SAMPLING_RATE,
+    )
 
     # Temporal filtering
     resp_physio = operations.filter_physio(resp_physio, cutoffs=1.0, method="lowpass")
@@ -562,7 +671,9 @@ def main(project_dir, dset):
     # Get list of participants with good data
     participants_file = op.join(preproc_dir, "participants.tsv")
     participants_df = pd.read_table(participants_file)
-    subjects = participants_df.loc[participants_df["exclude"] == 0, "participant_id"].tolist()
+    subjects = participants_df.loc[
+        participants_df["exclude"] == 0, "participant_id"
+    ].tolist()
 
     # Also get non-steady-state volume information
     nss_file = op.join(preproc_dir, "nss_removed.tsv")
@@ -576,7 +687,12 @@ def main(project_dir, dset):
         tedana_subj_dir = op.join(tedana_dir, subject, "func")
 
         # Collect important files
-        confounds_files = glob(op.join(preproc_subj_func_dir, "*_desc-confounds_timeseries.tsv"))
+        confounds_files = glob(
+            op.join(
+                preproc_subj_func_dir,
+                "*_desc-confounds_timeseries.tsv",
+            )
+        )
         assert len(confounds_files) == 1
         confounds_file = confounds_files[0]
 
@@ -613,16 +729,26 @@ def main(project_dir, dset):
         )
         if dset == "dset-dupre":
             # Get physio data
-            physio_metadata_file = op.join(dset_subj_dir, f"{subject}_task-rest_physio.json")
+            physio_metadata_file = op.join(
+                dset_subj_dir,
+                f"{subject}_task-rest_physio.json",
+            )
             assert op.isfile(physio_metadata_file)
-            physio_file = op.join(dset_subj_func_dir, f"{subject}_task-rest_run-01_physio.tsv.gz")
+            physio_file = op.join(
+                dset_subj_func_dir,
+                f"{subject}_task-rest_run-01_physio.tsv.gz",
+            )
             assert op.isfile(physio_file)
 
             with open(physio_metadata_file, "r") as fo:
                 physio_metadata = json.load(fo)
 
             # Run peakdet
-            new_physio_files = run_peakdet(physio_file, physio_metadata, preproc_subj_func_dir)
+            new_physio_files = run_peakdet(
+                physio_file,
+                physio_metadata,
+                preproc_subj_func_dir,
+            )
 
             compile_physio_regressors(
                 medn_file,
