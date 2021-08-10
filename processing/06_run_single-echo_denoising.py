@@ -6,7 +6,7 @@ Methods:
     (integrated in tedana, but we do it separately here because the approach is very different)
 -   Dynamic global signal regression with rapidtide
 -   aCompCor with custom code
--   GODEC
+-   GODEC with the ME-ICA/godec package
 -   RVT (with lags) regression
 -   RV (with lags) regression
 """
@@ -22,18 +22,19 @@ from nilearn import image
 from utils import _generic_regression, run_command
 
 
-def run_rvtreg(medn_file, fit_file, mask_file, physio_file, confounds_file, out_dir):
+def run_rvtreg(medn_file, mask_file, physio_file, confounds_file, out_dir):
     """Clean MEDN data with regression model including RVT and RVT*RRF (plus lags).
 
     Parameters
     ----------
     medn_file
-    fit_file
     mask_file
     physio_file
     confounds_file
     out_dir
 
+    Notes
+    -----
     Used for:
     -   Carpet plots of MEDN after regression of RVT + RVT*RRF (S5)
     -   Scatter plot of MEDN-RVT+RVT*RRF SD of global signal against
@@ -123,13 +124,12 @@ def run_rvtreg(medn_file, fit_file, mask_file, physio_file, confounds_file, out_
             json.dump(fo, json_info, sort_keys=True, indent=4)
 
 
-def run_rvreg(medn_file, fit_file, mask_file, physio_file, confounds_file, out_dir):
+def run_rvreg(medn_file, mask_file, physio_file, confounds_file, out_dir):
     """Clean MEDN data with regression model including RV and RV*RRF (plus lags).
 
     Parameters
     ----------
     medn_file
-    fit_file
     mask_file
     physio_file
     confounds_file
@@ -230,6 +230,8 @@ def run_dgsr(medn_file, mask_file, confounds_file, out_dir):
     confounds_file
     out_dir
 
+    Notes
+    -----
     Used for:
     -   Carpet plots of MEDN after dGSR (3, S12)
     -   QC:RSFC plot of MEDN after dGSR with motion as QC (4, 5, S10, S13)
@@ -377,6 +379,8 @@ def run_gsr(medn_file, mask_file, confounds_file, out_dir):
     cgm_mask
     out_dir
 
+    Notes
+    -----
     Used for:
     -   Carpet plots of MEDN after GSR (3, S12)
     -   QC:RSFC plot of MEDN after GSR with motion as QC (4, 5, S10, S13)
@@ -671,9 +675,7 @@ def main(project_dir, dset):
     # Get list of participants with good data
     participants_file = op.join(preproc_dir, "participants.tsv")
     participants_df = pd.read_table(participants_file)
-    subjects = participants_df.loc[
-        participants_df["exclude"] == 0, "participant_id"
-    ].tolist()
+    subjects = participants_df.loc[participants_df["exclude"] == 0, "participant_id"].tolist()
 
     for subject in subjects:
         print(f"\t{subject}", flush=True)
@@ -681,9 +683,7 @@ def main(project_dir, dset):
         tedana_subj_dir = op.join(tedana_dir, subject, "func")
 
         # Collect important files
-        confounds_files = glob(
-            op.join(preproc_subj_func_dir, "*_desc-confounds_timeseries.tsv")
-        )
+        confounds_files = glob(op.join(preproc_subj_func_dir, "*_desc-confounds_timeseries.tsv"))
         assert len(confounds_files) == 1
         confounds_file = confounds_files[0]
 
@@ -698,13 +698,19 @@ def main(project_dir, dset):
         nuis_subj_dir = op.join(nuis_dir, subject, "func")
         os.makedirs(nuis_subj_dir, exist_ok=True)
 
+        # ########
         # aCompCor
+        # ########
         run_acompcor(medn_file, mask_file, confounds_file, nuis_subj_dir)
 
+        # ###
         # GSR
+        # ###
         run_gsr(medn_file, mask_file, confounds_file, nuis_subj_dir)
 
+        # ####
         # dGSR
+        # ####
         # TODO: Check settings with Blaise Frederick
         dgsr_subj_dir = op.join(dgsr_dir, subject, "func")
         os.makedirs(dgsr_subj_dir, exist_ok=True)
@@ -720,7 +726,9 @@ def main(project_dir, dset):
         if op.isfile(op.join(dgsr_dir, "dataset_description.json")):
             os.remove(op.join(dgsr_subj_dir, "dataset_description.json"))
 
+        # #####
         # GODEC
+        # #####
         godec_subj_dir = op.join(godec_dir, subject, "func")
         os.makedirs(godec_subj_dir, exist_ok=True)
         run_godec(medn_file, mask_file, godec_subj_dir)
@@ -735,6 +743,9 @@ def main(project_dir, dset):
         if op.isfile(op.join(godec_dir, "dataset_description.json")):
             os.remove(op.join(godec_subj_dir, "dataset_description.json"))
 
+        # ################
+        # Physio Denoising
+        # ################
         if dset == "dset-dupre":
             run_rvtreg(medn_file, mask_file, confounds_file)
             run_rvreg(medn_file, mask_file, confounds_file, nuis_subj_dir)

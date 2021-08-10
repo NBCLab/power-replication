@@ -107,9 +107,7 @@ def make_plots(dset, pathstr, method, in_dir="/scratch/tsalo006/power-replicatio
         anat_dir = op.join(preproc_dir, "anat")
 
         # Get TR
-        func_file = layout.get(
-            subjects=[subj], task="rest", run="01", suffix=".nii.gz"
-        )[0]
+        func_file = layout.get(subjects=[subj], task="rest", run="01", suffix=".nii.gz")[0]
         metadata = layout.get_metadata(func_file.filename)
         tr = metadata["RepetitionTime"]
 
@@ -118,9 +116,7 @@ def make_plots(dset, pathstr, method, in_dir="/scratch/tsalo006/power-replicatio
             fp_subj_dir, subj, "func", "sub-{0}_task-rest_run-01_bold_confounds.tsv"
         )
         conf_df = pd.read_csv(conf_file, sep="\t")
-        conf_df = conf_df[
-            ["X", "Y", "Z", "RotX", "RotY", "RotZ", "FramewiseDisplacement"]
-        ]
+        conf_df = conf_df[["X", "Y", "Z", "RotX", "RotY", "RotZ", "FramewiseDisplacement"]]
         conf_df = conf_df.rename(
             columns={
                 "X": "X",

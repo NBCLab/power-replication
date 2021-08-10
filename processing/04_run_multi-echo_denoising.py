@@ -34,9 +34,7 @@ def run_tedana(project_dir, dset):
     # Get list of participants with good data
     participants_file = op.join(dset_dir, "participants.tsv")
     participants_df = pd.read_table(participants_file)
-    subjects = participants_df.loc[
-        participants_df["exclude"] == 0, "participant_id"
-    ].tolist()
+    subjects = participants_df.loc[participants_df["exclude"] == 0, "participant_id"].tolist()
 
     for subject in subjects:
         print(f"\t{subject}", flush=True)
@@ -49,11 +47,7 @@ def run_tedana(project_dir, dset):
         os.makedirs(tedana_subj_dir, exist_ok=True)
 
         preproc_files = sorted(
-            glob(
-                op.join(
-                    preproc_subj_func_dir, f"{subject}_*_desc-NSSRemoved_bold.nii.gz"
-                )
-            )
+            glob(op.join(preproc_subj_func_dir, f"{subject}_*_desc-NSSRemoved_bold.nii.gz"))
         )
         json_files = [f.replace(".nii.gz", ".json") for f in preproc_files]
         echo_times = []
@@ -138,13 +132,9 @@ def run_tedana(project_dir, dset):
         )
 
         # Derive binary mask from adaptive mask
-        adaptive_mask = op.join(
-            tedana_subj_dir, f"{prefix}_desc-adaptiveGoodSignal_mask.nii.gz"
-        )
+        adaptive_mask = op.join(tedana_subj_dir, f"{prefix}_desc-adaptiveGoodSignal_mask.nii.gz")
         updated_mask = image.math_img("img >= 1", img=adaptive_mask)
-        updated_mask.to_filename(
-            op.join(tedana_subj_dir, f"{prefix}_desc-goodSignal_mask.nii.gz")
-        )
+        updated_mask.to_filename(op.join(tedana_subj_dir, f"{prefix}_desc-goodSignal_mask.nii.gz"))
 
         # Merge metadata into relevant jsons
         SUFFIXES = {

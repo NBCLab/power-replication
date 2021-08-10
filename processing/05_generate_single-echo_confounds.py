@@ -45,15 +45,11 @@ def compile_nuisance_regressors(
     # #########################
     # Extract white matter and CSF signals for nuisance regression
     wm_img = image.math_img("img == 6", img=seg_file)
-    wm_img = image.math_img(
-        "wm_mask * brain_mask", wm_mask=wm_img, brain_mask=mask_file
-    )
+    wm_img = image.math_img("wm_mask * brain_mask", wm_mask=wm_img, brain_mask=mask_file)
     wm_data = masking.apply_mask(medn_file, wm_img)
 
     csf_img = image.math_img("img == 8", img=seg_file)
-    csf_img = image.math_img(
-        "csf_mask * brain_mask", csf_mask=csf_img, brain_mask=mask_file
-    )
+    csf_img = image.math_img("csf_mask * brain_mask", csf_mask=csf_img, brain_mask=mask_file)
     csf_data = masking.apply_mask(medn_file, csf_img)
 
     confounds_df["NuisanceRegression_WhiteMatter"] = wm_data
@@ -72,9 +68,7 @@ def compile_nuisance_regressors(
     # ##############
     # Extract and run PCA on white matter for aCompCor
     wm_img = image.math_img("img == 6", img=seg_file)
-    wm_img = image.math_img(
-        "wm_mask * brain_mask", wm_mask=wm_img, brain_mask=mask_file
-    )
+    wm_img = image.math_img("wm_mask * brain_mask", wm_mask=wm_img, brain_mask=mask_file)
     wm_data = masking.apply_mask(medn_file, wm_img)
     pca = sklearn.decomposition.PCA(n_components=5)
     acompcor_components = pca.fit_transform(wm_data)
@@ -414,7 +408,7 @@ def run_peakdet(physio_file, physio_metadata, out_dir):
     # Save output files
     # #################
     # Respiratory data
-    np.savetxt(resp_file, resp_physio.data, delimiter="\t", newline='\n')
+    np.savetxt(resp_file, resp_physio.data, delimiter="\t", newline="\n")
     with open(resp_metadata_file, "w") as fo:
         json.dump(resp_metadata, fo, sort_keys=True, indent=4)
 
@@ -422,7 +416,7 @@ def run_peakdet(physio_file, physio_metadata, out_dir):
     np.savetxt(resp_troughs_file, resp_physio.troughs)
 
     # Cardiac data
-    np.savetxt(card_file, card_physio.data, delimiter="\t", newline='\n')
+    np.savetxt(card_file, card_physio.data, delimiter="\t", newline="\n")
     with open(card_metadata_file, "w") as fo:
         json.dump(card_metadata, fo, sort_keys=True, indent=4)
 
@@ -454,9 +448,7 @@ def main(project_dir, dset):
     # Get list of participants with good data
     participants_file = op.join(preproc_dir, "participants.tsv")
     participants_df = pd.read_table(participants_file)
-    subjects = participants_df.loc[
-        participants_df["exclude"] == 0, "participant_id"
-    ].tolist()
+    subjects = participants_df.loc[participants_df["exclude"] == 0, "participant_id"].tolist()
 
     # Also get non-steady-state volume information
     nss_file = op.join(preproc_dir, "nss_removed.tsv")
@@ -470,9 +462,7 @@ def main(project_dir, dset):
         tedana_subj_dir = op.join(tedana_dir, subject, "func")
 
         # Collect important files
-        confounds_files = glob(
-            op.join(preproc_subj_func_dir, "*_desc-confounds_timeseries.tsv")
-        )
+        confounds_files = glob(op.join(preproc_subj_func_dir, "*_desc-confounds_timeseries.tsv"))
         assert len(confounds_files) == 1
         confounds_file = confounds_files[0]
 

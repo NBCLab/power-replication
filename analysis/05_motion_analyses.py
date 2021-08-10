@@ -101,9 +101,7 @@ def run_analyses(dset, pathstr, method, in_dir="/scratch/tsalo006/power-replicat
     # Assess significance
     qcrsfc_rs = np.loadtxt(op.join(out_dir, "qcrsfc_analysis_values.txt"))
     qcrsfc_smc = np.loadtxt(op.join(out_dir, "qcrsfc_analysis_smoothing_curve.txt"))
-    perm_qcrsfc_smc = np.loadtxt(
-        op.join(out_dir, "qcrsfc_analysis_null_smoothing_curves.txt")
-    )
+    perm_qcrsfc_smc = np.loadtxt(op.join(out_dir, "qcrsfc_analysis_null_smoothing_curves.txt"))
     intercept = ddmra.get_val(smc_sorted_dists, qcrsfc_smc, v1)
     slope = ddmra.get_val(smc_sorted_dists, qcrsfc_smc, v1) - ddmra.get_val(
         smc_sorted_dists, qcrsfc_smc, v2
@@ -160,9 +158,7 @@ def run_analyses(dset, pathstr, method, in_dir="/scratch/tsalo006/power-replicat
     # Assess significance
     hl_corr_diff = np.loadtxt(op.join(out_dir, "highlow_analysis_values.txt"))
     hl_smc = np.loadtxt(op.join(out_dir, "highlow_analysis_smoothing_curve.txt"))
-    perm_hl_smc = np.loadtxt(
-        op.join(out_dir, "highlow_analysis_null_smoothing_curves.txt")
-    )
+    perm_hl_smc = np.loadtxt(op.join(out_dir, "highlow_analysis_null_smoothing_curves.txt"))
     intercept = ddmra.get_val(smc_sorted_dists, hl_smc, v1)
     slope = ddmra.get_val(smc_sorted_dists, hl_smc, v1) - ddmra.get_val(
         smc_sorted_dists, hl_smc, v2
@@ -218,9 +214,7 @@ def run_analyses(dset, pathstr, method, in_dir="/scratch/tsalo006/power-replicat
     # Scrubbing analysis
     mean_delta_r = np.loadtxt(op.join(out_dir, "scrubbing_analysis_values.txt"))
     scrub_smc = np.loadtxt(op.join(out_dir, "scrubbing_analysis_smoothing_curve.txt"))
-    perm_scrub_smc = np.loadtxt(
-        op.join(out_dir, "scrubbing_analysis_null_smoothing_curves.txt")
-    )
+    perm_scrub_smc = np.loadtxt(op.join(out_dir, "scrubbing_analysis_null_smoothing_curves.txt"))
 
     # Assess significance
     intercept = ddmra.get_val(smc_sorted_dists, scrub_smc, v1)

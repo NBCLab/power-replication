@@ -45,19 +45,13 @@ def generate_physio_regs(dset, in_dir="/scratch/tsalo006/power-replication/"):
             os.mkdir(physio_dir)
 
         func_dir = op.join(dset_dir, subj, "func")
-        physio_tsv = op.join(
-            func_dir, "sub-{0}_task-rest_run-01_physio" ".tsv.gz".format(subj)
-        )
-        df = pd.read_csv(
-            physio_tsv, sep="\t", header=None, names=["cardiac", "respiratory"]
-        )
+        physio_tsv = op.join(func_dir, "sub-{0}_task-rest_run-01_physio" ".tsv.gz".format(subj))
+        df = pd.read_csv(physio_tsv, sep="\t", header=None, names=["cardiac", "respiratory"])
 
         # RV
         rv_regs, rv_x_rrf_regs = compute_rv(df, tr, samplerate)
         rv_file = op.join(physio_dir, "sub-{0}_task-rest_run-01_rv.txt".format(subj))
-        rv_x_rrf_file = op.join(
-            physio_dir, "sub-{0}_task-rest_run-01_rvXrrf" ".txt".format(subj)
-        )
+        rv_x_rrf_file = op.join(physio_dir, "sub-{0}_task-rest_run-01_rvXrrf" ".txt".format(subj))
         np.savetxt(rv_file, rv_regs)
         np.savetxt(rv_x_rrf_file, rv_x_rrf_regs)
 
