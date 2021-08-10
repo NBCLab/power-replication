@@ -2,6 +2,7 @@
 Perform multi-echo denoising strategies with tedana.
 
 This includes tedana, MIR, and FIT (via t2smap).
+Additionally, we create the TE30 files in this script as well.
 """
 import json
 import os
@@ -9,6 +10,7 @@ import os.path as op
 from glob import glob
 from shutil import copyfile
 
+import numpy as np
 import pandas as pd
 import tedana
 from nilearn import image
@@ -49,6 +51,13 @@ def run_tedana(project_dir, dset):
         preproc_files = sorted(
             glob(op.join(preproc_subj_func_dir, f"{subject}_*_desc-NSSRemoved_bold.nii.gz"))
         )
+
+        # Get prefix from first filename
+        first_file = preproc_files[0]
+        first_file = op.basename(first_file)
+        prefix = first_file.split("_echo")[0]
+
+        # Collect metadata
         json_files = [f.replace(".nii.gz", ".json") for f in preproc_files]
         echo_times = []
         for json_file in json_files:
@@ -56,13 +65,30 @@ def run_tedana(project_dir, dset):
                 metadata = json.load(fo)
                 echo_times.append(metadata["EchoTime"] * 1000)
 
+        # Collect the TE30 files
+        TARGET_TE = 30
+        echo_times = np.asarray(echo_times)
+        te30_idx = (np.abs(echo_times - TARGET_TE)).argmin()
+        te30_nii_file = preproc_files[te30_idx]
+        te30_json_file = json_files[te30_idx]
+        te30_out_nii_file = op.join(preproc_subj_func_dir, f"{prefix}_desc-TE30_bold.nii.gz")
+        te30_out_json_file = op.join(preproc_subj_func_dir, f"{prefix}_desc-TE30_bold.json")
+
+        with open(te30_json_file, "r") as fo:
+            te30_metadata = json.load(fo)
+
+        te30_metadata["Sources"] = [te30_nii_file]
+        te30_metadata["Description"] = (
+            "Preprocessed data from echo closest to 30ms, with non-steady-state volumes removed."
+        )
+
+        with open(te30_out_json_file, "w") as fo:
+            json.dump(te30_metadata, fo, sort_keys=True, indent=4)
+
+        copyfile(te30_nii_file, te30_out_nii_file)
+
         # Remove EchoTime for future use
         metadata.pop("EchoTime")
-
-        # Get prefix from first filename
-        first_file = preproc_files[0]
-        first_file = op.basename(first_file)
-        prefix = first_file.split("_echo")[0]
 
         # Derive brain mask from discrete segmentation
         dseg_file = op.join(
@@ -70,6 +96,9 @@ def run_tedana(project_dir, dset):
             f"{subject}_space-T1w_res-bold_desc-totalMaskWithCSF_dseg.nii.gz",
         )
         mask_img = image.math_img("img >= 1", img=dseg_file)
+
+        # Add Sources to metadata that will be reused for all relevant t2smap/tedana outputs
+        metadata["Sources"] = preproc_files + [dseg_file]
 
         # ############
         # FIT denoised
@@ -87,7 +116,6 @@ def run_tedana(project_dir, dset):
             out_dir=t2smap_subj_dir,
             prefix=prefix,
         )
-        metadata["Sources"] = preproc_files + [dseg_file]
 
         # Merge metadata into FIT T2/S0 jsons
         SUFFIXES = {

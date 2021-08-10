@@ -22,14 +22,13 @@ from nilearn import image
 from utils import _generic_regression, run_command
 
 
-def run_rvtreg(medn_file, mask_file, physio_file, confounds_file, out_dir):
+def run_rvtreg(medn_file, mask_file, confounds_file, out_dir):
     """Clean MEDN data with regression model including RVT and RVT*RRF (plus lags).
 
     Parameters
     ----------
     medn_file
     mask_file
-    physio_file
     confounds_file
     out_dir
 
@@ -124,14 +123,13 @@ def run_rvtreg(medn_file, mask_file, physio_file, confounds_file, out_dir):
             json.dump(fo, json_info, sort_keys=True, indent=4)
 
 
-def run_rvreg(medn_file, mask_file, physio_file, confounds_file, out_dir):
+def run_rvreg(medn_file, mask_file, confounds_file, out_dir):
     """Clean MEDN data with regression model including RV and RV*RRF (plus lags).
 
     Parameters
     ----------
     medn_file
     mask_file
-    physio_file
     confounds_file
     out_dir
 
@@ -662,7 +660,7 @@ def run_nuisance(medn_file, mask_file, seg_file, confounds_file, out_dir):
 
 
 def main(project_dir, dset):
-    """TODO: Create dataset_description.json files."""
+    """Run single-echo denoising workflows on a given dataset."""
     dset_dir = op.join(project_dir, dset)
     deriv_dir = op.join(dset_dir, "derivatives")
     tedana_dir = op.join(deriv_dir, "tedana")
@@ -676,6 +674,14 @@ def main(project_dir, dset):
     participants_file = op.join(preproc_dir, "participants.tsv")
     participants_df = pd.read_table(participants_file)
     subjects = participants_df.loc[participants_df["exclude"] == 0, "participant_id"].tolist()
+
+    with open(op.join(nuis_dir, "dataset_description.json"), "w") as fo:
+        dset_desc = {
+            "Name": "Nuisance Regressions",
+            "BIDSVersion": "1.2.1",
+            "DatasetType": "derivative",
+        }
+        json.dump(dset_desc, fo, sort_keys=True, indent=4)
 
     for subject in subjects:
         print(f"\t{subject}", flush=True)
@@ -747,7 +753,7 @@ def main(project_dir, dset):
         # Physio Denoising
         # ################
         if dset == "dset-dupre":
-            run_rvtreg(medn_file, mask_file, confounds_file)
+            run_rvtreg(medn_file, mask_file, confounds_file, nuis_subj_dir)
             run_rvreg(medn_file, mask_file, confounds_file, nuis_subj_dir)
 
 
