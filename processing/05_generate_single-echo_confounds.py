@@ -19,6 +19,7 @@ import pandas as pd
 import sklearn
 from nilearn import image, masking
 from peakdet import load_physio, operations
+from phys2denoise import utils as physutils
 from phys2denoise.metrics import chest_belt
 from scipy import signal
 
@@ -196,10 +197,21 @@ def compile_physio_regressors(
     rv_regressors = chest_belt.rv(
         resp_data,
         samplerate=resp_samplerate,
-        out_samplerate=1 / resp_samplerate,
         window=6,
-        lags=[-3 * resp_samplerate, 0, 3 * resp_samplerate],
     )
+
+    # Apply lags
+    rv_regressors_all = []
+    lags_in_sec = [-3, 0, 3]
+    for i_col in range(rv_regressors.shape[1]):
+        rv_regressors_lagged = physutils.apply_lags(
+            rv_regressors[:, i_col],
+            lags=[lag * resp_samplerate for lag in lags_in_sec],
+        )
+        rv_regressors_all.append(rv_regressors_lagged)
+    rv_regressors_all = np.hstack(rv_regressors_all)
+    assert rv_regressors_all.shape[1] == 6
+
     # Crop out non-steady-state volumes *and* any trailing time
     rv_regressors = rv_regressors[resp_data_start:resp_data_end, :]
 
@@ -268,7 +280,19 @@ def compile_physio_regressors(
     # ###########################
     # TODO: Calculate RVT and RVT*RRF regressors
     # This includes lags
-    rvt_regressors = (resp_data, resp_peaks, resp_troughs)
+    rvt_regressors = chest_belt.rvt(resp_data, resp_peaks, resp_troughs, resp_samplerate)
+
+    # Apply lags
+    rvt_regressors_all = []
+    lags_in_sec = [0, 5, 10, 15, 20]
+    for i_col in range(rvt_regressors.shape[1]):
+        rvt_regressors_lagged = physutils.apply_lags(
+            rvt_regressors[:, i_col],
+            lags=[lag * resp_samplerate for lag in lags_in_sec],
+        )
+        rvt_regressors_all.append(rvt_regressors_lagged)
+    rvt_regressors_all = np.hstack(rvt_regressors_all)
+    assert rvt_regressors_all.shape[1] == 10
 
     # Crop out non-steady-state volumes *and* any trailing time
     rvt_regressors = rvt_regressors[resp_data_start:resp_data_end, :]
@@ -277,13 +301,103 @@ def compile_physio_regressors(
     rvt_regressors = signal.resample(rvt_regressors, num=n_vols, axis=0)
 
     # Add regressors to confounds and update metadata
+    rvt_regressor_names = [
+        "RVTRegression_RVT",
+        "RVTRegression_RVT+5s",
+        "RVTRegression_RVT+10s",
+        "RVTRegression_RVT+15s",
+        "RVTRegression_RVT+20s",
+        "RVTRegression_RVT*RRF",
+        "RVTRegression_RVT*RRF+5s",
+        "RVTRegression_RVT*RRF+10s",
+        "RVTRegression_RVT*RRF+15s",
+        "RVTRegression_RVT*RRF+20s",
+    ]
+    confounds_df[rvt_regressor_names] = rvt_regressors
+    temp_dict = {
+        "RVTRegression_RVT": {
+            "Sources": [physio_files["respiratory-data"]],
+            "Description": (
+                "Respiratory volume-per-time downsampled to the repetition time of the fMRI data."
+            ),
+        },
+        "RVTRegression_RVT+5s": {
+            "Sources": [physio_files["respiratory-data"]],
+            "Description": (
+                "Respiratory volume-per-time time-shifted 5 seconds forward and "
+                "downsampled to the repetition time of the fMRI data."
+            ),
+        },
+        "RVTRegression_RVT+10s": {
+            "Sources": [physio_files["respiratory-data"]],
+            "Description": (
+                "Respiratory volume-per-time time-shifted 10 seconds forward and "
+                "downsampled to the repetition time of the fMRI data."
+            ),
+        },
+        "RVTRegression_RVT+15s": {
+            "Sources": [physio_files["respiratory-data"]],
+            "Description": (
+                "Respiratory volume-per-time time-shifted 15 seconds forward and "
+                "downsampled to the repetition time of the fMRI data."
+            ),
+        },
+        "RVTRegression_RVT+20s": {
+            "Sources": [physio_files["respiratory-data"]],
+            "Description": (
+                "Respiratory volume-per-time time-shifted 20 seconds forward and "
+                "downsampled to the repetition time of the fMRI data."
+            ),
+        },
+        "RVTRegression_RVT*RRF": {
+            "Sources": [physio_files["respiratory-data"]],
+            "Description": (
+                "Respiratory volume-per-time convolved with the respiratory response function "
+                "and downsampled to the repetition time of the fMRI data."
+            ),
+        },
+        "RVTRegression_RVT*RRF+5s": {
+            "Sources": [physio_files["respiratory-data"]],
+            "Description": (
+                "Respiratory volume-per-time convolved with the respiratory response function, "
+                "time-shifted 5 seconds forward, "
+                "and downsampled to the repetition time of the fMRI data."
+            ),
+        },
+        "RVTRegression_RVT*RRF+10s": {
+            "Sources": [physio_files["respiratory-data"]],
+            "Description": (
+                "Respiratory volume-per-time convolved with the respiratory response function, "
+                "time-shifted 10 seconds forward, "
+                "and downsampled to the repetition time of the fMRI data."
+            ),
+        },
+        "RVTRegression_RVT*RRF+15s": {
+            "Sources": [physio_files["respiratory-data"]],
+            "Description": (
+                "Respiratory volume-per-time convolved with the respiratory response function, "
+                "time-shifted 15 seconds forward, "
+                "and downsampled to the repetition time of the fMRI data."
+            ),
+        },
+        "RVTRegression_RVT*RRF+20s": {
+            "Sources": [physio_files["respiratory-data"]],
+            "Description": (
+                "Respiratory volume-per-time convolved with the respiratory response function, "
+                "time-shifted 20 seconds forward, "
+                "and downsampled to the repetition time of the fMRI data."
+            ),
+        },
+    }
+    confounds_metadata = {**temp_dict, **confounds_metadata}
 
     # ################################
     # Respiratory Pattern Variability
     # ################################
     # Calculate RPV values and add to participants tsv
     window = resp_samplerate * 10  # window should be 10s
-    rpv = chest_belt.rpv(resp_data[resp_data_start:resp_data_end], window=window)
+    resp_data_from_scan = resp_data[resp_data_start:resp_data_end]
+    rpv = chest_belt.rpv(resp_data_from_scan, window=window)
     participants_df.loc[participants_df["participant_id"] == subject, "rpv"] = rpv
 
     # ######################
