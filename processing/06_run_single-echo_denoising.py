@@ -683,7 +683,7 @@ def main(project_dir, dset):
         }
         json.dump(dset_desc, fo, sort_keys=True, indent=4)
 
-    for subject in subjects:
+    for subject in subjects[:1]:
         print(f"\t{subject}", flush=True)
         preproc_subj_func_dir = op.join(preproc_dir, subject, "func")
         tedana_subj_dir = op.join(tedana_dir, subject, "func")

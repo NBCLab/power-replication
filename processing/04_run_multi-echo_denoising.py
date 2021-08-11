@@ -38,7 +38,7 @@ def run_tedana(project_dir, dset):
     participants_df = pd.read_table(participants_file)
     subjects = participants_df.loc[participants_df["exclude"] == 0, "participant_id"].tolist()
 
-    for subject in subjects:
+    for subject in subjects[:1]:
         print(f"\t{subject}", flush=True)
         preproc_subj_dir = op.join(preproc_dir, subject)
         preproc_subj_anat_dir = op.join(preproc_subj_dir, "anat")

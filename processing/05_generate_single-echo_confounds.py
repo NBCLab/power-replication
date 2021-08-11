@@ -20,7 +20,7 @@ import sklearn
 from nilearn import image, masking
 from peakdet import load_physio, operations
 from phys2denoise import utils as physutils
-from phys2denoise.metrics import chest_belt
+from phys2denoise.metrics import cardiac, chest_belt
 from scipy import signal
 
 
@@ -187,7 +187,6 @@ def compile_physio_regressors(
     resp_peaks = np.loadtxt(physio_files["respiratory-peaks"])
     resp_troughs = np.loadtxt(physio_files["respiratory-troughs"])
     card_peaks = np.loadtxt(physio_files["cardiac-peaks"])
-    card_troughs = np.loadtxt(physio_files["cardiac-troughs"])
 
     # Normally we'd offset the data by the start time, but in this dataset that's 0
     assert resp_metadata["StartTime"] == 0
@@ -483,34 +482,33 @@ def compile_physio_regressors(
     rpv = chest_belt.rpv(resp_data_from_scan, window=window)
     participants_df.loc[participants_df["participant_id"] == subject, "rpv"] = rpv
 
-    # ######################
-    # Heart Rate Variability
-    # ######################
-    # TODO: Calculate HRV values and add to file
-    hrv_regressors = (card_data, card_peaks, card_troughs)
+    # ########################
+    # Instantaneous Heart Rate
+    # ########################
+    # Calculate IHR
+    ihr = cardiac.ihr(card_data, card_peaks, card_samplerate)
+
+    # TODO: Identify "suspicious periods" (bpm change > 25) and interpolate
 
     # Crop out non-steady-state volumes *and* any trailing time
-    hrv_regressors = hrv_regressors[card_data_start:card_data_end, :]
+    ihr_regressor = ihr[card_data_start:card_data_end]
 
     # Resample to TR
-    hrv_regressors = signal.resample(hrv_regressors, num=n_vols, axis=0)
+    ihr_regressor = signal.resample(ihr_regressor, num=n_vols, axis=0)
 
     # Add regressors to confounds and update metadata
-    hrv_regressor_names = [
-        "HRVRegression_HRV",
-    ]
-    confounds_df[hrv_regressor_names] = hrv_regressors
+    ihr_regressor_name = "IHRRegression_IHR"
+    confounds_df[ihr_regressor_name] = ihr_regressor
 
     temp_dict = {
-        "HRVRegression_HRV": {
+        "IHRRegression_IHR": {
             "Sources": [
                 physio_files["cardiac-data"],
                 physio_files["cardiac-metadata"],
                 physio_files["cardiac-peaks"],
-                physio_files["cardiac-troughs"],
             ],
             "Description": (
-                "Heart-rate variability calculated from cardiac data upsampled to "
+                "Instantaneous heart rate calculated from cardiac data upsampled to "
                 f"{card_samplerate} Hertz, then downsampled to the repetition time of the "
                 "fMRI data."
             ),
@@ -574,7 +572,7 @@ def run_peakdet(physio_file, physio_metadata, out_dir):
     # Load data
     # #########
     # Split raw data into respiratory and cardiac arrays
-    sampling_rate = physio_metadata["SamplingRate"]
+    sampling_rate = physio_metadata["SamplingFrequency"]
     resp_idx = physio_metadata["Columns"].index("respiratory")
     card_idx = physio_metadata["Columns"].index("cardiac")
     physio_data = np.loadtxt(physio_file)
@@ -618,7 +616,7 @@ def run_peakdet(physio_file, physio_metadata, out_dir):
 
     card_metadata = physio_metadata.copy()
     card_metadata["Columns"] = ["cardiac"]
-    card_metadata["SamplingRate"] = TARGET_SAMPLING_RATE
+    card_metadata["SamplingFrequency"] = TARGET_SAMPLING_RATE
     card_metadata["RawSources"] = [physio_file]
     card_metadata["Description"] = (
         "Cardiac recording data were extracted from the BIDS physio file, "
@@ -678,7 +676,7 @@ def main(project_dir, dset):
     # Also get non-steady-state volume information
     nss_file = op.join(preproc_dir, "nss_removed.tsv")
 
-    for subject in subjects:
+    for subject in subjects[:1]:
         print(f"\t{subject}", flush=True)
         dset_subj_dir = op.join(dset_dir, subject)
         dset_subj_func_dir = op.join(dset_subj_dir, "func")
