@@ -6,7 +6,7 @@ Methods:
     (integrated in tedana, but we do it separately here because the approach is very different)
 -   Dynamic global signal regression with rapidtide
 -   aCompCor with custom code
--   GODEC
+-   GODEC with the ME-ICA/godec package
 -   RVT (with lags) regression
 -   RV (with lags) regression
 """

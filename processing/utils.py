@@ -6,7 +6,7 @@ from nilearn import image, input_data
 
 
 def run_command(command, env=None):
-    """Run a given command with certain environment variables set."""
+    """Run a given shell command with certain environment variables set."""
     merged_env = os.environ
     if env:
         merged_env.update(env)
