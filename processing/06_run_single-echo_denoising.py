@@ -267,7 +267,7 @@ def run_dgsr(medn_file, mask_file, confounds_file, out_dir):
     )
     run_command(cmd)
 
-    # Will the scale of the denoised data be correct? Or is it mean-centered or something?
+    # TODO: Will the scale of the denoised data be correct? Or is it mean-centered or something?
     dgsr_noise_img = image.math_img("img1 - img2", img1=medn_file, img2=dgsr_file)
     dgsr_noise_img.to_filename(dgsr_noise_file)
 
@@ -277,8 +277,8 @@ def run_dgsr(medn_file, mask_file, confounds_file, out_dir):
     SUFFIXES = {
         "desc-lfofilterCleaned_bold": "Multi-echo denoised data further denoised with rapidtide.",
         "desc-noise_bold": (
-            "Noise time series retained from further denoising "
-            "multi-echo denoised data with rapidtide."
+            "Noise time series retained from further denoising multi-echo denoised data with "
+            "rapidtide."
         ),
     }
     for suffix, description in SUFFIXES.items():
@@ -677,11 +677,21 @@ def main(project_dir, dset):
     # Get list of participants with good data
     participants_file = op.join(preproc_dir, "participants.tsv")
     participants_df = pd.read_table(participants_file)
-    subjects = participants_df.loc[participants_df["exclude"] == 0, "participant_id"].tolist()
+    subjects = participants_df.loc[
+        participants_df["exclude"] == 0, "participant_id"
+    ].tolist()
 
     with open(op.join(nuis_dir, "dataset_description.json"), "w") as fo:
         dset_desc = {
             "Name": "Nuisance Regressions",
+            "BIDSVersion": "1.2.1",
+            "DatasetType": "derivative",
+        }
+        json.dump(dset_desc, fo, sort_keys=True, indent=4)
+
+    with open(op.join(dgsr_dir, "dataset_description.json"), "w") as fo:
+        dset_desc = {
+            "Name": "Dynamic Global Signal Regression",
             "BIDSVersion": "1.2.1",
             "DatasetType": "derivative",
         }
@@ -693,7 +703,9 @@ def main(project_dir, dset):
         tedana_subj_dir = op.join(tedana_dir, subject, "func")
 
         # Collect important files
-        confounds_files = glob(op.join(preproc_subj_func_dir, "*_desc-confounds_timeseries.tsv"))
+        confounds_files = glob(
+            op.join(preproc_subj_func_dir, "*_desc-confounds_timeseries.tsv")
+        )
         assert len(confounds_files) == 1
         confounds_file = confounds_files[0]
 

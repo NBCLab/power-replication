@@ -33,7 +33,9 @@ def preprocess(project_dir, dset):
     # Get list of participants with good data
     participants_file = op.join(dset_dir, "participants.tsv")
     participants_df = pd.read_table(participants_file)
-    subjects = participants_df.loc[participants_df["exclude"] == 0, "participant_id"].tolist()
+    subjects = participants_df.loc[
+        participants_df["exclude"] == 0, "participant_id"
+    ].tolist()
 
     if not op.isdir(out_dir):
         os.mkdir(out_dir)
@@ -118,8 +120,12 @@ def preprocess(project_dir, dset):
         wm_ero02 = nib.Nifti1Image(
             wm_ero02, wm_img.affine, header=wm_img.header
         )  # aka Superficial WM
-        wm_ero24 = nib.Nifti1Image(wm_ero24, wm_img.affine, header=wm_img.header)  # aka Deeper WM
-        wm_ero4 = nib.Nifti1Image(wm_ero4, wm_img.affine, header=wm_img.header)  # aka Deepest WM
+        wm_ero24 = nib.Nifti1Image(
+            wm_ero24, wm_img.affine, header=wm_img.header
+        )  # aka Deeper WM
+        wm_ero4 = nib.Nifti1Image(
+            wm_ero4, wm_img.affine, header=wm_img.header
+        )  # aka Deepest WM
 
         # Resample WM masks to 3mm (functional) resolution with NN interp
         res_wm_ero02 = image.resample_to_img(
@@ -250,7 +256,9 @@ def preprocess(project_dir, dset):
         out_confounds_json_file = out_confounds_file.replace(".tsv", ".json")
 
         confounds_df = pd.read_table(confounds_file)
-        nss_cols = [c for c in confounds_df.columns if c.startswith("non_steady_state_outlier")]
+        nss_cols = [
+            c for c in confounds_df.columns if c.startswith("non_steady_state_outlier")
+        ]
 
         if len(nss_cols):
             nss_vols = confounds_df.loc[
@@ -276,7 +284,9 @@ def preprocess(project_dir, dset):
                 json.dump(json_info, fo, indent=4, sort_keys=True)
 
             for echo_file in echo_files:
-                reduced_echo_img = image.index_img(echo_file, slice(first_kept_vol, n_vols + 1))
+                reduced_echo_img = image.index_img(
+                    echo_file, slice(first_kept_vol, n_vols + 1)
+                )
                 echo_filename = op.basename(echo_file)
                 echo_filename = echo_filename.replace(
                     "_desc-partialPreproc_",
@@ -353,7 +363,9 @@ def compile_metadata(project_dir, dset):
     # Get list of participants with good data
     participants_file = op.join(dset_dir, "participants.tsv")
     participants_df = pd.read_table(participants_file)
-    subjects = participants_df.loc[participants_df["exclude"] == 0, "participant_id"].tolist()
+    subjects = participants_df.loc[
+        participants_df["exclude"] == 0, "participant_id"
+    ].tolist()
 
     FROM_RAW_METADATA = ["EchoTime", "RepetitionTime", "FlipAngle", "TaskName"]
 
@@ -366,7 +378,9 @@ def compile_metadata(project_dir, dset):
         fmriprep_files = [
             op.join(
                 fmriprep_func_dir,
-                f.replace("_bold.nii.gz", "_space-scanner_desc-partialPreproc_bold.nii.gz"),
+                f.replace(
+                    "_bold.nii.gz", "_space-scanner_desc-partialPreproc_bold.nii.gz"
+                ),
             )
             for f in base_filenames
         ]
@@ -399,7 +413,9 @@ def compile_metadata(project_dir, dset):
                 with open(raw_json, "r") as fo:
                     raw_metadata = json.load(fo)
 
-            raw_metadata = {k: v for k, v in raw_metadata.items() if k in FROM_RAW_METADATA}
+            raw_metadata = {
+                k: v for k, v in raw_metadata.items() if k in FROM_RAW_METADATA
+            }
 
             if op.isfile(fmriprep_json):
                 with open(fmriprep_json, "r") as fo:
@@ -484,6 +500,39 @@ def create_top_level_files(project_dir, dset):
         else:
             raise Exception(f"Type {type(v)} not understood.")
 
+    fmriprep_data_desc = op.join(
+        project_dir,
+        dset,
+        "derivatives/fmriprep/dataset_description.json",
+    )
+    out_data_desc = op.join(
+        project_dir, dset, "derivatives/power/dataset_description.json"
+    )
+    with open(fmriprep_data_desc, "r") as fo:
+        data_description = json.load(fo)
+
+    data_description["Name"] = "Replication of Power et al. (2018)"
+    data_description[
+        "HowToAcknowledge"
+    ] += " Please cite Salo et al. (2021) (once it's published, of course)."
+    data_description["GeneratedBy"] = [
+        {
+            "Name": "Custom Code",
+            "Description": (
+                "Postprocessing workflow to "
+                "(1) extract echo-wise preprocessed data from the fMRIPrep working directory, "
+                "(2) create tissue type masks at functional resolution, "
+                "(3) remove non-steady state volumes from each fMRI run, and "
+                "(4) calculate nuisance regressors "
+                "for the Power et al. (2018) replication."
+            ),
+            "CodeURL": "https://github.com/NBCLab/power-replication",
+        },
+    ] + data_description["GeneratedBy"]
+
+    with open(out_data_desc, "w") as fo:
+        json.dump(data_description, fo, sort_keys=True, indent=4)
+
 
 if __name__ == "__main__":
     project_dir = "/home/data/nbc/misc-projects/Salo_PowerReplication/"
@@ -498,4 +547,4 @@ if __name__ == "__main__":
         print(f"{dset}", flush=True)
         # preprocess(project_dir, dset)
         # compile_metadata(project_dir, dset)
-        # create_top_level_files(project_dir, dset)
+        create_top_level_files(project_dir, dset)

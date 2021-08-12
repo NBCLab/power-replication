@@ -36,7 +36,9 @@ def run_tedana(project_dir, dset):
     # Get list of participants with good data
     participants_file = op.join(dset_dir, "participants.tsv")
     participants_df = pd.read_table(participants_file)
-    subjects = participants_df.loc[participants_df["exclude"] == 0, "participant_id"].tolist()
+    subjects = participants_df.loc[
+        participants_df["exclude"] == 0, "participant_id"
+    ].tolist()
 
     for subject in subjects[:1]:
         print(f"\t{subject}", flush=True)
@@ -49,7 +51,11 @@ def run_tedana(project_dir, dset):
         os.makedirs(tedana_subj_dir, exist_ok=True)
 
         preproc_files = sorted(
-            glob(op.join(preproc_subj_func_dir, f"{subject}_*_desc-NSSRemoved_bold.nii.gz"))
+            glob(
+                op.join(
+                    preproc_subj_func_dir, f"{subject}_*_desc-NSSRemoved_bold.nii.gz"
+                )
+            )
         )
 
         # Get prefix from first filename
@@ -71,16 +77,20 @@ def run_tedana(project_dir, dset):
         te30_idx = (np.abs(echo_times - TARGET_TE)).argmin()
         te30_nii_file = preproc_files[te30_idx]
         te30_json_file = json_files[te30_idx]
-        te30_out_nii_file = op.join(preproc_subj_func_dir, f"{prefix}_desc-TE30_bold.nii.gz")
-        te30_out_json_file = op.join(preproc_subj_func_dir, f"{prefix}_desc-TE30_bold.json")
+        te30_out_nii_file = op.join(
+            preproc_subj_func_dir, f"{prefix}_desc-TE30_bold.nii.gz"
+        )
+        te30_out_json_file = op.join(
+            preproc_subj_func_dir, f"{prefix}_desc-TE30_bold.json"
+        )
 
         with open(te30_json_file, "r") as fo:
             te30_metadata = json.load(fo)
 
         te30_metadata["Sources"] = [te30_nii_file]
-        te30_metadata["Description"] = (
-            "Preprocessed data from echo closest to 30ms, with non-steady-state volumes removed."
-        )
+        te30_metadata[
+            "Description"
+        ] = "Preprocessed data from echo closest to 30ms, with non-steady-state volumes removed."
 
         with open(te30_out_json_file, "w") as fo:
             json.dump(te30_metadata, fo, sort_keys=True, indent=4)
@@ -131,12 +141,26 @@ def run_tedana(project_dir, dset):
             with open(suff_json_file, "w") as fo:
                 json.dump(fo, metadata, sort_keys=True, indent=4)
 
+        # Merge dataset descriptions
         if subject == subjects[0]:
-            copyfile(
-                op.join(t2smap_subj_dir, "dataset_description.json"),
-                op.join(t2smap_dir, "dataset_description.json"),
+            preproc_data_desc = op.join(preproc_dir, "dataset_description.json")
+            t2smap_data_desc = op.join(tedana_subj_dir, "dataset_description.json")
+            with open(preproc_data_desc, "r") as fo:
+                data_description = json.load(fo)
+
+            with open(t2smap_data_desc, "r") as fo:
+                ted_data_description = json.load(fo)
+
+            data_description["Name"] = ted_data_description["Name"]
+            data_description["BIDSVersion"] = ted_data_description["BIDSVersion"]
+            data_description["GeneratedBy"] = (
+                ted_data_description["GeneratedBy"] + data_description["GeneratedBy"]
             )
 
+            with open(op.join(t2smap_dir, "dataset_description.json"), "w") as fo:
+                json.dump(data_description, fo, sort_keys=True, indent=4)
+
+        # Remove subject-level dataset descriptions
         if op.isfile(op.join(t2smap_dir, "dataset_description.json")):
             os.remove(op.join(t2smap_subj_dir, "dataset_description.json"))
 
@@ -160,9 +184,13 @@ def run_tedana(project_dir, dset):
         )
 
         # Derive binary mask from adaptive mask
-        adaptive_mask = op.join(tedana_subj_dir, f"{prefix}_desc-adaptiveGoodSignal_mask.nii.gz")
+        adaptive_mask = op.join(
+            tedana_subj_dir, f"{prefix}_desc-adaptiveGoodSignal_mask.nii.gz"
+        )
         updated_mask = image.math_img("img >= 1", img=adaptive_mask)
-        updated_mask.to_filename(op.join(tedana_subj_dir, f"{prefix}_desc-goodSignal_mask.nii.gz"))
+        updated_mask.to_filename(
+            op.join(tedana_subj_dir, f"{prefix}_desc-goodSignal_mask.nii.gz")
+        )
 
         # Merge metadata into relevant jsons
         SUFFIXES = {
@@ -188,12 +216,26 @@ def run_tedana(project_dir, dset):
             with open(suff_json_file, "w") as fo:
                 json.dump(fo, metadata, sort_keys=True, indent=4)
 
+        # Merge dataset descriptions
         if subject == subjects[0]:
-            copyfile(
-                op.join(tedana_subj_dir, "dataset_description.json"),
-                op.join(tedana_dir, "dataset_description.json"),
+            preproc_data_desc = op.join(preproc_dir, "dataset_description.json")
+            tedana_data_desc = op.join(tedana_subj_dir, "dataset_description.json")
+            with open(preproc_data_desc, "r") as fo:
+                data_description = json.load(fo)
+
+            with open(tedana_data_desc, "r") as fo:
+                ted_data_description = json.load(fo)
+
+            data_description["Name"] = ted_data_description["Name"]
+            data_description["BIDSVersion"] = ted_data_description["BIDSVersion"]
+            data_description["GeneratedBy"] = (
+                ted_data_description["GeneratedBy"] + data_description["GeneratedBy"]
             )
 
+            with open(op.join(tedana_dir, "dataset_description.json"), "w") as fo:
+                json.dump(data_description, fo, sort_keys=True, indent=4)
+
+        # Remove subject-level dataset descriptions
         if op.isfile(op.join(tedana_dir, "dataset_description.json")):
             os.remove(op.join(tedana_subj_dir, "dataset_description.json"))
 

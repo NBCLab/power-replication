@@ -612,7 +612,7 @@ def run_peakdet(physio_file, physio_metadata, out_dir):
         "after which low-pass filtering was applied and peaks and troughs were automatically "
         "detected using `peakdet`."
     )
-    resp_metadata["PeakDet"] = resp_physio.history
+    resp_metadata["PeakDetHistory"] = resp_physio.history
 
     card_metadata = physio_metadata.copy()
     card_metadata["Columns"] = ["cardiac"]
@@ -623,7 +623,7 @@ def run_peakdet(physio_file, physio_metadata, out_dir):
         "after which the data were upsampled to 250 Hz, low-pass filtering was applied, "
         "and peaks and troughs were automatically detected using `peakdet`."
     )
-    card_metadata["PeakDet"] = card_physio.history
+    card_metadata["PeakDetHistory"] = card_physio.history
 
     # #################
     # Save output files
@@ -757,6 +757,32 @@ def main(project_dir, dset):
                 nss_file,
                 subject,
             )
+
+            if subject == subjects[0]:
+                data_desc_file = op.join(preproc_dir, "dataset_description.json")
+                with open(data_desc_file, "r") as fo:
+                    dataset_description = json.load(fo)
+
+                dataset_description["GeneratedBy"] = [
+                    {
+                        "Name": "phys2denoise",
+                        "Description": (
+                            "Physiological metric calculation with phys2denoise. "
+                            "Metrics calculated with this include RVT, RV, RPV, and IHR."
+                        ),
+                        "CodeURL": "https://github.com/tsalo/phys2denoise.git@be8251db24b157c9a7717f3e2e41eca60ed23649",
+                    },
+                    {
+                        "Name": "peakdet",
+                        "Description": (
+                            "Low-pass filtering, and peak detection of physiological data with peakdet."
+                        ),
+                        "CodeURL": "https://github.com/physiopy/peakdet.git@f6908e3cebf2fdc31ba73f2b3d3370bf7dfae89c",
+                    },
+                ] + dataset_description["GeneratedBy"]
+
+                with open(data_desc_file, "w") as fo:
+                    json.dump(dataset_description, fo, sort_keys=True, indent=4)
 
 
 if __name__ == "__main__":
