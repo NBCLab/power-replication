@@ -770,14 +770,21 @@ def main(project_dir, dset):
                             "Physiological metric calculation with phys2denoise. "
                             "Metrics calculated with this include RVT, RV, RPV, and IHR."
                         ),
-                        "CodeURL": "https://github.com/tsalo/phys2denoise.git@be8251db24b157c9a7717f3e2e41eca60ed23649",
+                        "CodeURL": (
+                            "https://github.com/tsalo/phys2denoise.git@"
+                            "be8251db24b157c9a7717f3e2e41eca60ed23649"
+                        ),
                     },
                     {
                         "Name": "peakdet",
                         "Description": (
-                            "Low-pass filtering, and peak detection of physiological data with peakdet."
+                            "Low-pass filtering, and peak detection of physiological data with "
+                            "peakdet."
                         ),
-                        "CodeURL": "https://github.com/physiopy/peakdet.git@f6908e3cebf2fdc31ba73f2b3d3370bf7dfae89c",
+                        "CodeURL": (
+                            "https://github.com/physiopy/peakdet.git@"
+                            "f6908e3cebf2fdc31ba73f2b3d3370bf7dfae89c"
+                        ),
                     },
                 ] + dataset_description["GeneratedBy"]
 
