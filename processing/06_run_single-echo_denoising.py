@@ -257,9 +257,13 @@ def run_dgsr(medn_file, mask_file, confounds_file, out_dir):
     dgsr_file = op.join(out_dir, f"{prefix}_desc-lfofilterCleaned_bold.nii.gz")
     dgsr_noise_file = op.join(out_dir, f"{prefix}_desc-noise_bold.nii.gz")
 
+    # TODO: Check settings with Blaise Frederick
+    # Use the standard denoising settings, with a smoothing kernel equal to 1/2 voxel size,
+    # per rapidtide's recommendation.
     cmd = (
         f"rapidtide --denoising --datatstep {t_r} "
-        f"--motionfile {confounds_file} {medn_file} {prefix}"
+        f"--motionfile {confounds_file} --denoising --spatialfilt -1 "
+        f"{medn_file} {prefix}"
     )
     run_command(cmd)
 
@@ -717,7 +721,6 @@ def main(project_dir, dset):
         # ####
         # dGSR
         # ####
-        # TODO: Check settings with Blaise Frederick
         dgsr_subj_dir = op.join(dgsr_dir, subject, "func")
         os.makedirs(dgsr_subj_dir, exist_ok=True)
         run_dgsr(medn_file, mask_file, confounds_file, dgsr_subj_dir)

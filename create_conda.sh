@@ -29,9 +29,10 @@ conda install \
     jupyterlab \
     nibabel \
     nilearn \
-    tedana \
+    rapidtide==2.0.4 \
+    tedana==0.0.11 \
     git+https://github.com/ME-ICA/godec.git@094129688775e0c07ad81e946974fa0ef72f34c4 \
     git+https://github.com/physiopy/peakdet.git@f6908e3cebf2fdc31ba73f2b3d3370bf7dfae89c \
-    git+https://github.com/tsalo/phys2denoise.git@baf69c0f3cefb08d7f47e1961765dcd139af0b67
+    git+https://github.com/tsalo/phys2denoise.git@be8251db24b157c9a7717f3e2e41eca60ed23649
 
 conda list > python_requirements.txt
