@@ -14,9 +14,9 @@ import json
 import os
 import os.path as op
 from glob import glob
-from shutil import copyfile
 
 import pandas as pd
+import rapidtide
 from nilearn import image
 
 from utils import _generic_regression, run_command
@@ -681,21 +681,30 @@ def main(project_dir, dset):
         participants_df["exclude"] == 0, "participant_id"
     ].tolist()
 
-    with open(op.join(nuis_dir, "dataset_description.json"), "w") as fo:
-        dset_desc = {
-            "Name": "Nuisance Regressions",
-            "BIDSVersion": "1.2.1",
-            "DatasetType": "derivative",
+    with open(op.join(preproc_dir, "dataset_description.json"), "r") as fo:
+        preproc_dset_desc = json.load(fo)
+
+    nuis_dset_desc = preproc_dset_desc.copy()
+    dgsr_dset_desc = preproc_dset_desc.copy()
+    nuis_dset_desc["Name"] = "Nuisance Regressions"
+    dgsr_dset_desc["Name"] = "Dynamic Global Signal Regression"
+    dgsr_dset_desc["GeneratedBy"] = [
+        {
+            "Name": "rapidtide",
+            "Description": (
+                "Dynamic global signal regression for the removal of systemic low-frequency "
+                "oscillations from fMRI data with rapidtide."
+            ),
+            "Version": rapidtide.__version__,
+            "CodeURL": "https://github.com/bbfrederick/rapidtide",
         }
-        json.dump(dset_desc, fo, sort_keys=True, indent=4)
+    ] + dgsr_dset_desc["GeneratedBy"]
+
+    with open(op.join(nuis_dir, "dataset_description.json"), "w") as fo:
+        json.dump(nuis_dset_desc, fo, sort_keys=True, indent=4)
 
     with open(op.join(dgsr_dir, "dataset_description.json"), "w") as fo:
-        dset_desc = {
-            "Name": "Dynamic Global Signal Regression",
-            "BIDSVersion": "1.2.1",
-            "DatasetType": "derivative",
-        }
-        json.dump(dset_desc, fo, sort_keys=True, indent=4)
+        json.dump(dgsr_dset_desc, fo, sort_keys=True, indent=4)
 
     for subject in subjects[:1]:
         print(f"\t{subject}", flush=True)
@@ -737,16 +746,6 @@ def main(project_dir, dset):
         os.makedirs(dgsr_subj_dir, exist_ok=True)
         run_dgsr(medn_file, mask_file, confounds_file, dgsr_subj_dir)
 
-        # Clean up dataset description files
-        if subject == subjects[0]:
-            copyfile(
-                op.join(dgsr_subj_dir, "dataset_description.json"),
-                op.join(dgsr_dir, "dataset_description.json"),
-            )
-
-        if op.isfile(op.join(dgsr_dir, "dataset_description.json")):
-            os.remove(op.join(dgsr_subj_dir, "dataset_description.json"))
-
         # #####
         # GODEC
         # #####
@@ -756,10 +755,13 @@ def main(project_dir, dset):
 
         # Clean up dataset description files
         if subject == subjects[0]:
-            copyfile(
-                op.join(godec_subj_dir, "dataset_description.json"),
-                op.join(godec_dir, "dataset_description.json"),
-            )
+            with open(op.join(godec_subj_dir, "dataset_description.json"), "r") as fo:
+                godec_dset_desc = json.load(fo)
+
+            godec_dset_desc["GeneratedBy"] += preproc_dset_desc["GeneratedBy"]
+
+            with open(op.join(godec_dir, "dataset_description.json"), "w") as fo:
+                json.dump(godec_dset_desc, fo, sort_keys=True, indent=4)
 
         if op.isfile(op.join(godec_dir, "dataset_description.json")):
             os.remove(op.join(godec_subj_dir, "dataset_description.json"))
