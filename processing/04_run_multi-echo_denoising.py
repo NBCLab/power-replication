@@ -249,6 +249,7 @@ if __name__ == "__main__":
         "dset-dalenberg",
         "dset-dupre",
     ]
+    print(op.basename(__file__), flush=True)
     for dset in dsets:
-        print(dset, flush=True)
+        print(f"\t{dset}", flush=True)
         run_tedana(project_dir, dset)

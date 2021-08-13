@@ -543,8 +543,9 @@ if __name__ == "__main__":
         "dset-dalenberg",
         "dset-dupre",
     ]
+    print(op.basename(__file__), flush=True)
     for dset in dsets:
-        print(f"{dset}", flush=True)
+        print(f"\t{dset}", flush=True)
         # preprocess(project_dir, dset)
         # compile_metadata(project_dir, dset)
         create_top_level_files(project_dir, dset)
