@@ -29,7 +29,7 @@ conda install \
     jupyterlab \
     nibabel \
     nilearn \
-    rapidtide==2.0.4 \
+    rapidtide==2.0.5 \
     tedana==0.0.11 \
     git+https://github.com/ME-ICA/godec.git@094129688775e0c07ad81e946974fa0ef72f34c4 \
     git+https://github.com/physiopy/peakdet.git@f6908e3cebf2fdc31ba73f2b3d3370bf7dfae89c \
