@@ -4,12 +4,9 @@ conda create -p conda_env/ pip python=3.7
 source activate conda_env/
 conda install \
     pip \
-    accelerate \
     Biopython \
     cython \
-    dateutil \
     funcsigs \
-    libgfortran \
     matplotlib \
     numexpr \
     numpy \
@@ -24,12 +21,13 @@ conda install \
 /home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/bin/pip install pip -U
 
 /home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/bin/pip install \
+    accelerate \
     ipython \
     ipywidgets \
     jupyterlab \
     nibabel \
     nilearn \
-    rapidtide==2.0.5 \ # tedana==0.0.11 \
+    rapidtide==2.0.5 \
     git+https://github.com/ME-ICA/tedana.git@3147e01bfbd2a058f41af73eb55debb3dea519b2 \
     git+https://github.com/ME-ICA/godec.git@094129688775e0c07ad81e946974fa0ef72f34c4 \
     git+https://github.com/physiopy/peakdet.git@f6908e3cebf2fdc31ba73f2b3d3370bf7dfae89c \
