@@ -29,9 +29,9 @@ conda install \
     nibabel \
     nilearn \
     git+https://github.com/tsalo/rapidtide.git@f86237d8867222d645dd53556cc4617ba4d7ebde \
-    git+https://github.com/ME-ICA/tedana.git@3147e01bfbd2a058f41af73eb55debb3dea519b2 \
+    git+https://github.com/tsalo/tedana.git@fdcdb22db30501563392e01a80328a27161ea8cf \
     git+https://github.com/ME-ICA/godec.git@094129688775e0c07ad81e946974fa0ef72f34c4 \
     git+https://github.com/tsalo/peakdet.git@0034b2c76669a227295501e0d7c7d1fd207259d1 \
-    git+https://github.com/tsalo/phys2denoise.git@be8251db24b157c9a7717f3e2e41eca60ed23649
+    git+https://github.com/tsalo/phys2denoise.git@10f9fb6d550dbbe5b9cc80c0cdaee346440e66fa
 
 conda list > python_requirements.txt
