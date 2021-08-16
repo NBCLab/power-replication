@@ -697,14 +697,16 @@ def main(project_dir, dset):
         seg_files = glob(
             op.join(
                 preproc_subj_anat_dir,
-                "*_space-T1w_res-bold_desc-totalMaskWithCSF_mask.nii.gz",
+                "*_space-scanner_res-bold_desc-totalMaskWithCSF_mask.nii.gz",
             )
         )
         assert len(seg_files) == 1
         seg_file = seg_files[0]
 
         cgm_files = glob(
-            op.join(preproc_subj_anat_dir, "*_space-T1w_res-bold_label-CGM_mask.nii.gz")
+            op.join(
+                preproc_subj_anat_dir, "*_space-scanner_res-bold_label-CGM_mask.nii.gz"
+            )
         )
         assert len(cgm_files) == 1
         cgm_file = cgm_files[0]

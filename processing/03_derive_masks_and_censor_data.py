@@ -395,7 +395,9 @@ def apply_xfms_to_masks(project_dir, dset):
         )
         for file_to_xfm in files_to_xfm:
             out_file = file_to_xfm.replace("space-T1w", "space-scanner")
-            out_img = xfm.apply(spatialimage=file_to_xfm, reference=scanner_file, order=0)
+            out_img = xfm.apply(
+                spatialimage=file_to_xfm, reference=scanner_file, order=0
+            )
             out_img.to_filename(out_file)
 
 

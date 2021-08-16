@@ -103,7 +103,7 @@ def run_tedana(project_dir, dset):
         # Derive brain mask from discrete segmentation
         dseg_file = op.join(
             preproc_subj_anat_dir,
-            f"{subject}_space-T1w_res-bold_desc-totalMaskWithCSF_dseg.nii.gz",
+            f"{subject}_space-scanner_res-bold_desc-totalMaskWithCSF_dseg.nii.gz",
         )
         mask_img = image.math_img("img >= 1", img=dseg_file)
 
