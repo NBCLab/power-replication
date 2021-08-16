@@ -119,7 +119,7 @@ patsy                     0.5.1                    pypi_0    pypi
 pcre                      8.45                 h295c915_0  
 peakdet                   0+untagged.182.g0034b2c          pypi_0    pypi
 pexpect                   4.8.0                    pypi_0    pypi
-phys2denoise              0+untagged.88.gbe8251d          pypi_0    pypi
+phys2denoise              0+untagged.89.g10f9fb6          pypi_0    pypi
 pickleshare               0.7.5                    pypi_0    pypi
 pillow                    8.3.1            py37h2c7a002_0  
 pip                       21.2.4                   pypi_0    pypi
@@ -157,7 +157,7 @@ sniffio                   1.2.0                    pypi_0    pypi
 sqlite                    3.36.0               hc218d9a_0  
 statsmodels               0.12.2                   pypi_0    pypi
 sympy                     1.8              py37h06a4308_0  
-tedana                    0.0.10+20.g3147e01          pypi_0    pypi
+tedana                    0+untagged.1049.g3ea3e9d          pypi_0    pypi
 terminado                 0.11.0                   pypi_0    pypi
 testpath                  0.5.0                    pypi_0    pypi
 threadpoolctl             2.2.0              pyhbf3da8f_0  
