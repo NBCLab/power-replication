@@ -12,8 +12,8 @@ from shutil import copyfile
 
 import numpy as np
 import pandas as pd
-import tedana
 from nilearn import image
+from tedana import workflows
 
 
 def run_tedana(project_dir, dset):
@@ -116,7 +116,7 @@ def run_tedana(project_dir, dset):
         # We retain t2s and s0 timeseries from this method, but do not use
         # optcom or any other derivatives.
         print("\t\tt2smap", flush=True)
-        tedana.workflows.t2smap_workflow(
+        workflows.t2smap_workflow(
             preproc_files,
             echo_times,
             combmode="t2s",
@@ -171,7 +171,7 @@ def run_tedana(project_dir, dset):
         # reconstructed MEHK-noise, optcom, mmix (component timeseries), and
         # comptable (classifications of components)
         print("\t\ttedana", flush=True)
-        tedana.workflows.tedana_workflow(
+        workflows.tedana_workflow(
             preproc_files,
             echo_times,
             fittype="curvefit",

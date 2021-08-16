@@ -19,8 +19,8 @@ import pandas as pd
 import sklearn
 from nilearn import image, masking
 from peakdet import load_physio, operations
-from phys2denoise import utils as physutils
 from phys2denoise.metrics import cardiac, chest_belt
+from phys2denoise.metrics import utils as physutils
 from scipy import signal
 
 
@@ -667,7 +667,7 @@ def main(project_dir, dset):
     preproc_dir = op.join(deriv_dir, "power")
 
     # Get list of participants with good data
-    participants_file = op.join(preproc_dir, "participants.tsv")
+    participants_file = op.join(dset_dir, "participants.tsv")
     participants_df = pd.read_table(participants_file)
     subjects = participants_df.loc[
         participants_df["exclude"] == 0, "participant_id"
