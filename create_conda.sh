@@ -28,6 +28,7 @@ conda install \
     jupyterlab \
     nibabel \
     nilearn \
+    nitransforms \
     git+https://github.com/tsalo/rapidtide.git@f86237d8867222d645dd53556cc4617ba4d7ebde \
     git+https://github.com/tsalo/tedana.git@3ea3e9df6482e6aa1a4ee386383f0ef5c5e50363 \
     git+https://github.com/ME-ICA/godec.git@094129688775e0c07ad81e946974fa0ef72f34c4 \

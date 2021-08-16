@@ -6,6 +6,7 @@ import shutil
 from glob import glob
 
 import nibabel as nib
+import nitransforms as nit
 import numpy as np
 import pandas as pd
 from nilearn import image
@@ -348,6 +349,56 @@ def preprocess(project_dir, dset):
         nss_df.to_csv(nss_file, sep="\t", index=True, index_label="participant_id")
 
 
+def apply_xfms_to_masks(project_dir, dset):
+    """Transform masks/dsegs from T1w space to scanner space.
+
+    This function is separate from preprocess() because I realized it was necessary
+    *after* running the other function.
+    """
+    dset_dir = op.join(project_dir, dset)
+    fp_dir = op.join(dset_dir, "derivatives/fmriprep")
+    out_dir = op.join(dset_dir, "derivatives/power")
+
+    # Get list of participants with good data
+    participants_file = op.join(dset_dir, "participants.tsv")
+    participants_df = pd.read_table(participants_file)
+    subjects = participants_df.loc[
+        participants_df["exclude"] == 0, "participant_id"
+    ].tolist()
+
+    for subject in subjects:
+        print(f"\t\t{subject}", flush=True)
+        subj_fmriprep_dir = op.join(fp_dir, subject)
+        subj_out_dir = op.join(out_dir, subject)
+        anat_out_dir = op.join(subj_out_dir, "anat")
+
+        xfm_files = sorted(
+            glob(
+                op.join(
+                    subj_fmriprep_dir, "func", "*from-T1w_to-scanner_mode-image_xfm.txt"
+                )
+            )
+        )
+        assert len(xfm_files) == 1
+        xfm_file = xfm_files[0]
+
+        scanner_files = sorted(
+            glob(op.join(subj_fmriprep_dir, "func", "*_space-scanner_*_bold.nii.gz"))
+        )
+        assert len(scanner_files) >= 3
+        scanner_file = scanner_files[0]
+
+        xfm = nit.linear.load(xfm_file, fmt="itk")
+
+        files_to_xfm = sorted(
+            glob(op.join(anat_out_dir, "*space-T1w_res-bold*.nii.gz"))
+        )
+        for file_to_xfm in files_to_xfm:
+            out_file = file_to_xfm.replace("space-T1w", "space-scanner")
+            out_img = xfm.apply(spatialimage=file_to_xfm, reference=scanner_file)
+            out_img.to_filename(out_file)
+
+
 def compile_metadata(project_dir, dset):
     """Extract metadata from raw BOLD files and add to the preprocessed BOLD file jsons.
 
@@ -547,5 +598,6 @@ if __name__ == "__main__":
     for dset in dsets:
         print(f"\t{dset}", flush=True)
         # preprocess(project_dir, dset)
+        apply_xfms_to_masks(project_dir, dset)
         # compile_metadata(project_dir, dset)
-        create_top_level_files(project_dir, dset)
+        # create_top_level_files(project_dir, dset)
