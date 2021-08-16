@@ -395,7 +395,7 @@ def apply_xfms_to_masks(project_dir, dset):
         )
         for file_to_xfm in files_to_xfm:
             out_file = file_to_xfm.replace("space-T1w", "space-scanner")
-            out_img = xfm.apply(spatialimage=file_to_xfm, reference=scanner_file)
+            out_img = xfm.apply(spatialimage=file_to_xfm, reference=scanner_file, order=0)
             out_img.to_filename(out_file)
 
 
@@ -598,6 +598,6 @@ if __name__ == "__main__":
     for dset in dsets:
         print(f"\t{dset}", flush=True)
         # preprocess(project_dir, dset)
-        apply_xfms_to_masks(project_dir, dset)
+        # apply_xfms_to_masks(project_dir, dset)
         # compile_metadata(project_dir, dset)
         # create_top_level_files(project_dir, dset)
