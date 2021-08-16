@@ -675,7 +675,7 @@ def main(project_dir, dset):
     godec_dir = op.join(deriv_dir, "godec")
 
     # Get list of participants with good data
-    participants_file = op.join(preproc_dir, "participants.tsv")
+    participants_file = op.join(dset_dir, "participants.tsv")
     participants_df = pd.read_table(participants_file)
     subjects = participants_df.loc[
         participants_df["exclude"] == 0, "participant_id"
