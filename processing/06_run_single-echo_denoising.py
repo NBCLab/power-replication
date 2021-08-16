@@ -700,9 +700,11 @@ def main(project_dir, dset):
         }
     ] + dgsr_dset_desc["GeneratedBy"]
 
+    os.makedirs(nuis_dir, exist_ok=True)
     with open(op.join(nuis_dir, "dataset_description.json"), "w") as fo:
         json.dump(nuis_dset_desc, fo, sort_keys=True, indent=4)
 
+    os.makedirs(dgsr_dir, exist_ok=True)
     with open(op.join(dgsr_dir, "dataset_description.json"), "w") as fo:
         json.dump(dgsr_dset_desc, fo, sort_keys=True, indent=4)
 

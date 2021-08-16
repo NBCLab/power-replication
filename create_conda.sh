@@ -29,7 +29,7 @@ conda install \
     nibabel \
     nilearn \
     git+https://github.com/tsalo/rapidtide.git@f86237d8867222d645dd53556cc4617ba4d7ebde \
-    git+https://github.com/tsalo/tedana.git@fdcdb22db30501563392e01a80328a27161ea8cf \
+    git+https://github.com/tsalo/tedana.git@3ea3e9df6482e6aa1a4ee386383f0ef5c5e50363 \
     git+https://github.com/ME-ICA/godec.git@094129688775e0c07ad81e946974fa0ef72f34c4 \
     git+https://github.com/tsalo/peakdet.git@0034b2c76669a227295501e0d7c7d1fd207259d1 \
     git+https://github.com/tsalo/phys2denoise.git@10f9fb6d550dbbe5b9cc80c0cdaee346440e66fa
