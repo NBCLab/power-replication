@@ -21,11 +21,12 @@ def preprocess(project_dir, dset):
     """
     # LUT values from
     # https://surfer.nmr.mgh.harvard.edu/fswiki/FsTutorial/AnatomicalROI/FreeSurferColorLUT
+    # These apply to aseg, not aparcaseg
     CORTICAL_LABELS = [3, 17, 18, 19, 20, 42, 53, 54, 55, 56]
-    SUBCORTICAL_LABELS = [9, 10, 11, 12, 13, 26, 48, 49, 50, 52, 58]
-    WM_LABELS = [2, 7, 41, 46, 192]
+    SUBCORTICAL_LABELS = [9, 10, 11, 12, 13, 26, 48, 49, 50, 51, 52, 58]
+    WM_LABELS = [2, 7, 41, 46, 77, 78, 79, 192]
     CSF_LABELS = [4, 5, 14, 15, 24, 43, 44, 72]
-    CEREBELLUM_LABELS = [8, 47]
+    CEREBELLUM_LABELS = [6, 8, 47]
 
     dset_dir = op.join(project_dir, dset)
     fp_dir = op.join(dset_dir, "derivatives/fmriprep")
@@ -64,41 +65,44 @@ def preprocess(project_dir, dset):
         # Create GM, WM, and CSF masks
         # WM and CSF masks must be created from the high resolution Freesurfer aparc file
         # Then they must be eroded
-        aparcaseg_t1wres = op.join(
+        aseg_t1wres = op.join(
             subj_fmriprep_dir,
             "anat",
-            f"{subject}_desc-aparcaseg_dseg.nii.gz",
+            f"{subject}_desc-aseg_dseg.nii.gz",
         )
-        aparcaseg_boldres = sorted(
+        aseg_boldres = sorted(
             glob(
                 op.join(
                     subj_fmriprep_dir,
                     "func",
-                    f"{subject}_task-*_space-T1w_desc-aparcaseg_dseg.nii.gz",
+                    f"{subject}_task-*_space-T1w_desc-aseg_dseg.nii.gz",
                 )
             )
-        )[0]
+        )
+        assert len(aseg_boldres) == 1
+        aseg_boldres = aseg_boldres[0]
+
         wm_img = image.math_img(
             f"np.isin(img, {WM_LABELS}).astype(int)",
-            img=aparcaseg_t1wres,
+            img=aseg_t1wres,
         )
         csf_img = image.math_img(
             f"np.isin(img, {CSF_LABELS}).astype(int)",
-            img=aparcaseg_t1wres,
+            img=aseg_t1wres,
         )
 
         # Create GM masks in BOLD resolution
         cort_img = image.math_img(
             f"np.isin(img, {CORTICAL_LABELS}).astype(int)",
-            img=aparcaseg_boldres,
+            img=aseg_boldres,
         )
         subcort_img = image.math_img(
             f"np.isin(img, {SUBCORTICAL_LABELS}).astype(int)",
-            img=aparcaseg_boldres,
+            img=aseg_boldres,
         )
         cereb_img = image.math_img(
             f"np.isin(img, {CEREBELLUM_LABELS}).astype(int)",
-            img=aparcaseg_boldres,
+            img=aseg_boldres,
         )
 
         # Save cortical mask to file
@@ -131,17 +135,17 @@ def preprocess(project_dir, dset):
         # Resample WM masks to 3mm (functional) resolution with NN interp
         res_wm_ero02 = image.resample_to_img(
             wm_ero02,
-            aparcaseg_boldres,
+            aseg_boldres,
             interpolation="nearest",
         )
         res_wm_ero24 = image.resample_to_img(
             wm_ero24,
-            aparcaseg_boldres,
+            aseg_boldres,
             interpolation="nearest",
         )
         res_wm_ero4 = image.resample_to_img(
             wm_ero4,
-            aparcaseg_boldres,
+            aseg_boldres,
             interpolation="nearest",
         )
 
@@ -161,12 +165,12 @@ def preprocess(project_dir, dset):
         # Resample CSF masks to 3mm (functional) resolution with NN interp
         res_csf_ero02 = image.resample_to_img(
             csf_ero02,
-            aparcaseg_boldres,
+            aseg_boldres,
             interpolation="nearest",
         )
         res_csf_ero2 = image.resample_to_img(
             csf_ero2,
-            aparcaseg_boldres,
+            aseg_boldres,
             interpolation="nearest",
         )
 
