@@ -143,7 +143,9 @@ def run_tedana(project_dir, dset):
 
         # Merge dataset descriptions
         preproc_data_desc = op.join(preproc_dir, "dataset_description.json")
-        t2smap_data_desc = op.join(t2smap_subj_dir, f"{prefix}_dataset_description.json")
+        t2smap_data_desc = op.join(
+            t2smap_subj_dir, f"{prefix}_dataset_description.json"
+        )
         out_data_desc = op.join(t2smap_dir, "dataset_description.json")
         if not op.isfile(out_data_desc):
             with open(preproc_data_desc, "r") as fo:
@@ -162,7 +164,7 @@ def run_tedana(project_dir, dset):
                 json.dump(data_description, fo, sort_keys=True, indent=4)
 
         # Remove subject-level dataset descriptions
-        os.remove(op.join(t2smap_subj_dir, "dataset_description.json"))
+        os.remove(t2smap_data_desc)
 
         # ############
         # TEDANA + MIR
@@ -217,7 +219,9 @@ def run_tedana(project_dir, dset):
                 json.dump(metadata, fo, sort_keys=True, indent=4)
 
         # Merge dataset descriptions
-        tedana_data_desc = op.join(tedana_subj_dir, f"{prefix}_dataset_description.json")
+        tedana_data_desc = op.join(
+            tedana_subj_dir, f"{prefix}_dataset_description.json"
+        )
         preproc_data_desc = op.join(preproc_dir, "dataset_description.json")
         out_data_desc = op.join(tedana_dir, "dataset_description.json")
 
