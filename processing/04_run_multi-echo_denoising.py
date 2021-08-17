@@ -139,7 +139,7 @@ def run_tedana(project_dir, dset):
             suff_json_file = op.join(t2smap_subj_dir, f"{prefix}_{suffix}.json")
             metadata["Description"] = description
             with open(suff_json_file, "w") as fo:
-                json.dump(fo, metadata, sort_keys=True, indent=4)
+                json.dump(metadata, fo, sort_keys=True, indent=4)
 
         # Merge dataset descriptions
         if subject == subjects[0]:
@@ -214,7 +214,7 @@ def run_tedana(project_dir, dset):
             suff_json_file = op.join(tedana_subj_dir, f"{prefix}_{suffix}.json")
             metadata["Description"] = description
             with open(suff_json_file, "w") as fo:
-                json.dump(fo, metadata, sort_keys=True, indent=4)
+                json.dump(metadata, fo, sort_keys=True, indent=4)
 
         # Merge dataset descriptions
         if subject == subjects[0]:

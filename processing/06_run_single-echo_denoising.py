@@ -120,7 +120,7 @@ def run_rvtreg(medn_file, mask_file, confounds_file, out_dir):
         suff_json_file = op.join(out_dir, f"{prefix}_{suffix}.json")
         json_info["Description"] = description
         with open(suff_json_file, "w") as fo:
-            json.dump(fo, json_info, sort_keys=True, indent=4)
+            json.dump(json_info, fo, sort_keys=True, indent=4)
 
 
 def run_rvreg(medn_file, mask_file, confounds_file, out_dir):
@@ -215,7 +215,7 @@ def run_rvreg(medn_file, mask_file, confounds_file, out_dir):
         suff_json_file = op.join(out_dir, f"{prefix}_{suffix}.json")
         json_info["Description"] = description
         with open(suff_json_file, "w") as fo:
-            json.dump(fo, json_info, sort_keys=True, indent=4)
+            json.dump(json_info, fo, sort_keys=True, indent=4)
 
 
 def run_dgsr(medn_file, mask_file, confounds_file, out_dir):
@@ -288,7 +288,7 @@ def run_dgsr(medn_file, mask_file, confounds_file, out_dir):
         suff_json_file = op.join(out_dir, f"{prefix}_{suffix}.json")
         json_info["Description"] = description
         with open(suff_json_file, "w") as fo:
-            json.dump(fo, json_info, sort_keys=True, indent=4)
+            json.dump(json_info, fo, sort_keys=True, indent=4)
 
 
 def run_godec(medn_file, mask_file, out_dir):
@@ -368,7 +368,7 @@ def run_godec(medn_file, mask_file, out_dir):
         suff_json_file = op.join(out_dir, f"{prefix}_{suffix}.json")
         json_info["Description"] = description
         with open(suff_json_file, "w") as fo:
-            json.dump(fo, json_info, sort_keys=True, indent=4)
+            json.dump(json_info, fo, sort_keys=True, indent=4)
 
 
 def run_gsr(medn_file, mask_file, confounds_file, out_dir):
@@ -461,7 +461,7 @@ def run_gsr(medn_file, mask_file, confounds_file, out_dir):
         suff_json_file = op.join(out_dir, f"{prefix}_{suffix}.json")
         json_info["Description"] = description
         with open(suff_json_file, "w") as fo:
-            json.dump(fo, json_info, sort_keys=True, indent=4)
+            json.dump(json_info, fo, sort_keys=True, indent=4)
 
 
 def run_acompcor(medn_file, mask_file, confounds_file, out_dir):
@@ -565,7 +565,7 @@ def run_acompcor(medn_file, mask_file, confounds_file, out_dir):
         suff_json_file = op.join(out_dir, f"{prefix}_{suffix}.json")
         json_info["Description"] = description
         with open(suff_json_file, "w") as fo:
-            json.dump(fo, json_info, sort_keys=True, indent=4)
+            json.dump(json_info, fo, sort_keys=True, indent=4)
 
 
 def run_nuisance(medn_file, mask_file, seg_file, confounds_file, out_dir):
@@ -660,7 +660,7 @@ def run_nuisance(medn_file, mask_file, seg_file, confounds_file, out_dir):
         suff_json_file = op.join(out_dir, f"{prefix}_{suffix}.json")
         json_info["Description"] = description
         with open(suff_json_file, "w") as fo:
-            json.dump(fo, json_info, sort_keys=True, indent=4)
+            json.dump(json_info, fo, sort_keys=True, indent=4)
 
 
 def main(project_dir, dset):
