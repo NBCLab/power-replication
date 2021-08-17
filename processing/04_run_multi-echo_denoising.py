@@ -144,7 +144,7 @@ def run_tedana(project_dir, dset):
         # Merge dataset descriptions
         if subject == subjects[0]:
             preproc_data_desc = op.join(preproc_dir, "dataset_description.json")
-            t2smap_data_desc = op.join(tedana_subj_dir, "dataset_description.json")
+            t2smap_data_desc = op.join(t2smap_subj_dir, "dataset_description.json")
             with open(preproc_data_desc, "r") as fo:
                 data_description = json.load(fo)
 
