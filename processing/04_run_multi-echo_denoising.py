@@ -142,9 +142,10 @@ def run_tedana(project_dir, dset):
                 json.dump(metadata, fo, sort_keys=True, indent=4)
 
         # Merge dataset descriptions
-        if subject == subjects[0]:
-            preproc_data_desc = op.join(preproc_dir, "dataset_description.json")
-            t2smap_data_desc = op.join(t2smap_subj_dir, "dataset_description.json")
+        preproc_data_desc = op.join(preproc_dir, "dataset_description.json")
+        t2smap_data_desc = op.join(t2smap_subj_dir, f"{prefix}_dataset_description.json")
+        out_data_desc = op.join(t2smap_dir, "dataset_description.json")
+        if not op.isfile(out_data_desc):
             with open(preproc_data_desc, "r") as fo:
                 data_description = json.load(fo)
 
@@ -157,12 +158,11 @@ def run_tedana(project_dir, dset):
                 ted_data_description["GeneratedBy"] + data_description["GeneratedBy"]
             )
 
-            with open(op.join(t2smap_dir, "dataset_description.json"), "w") as fo:
+            with open(out_data_desc, "w") as fo:
                 json.dump(data_description, fo, sort_keys=True, indent=4)
 
         # Remove subject-level dataset descriptions
-        if op.isfile(op.join(t2smap_dir, "dataset_description.json")):
-            os.remove(op.join(t2smap_subj_dir, "dataset_description.json"))
+        os.remove(op.join(t2smap_subj_dir, "dataset_description.json"))
 
         # ############
         # TEDANA + MIR
@@ -217,9 +217,11 @@ def run_tedana(project_dir, dset):
                 json.dump(metadata, fo, sort_keys=True, indent=4)
 
         # Merge dataset descriptions
-        if subject == subjects[0]:
-            preproc_data_desc = op.join(preproc_dir, "dataset_description.json")
-            tedana_data_desc = op.join(tedana_subj_dir, "dataset_description.json")
+        tedana_data_desc = op.join(tedana_subj_dir, f"{prefix}_dataset_description.json")
+        preproc_data_desc = op.join(preproc_dir, "dataset_description.json")
+        out_data_desc = op.join(tedana_dir, "dataset_description.json")
+
+        if not op.isfile(out_data_desc):
             with open(preproc_data_desc, "r") as fo:
                 data_description = json.load(fo)
 
@@ -232,12 +234,11 @@ def run_tedana(project_dir, dset):
                 ted_data_description["GeneratedBy"] + data_description["GeneratedBy"]
             )
 
-            with open(op.join(tedana_dir, "dataset_description.json"), "w") as fo:
+            with open(out_data_desc, "w") as fo:
                 json.dump(data_description, fo, sort_keys=True, indent=4)
 
         # Remove subject-level dataset descriptions
-        if op.isfile(op.join(tedana_dir, "dataset_description.json")):
-            os.remove(op.join(tedana_subj_dir, "dataset_description.json"))
+        os.remove(tedana_data_desc)
 
 
 if __name__ == "__main__":
