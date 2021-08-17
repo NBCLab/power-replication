@@ -121,7 +121,7 @@ def run_tedana(project_dir, dset):
             echo_times,
             combmode="t2s",
             fitmode="ts",
-            fittype="curvefit",
+            fittype="loglin",
             mask=mask_img,  # The docs say str, but workflows should work fine with an img
             out_dir=t2smap_subj_dir,
             prefix=prefix,
@@ -129,8 +129,8 @@ def run_tedana(project_dir, dset):
 
         # Merge metadata into FIT T2/S0 jsons
         SUFFIXES = {
-            "desc-full_T2starmap": "Volume-wise T2* estimated with tedana's t2smap workflow.",
-            "desc-full_S0map": "Volume-wise S0 estimated with tedana's t2smap workflow.",
+            "T2starmap": "Volume-wise T2* estimated with tedana's t2smap workflow.",
+            "S0map": "Volume-wise S0 estimated with tedana's t2smap workflow.",
         }
         for suffix, description in SUFFIXES.items():
             nii_file = op.join(t2smap_subj_dir, f"{prefix}_{suffix}.nii.gz")
