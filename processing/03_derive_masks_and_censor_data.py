@@ -603,7 +603,7 @@ if __name__ == "__main__":
     print(op.basename(__file__), flush=True)
     for dset in dsets:
         print(f"\t{dset}", flush=True)
-        # preprocess(project_dir, dset)
-        # apply_xfms_to_masks(project_dir, dset)
+        preprocess(project_dir, dset)
+        apply_xfms_to_masks(project_dir, dset)
         # compile_metadata(project_dir, dset)
         # create_top_level_files(project_dir, dset)
