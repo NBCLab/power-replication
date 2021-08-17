@@ -79,7 +79,7 @@ def preprocess(project_dir, dset):
                 )
             )
         )
-        assert len(aseg_boldres) == 1
+        assert len(aseg_boldres) == 1, aseg_boldres
         aseg_boldres = aseg_boldres[0]
 
         wm_img = image.math_img(
@@ -603,7 +603,7 @@ if __name__ == "__main__":
     print(op.basename(__file__), flush=True)
     for dset in dsets:
         print(f"\t{dset}", flush=True)
-        preprocess(project_dir, dset)
-        apply_xfms_to_masks(project_dir, dset)
-        # compile_metadata(project_dir, dset)
-        # create_top_level_files(project_dir, dset)
+        # preprocess(project_dir, dset)
+        # apply_xfms_to_masks(project_dir, dset)
+        compile_metadata(project_dir, dset)
+        create_top_level_files(project_dir, dset)
