@@ -13,12 +13,9 @@ from nilearn import image
 from scipy.ndimage.morphology import binary_erosion
 
 
-def preprocess(project_dir, dset):
-    """Perform additional, post-fMRIPrep preprocessing of structural and functional MRI data.
-
-    1) Create GM, WM, and CSF masks and resample to 3mm (functional) resolution
-    2) Remove non-steady state volumes from each fMRI image
-    """
+def create_masks(project_dir, dset):
+    """Create GM, WM, and CSF masks and resample to functional resolution."""
+    print("\t\tcreate_masks", flush=True)
     # LUT values from
     # https://surfer.nmr.mgh.harvard.edu/fswiki/FsTutorial/AnatomicalROI/FreeSurferColorLUT
     # These apply to aseg, not aparcaseg
@@ -26,10 +23,10 @@ def preprocess(project_dir, dset):
     SUBCORTICAL_LABELS = [9, 10, 11, 12, 13, 26, 48, 49, 50, 51, 52, 58]
     WM_LABELS = [2, 7, 41, 46, 77, 78, 79, 192]
     CSF_LABELS = [4, 5, 14, 15, 24, 43, 44, 72]
-    CEREBELLUM_LABELS = [6, 8, 47]
+    CEREBELLUM_LABELS = [8, 47]
 
     dset_dir = op.join(project_dir, dset)
-    fp_dir = op.join(dset_dir, "derivatives/fmriprep")
+    fmriprep_dir = op.join(dset_dir, "derivatives/fmriprep")
     out_dir = op.join(dset_dir, "derivatives/power")
 
     # Get list of participants with good data
@@ -42,14 +39,9 @@ def preprocess(project_dir, dset):
     if not op.isdir(out_dir):
         os.mkdir(out_dir)
 
-    # Summary information saved to a file
-    nss_file = op.join(out_dir, "nss_removed.tsv")
-    nss_df = pd.DataFrame(columns=["nss_count"], index=subjects)
-    nss_df.index.name = "participant_id"
-
     for subject in subjects:
-        print(f"\t{subject}", flush=True)
-        subj_fmriprep_dir = op.join(fp_dir, subject)
+        print(f"\t\t\t{subject}", flush=True)
+        subj_fmriprep_dir = op.join(fmriprep_dir, subject)
         subj_out_dir = op.join(out_dir, subject)
         if not op.isdir(subj_out_dir):
             os.mkdir(subj_out_dir)
@@ -58,19 +50,15 @@ def preprocess(project_dir, dset):
         if not op.isdir(anat_out_dir):
             os.mkdir(anat_out_dir)
 
-        func_out_dir = op.join(subj_out_dir, "func")
-        if not op.isdir(func_out_dir):
-            os.mkdir(func_out_dir)
-
         # Create GM, WM, and CSF masks
-        # WM and CSF masks must be created from the high resolution Freesurfer aparc file
+        # WM and CSF masks must be created from the high resolution Freesurfer aseg file
         # Then they must be eroded
-        aseg_t1wres = op.join(
+        aseg_t1wres_t1wspace = op.join(
             subj_fmriprep_dir,
             "anat",
             f"{subject}_desc-aseg_dseg.nii.gz",
         )
-        aseg_boldres = sorted(
+        aseg_boldres_t1wspace = sorted(
             glob(
                 op.join(
                     subj_fmriprep_dir,
@@ -79,30 +67,59 @@ def preprocess(project_dir, dset):
                 )
             )
         )
-        assert len(aseg_boldres) == 1, aseg_boldres
-        aseg_boldres = aseg_boldres[0]
+        assert len(aseg_boldres_t1wspace) == 1, aseg_boldres_t1wspace
+        aseg_boldres_t1wspace = aseg_boldres_t1wspace[0]
 
-        wm_img = image.math_img(
-            f"np.isin(img, {WM_LABELS}).astype(int)",
-            img=aseg_t1wres,
+        # Linearly transform the aseg file to scanner-space
+        xfm_files = sorted(
+            glob(
+                op.join(
+                    subj_fmriprep_dir,
+                    "func",
+                    "*_from-T1w_to-scanner_mode-image_xfm.txt",
+                )
+            )
         )
-        csf_img = image.math_img(
-            f"np.isin(img, {CSF_LABELS}).astype(int)",
-            img=aseg_t1wres,
+        assert len(xfm_files) == 1
+        xfm_file = xfm_files[0]
+
+        # Collect one example scanner-space file to use as a reference
+        scanner_files = sorted(
+            glob(
+                op.join(
+                    subj_fmriprep_dir,
+                    "func",
+                    "*_space-scanner_*_bold.nii.gz",
+                )
+            )
         )
+        assert len(scanner_files) >= 3
+        scanner_file = scanner_files[0]
+
+        # Load the linear transform
+        xfm = nit.linear.load(xfm_file, fmt="itk")
+
+        # Apply the transform to the BOLD-resolution, T1w-space aseg file
+        aseg_boldres_boldspace = aseg_boldres_t1wspace.replace("space-T1w", "space-scanner")
+        aseg_boldres_boldspace_img = xfm.apply(
+            spatialimage=aseg_boldres_t1wspace,
+            reference=scanner_file,
+            order=0,
+        )
+        aseg_boldres_boldspace_img.to_filename(aseg_boldres_boldspace)
 
         # Create GM masks in BOLD resolution
         cort_img = image.math_img(
             f"np.isin(img, {CORTICAL_LABELS}).astype(int)",
-            img=aseg_boldres,
+            img=aseg_boldres_boldspace,
         )
         subcort_img = image.math_img(
             f"np.isin(img, {SUBCORTICAL_LABELS}).astype(int)",
-            img=aseg_boldres,
+            img=aseg_boldres_boldspace,
         )
         cereb_img = image.math_img(
             f"np.isin(img, {CEREBELLUM_LABELS}).astype(int)",
-            img=aseg_boldres,
+            img=aseg_boldres_boldspace,
         )
 
         # Save cortical mask to file
@@ -110,8 +127,15 @@ def preprocess(project_dir, dset):
         cort_img.to_filename(
             op.join(
                 anat_out_dir,
-                f"{subject}_space-T1w_res-bold_label-CGM_mask.nii.gz",
+                f"{subject}_space-scanner_res-bold_label-CGM_mask.nii.gz",
             )
+        )
+
+        # Create T1w-space, T1w-resolution WM and CSF masks
+        wm_img = image.math_img(f"np.isin(img, {WM_LABELS}).astype(int)", img=aseg_t1wres_t1wspace)
+        csf_img = image.math_img(
+            f"np.isin(img, {CSF_LABELS}).astype(int)",
+            img=aseg_t1wres_t1wspace,
         )
 
         # Erode WM mask
@@ -132,20 +156,20 @@ def preprocess(project_dir, dset):
             wm_ero4, wm_img.affine, header=wm_img.header
         )  # aka Deepest WM
 
-        # Resample WM masks to 3mm (functional) resolution with NN interp
+        # Resample WM masks to functional resolution with NN interp
         res_wm_ero02 = image.resample_to_img(
             wm_ero02,
-            aseg_boldres,
+            aseg_boldres_t1wspace,
             interpolation="nearest",
         )
         res_wm_ero24 = image.resample_to_img(
             wm_ero24,
-            aseg_boldres,
+            aseg_boldres_t1wspace,
             interpolation="nearest",
         )
         res_wm_ero4 = image.resample_to_img(
             wm_ero4,
-            aseg_boldres,
+            aseg_boldres_t1wspace,
             interpolation="nearest",
         )
 
@@ -162,15 +186,15 @@ def preprocess(project_dir, dset):
             csf_ero2, csf_img.affine, header=csf_img.header
         )  # aka Deeper CSF
 
-        # Resample CSF masks to 3mm (functional) resolution with NN interp
+        # Resample CSF masks to functional resolution with NN interp
         res_csf_ero02 = image.resample_to_img(
             csf_ero02,
-            aseg_boldres,
+            aseg_boldres_t1wspace,
             interpolation="nearest",
         )
         res_csf_ero2 = image.resample_to_img(
             csf_ero2,
-            aseg_boldres,
+            aseg_boldres_t1wspace,
             interpolation="nearest",
         )
 
@@ -226,6 +250,40 @@ def preprocess(project_dir, dset):
                 f"{subject}_space-T1w_res-bold_desc-totalMaskWithCSF_mask.nii.gz",
             )
         )
+
+
+def remove_nss_vols(project_dir, dset):
+    """Remove non-steady state volumes from each fMRI image."""
+    print("\t\tremove_nss_vols", flush=True)
+    dset_dir = op.join(project_dir, dset)
+    fmriprep_dir = op.join(dset_dir, "derivatives/fmriprep")
+    out_dir = op.join(dset_dir, "derivatives/power")
+
+    # Get list of participants with good data
+    participants_file = op.join(dset_dir, "participants.tsv")
+    participants_df = pd.read_table(participants_file)
+    subjects = participants_df.loc[
+        participants_df["exclude"] == 0, "participant_id"
+    ].tolist()
+
+    if not op.isdir(out_dir):
+        os.mkdir(out_dir)
+
+    # Summary information saved to a file
+    nss_file = op.join(out_dir, "nss_removed.tsv")
+    nss_df = pd.DataFrame(columns=["nss_count"], index=subjects)
+    nss_df.index.name = "participant_id"
+
+    for subject in subjects:
+        print(f"\t\t\t{subject}", flush=True)
+        subj_fmriprep_dir = op.join(fmriprep_dir, subject)
+        subj_out_dir = op.join(out_dir, subject)
+        if not op.isdir(subj_out_dir):
+            os.mkdir(subj_out_dir)
+
+        func_out_dir = op.join(subj_out_dir, "func")
+        if not op.isdir(func_out_dir):
+            os.mkdir(func_out_dir)
 
         # Remove non-steady state volumes from fMRI runs
         pattern = op.join(
@@ -353,58 +411,6 @@ def preprocess(project_dir, dset):
         nss_df.to_csv(nss_file, sep="\t", index=True, index_label="participant_id")
 
 
-def apply_xfms_to_masks(project_dir, dset):
-    """Transform masks/dsegs from T1w space to scanner space.
-
-    This function is separate from preprocess() because I realized it was necessary
-    *after* running the other function.
-    """
-    dset_dir = op.join(project_dir, dset)
-    fp_dir = op.join(dset_dir, "derivatives/fmriprep")
-    out_dir = op.join(dset_dir, "derivatives/power")
-
-    # Get list of participants with good data
-    participants_file = op.join(dset_dir, "participants.tsv")
-    participants_df = pd.read_table(participants_file)
-    subjects = participants_df.loc[
-        participants_df["exclude"] == 0, "participant_id"
-    ].tolist()
-
-    for subject in subjects:
-        print(f"\t\t{subject}", flush=True)
-        subj_fmriprep_dir = op.join(fp_dir, subject)
-        subj_out_dir = op.join(out_dir, subject)
-        anat_out_dir = op.join(subj_out_dir, "anat")
-
-        xfm_files = sorted(
-            glob(
-                op.join(
-                    subj_fmriprep_dir, "func", "*from-T1w_to-scanner_mode-image_xfm.txt"
-                )
-            )
-        )
-        assert len(xfm_files) == 1
-        xfm_file = xfm_files[0]
-
-        scanner_files = sorted(
-            glob(op.join(subj_fmriprep_dir, "func", "*_space-scanner_*_bold.nii.gz"))
-        )
-        assert len(scanner_files) >= 3
-        scanner_file = scanner_files[0]
-
-        xfm = nit.linear.load(xfm_file, fmt="itk")
-
-        files_to_xfm = sorted(
-            glob(op.join(anat_out_dir, "*space-T1w_res-bold*.nii.gz"))
-        )
-        for file_to_xfm in files_to_xfm:
-            out_file = file_to_xfm.replace("space-T1w", "space-scanner")
-            out_img = xfm.apply(
-                spatialimage=file_to_xfm, reference=scanner_file, order=0
-            )
-            out_img.to_filename(out_file)
-
-
 def compile_metadata(project_dir, dset):
     """Extract metadata from raw BOLD files and add to the preprocessed BOLD file jsons.
 
@@ -413,6 +419,7 @@ def compile_metadata(project_dir, dset):
     project_dir
     dset
     """
+    print("\t\tcompile_metadata", flush=True)
     dset_dir = op.join(project_dir, dset)
     power_dir = op.join(dset_dir, "derivatives/power")
     fmriprep_dir = op.join(dset_dir, "derivatives/fmriprep")
@@ -427,6 +434,7 @@ def compile_metadata(project_dir, dset):
     FROM_RAW_METADATA = ["EchoTime", "RepetitionTime", "FlipAngle", "TaskName"]
 
     for subject in subjects:
+        print(f"\t\t\t{subject}", flush=True)
         raw_func_dir = op.join(dset_dir, subject, "func")
         fmriprep_func_dir = op.join(fmriprep_dir, subject, "func")
         power_func_dir = op.join(power_dir, subject, "func")
@@ -490,7 +498,7 @@ def compile_metadata(project_dir, dset):
             fmriprep_metadata["RawSources"] = [raw_file]
             power_metadata["RawSources"] = [raw_file]
             # Already done in preprocess()
-            # power_metadata["Sources"] = [fmripep_file]
+            # power_metadata["Sources"] = [fmriprep_file]
 
             with open(fmriprep_json, "w") as fo:
                 json.dump(fmriprep_metadata, fo, indent=4, sort_keys=True)
@@ -501,15 +509,16 @@ def compile_metadata(project_dir, dset):
 
 def create_top_level_files(project_dir, dset):
     """Create top-level files describing masks and discrete segmentation values."""
+    print("\t\tcreate_top_level_files", flush=True)
     INFO = {
-        "space-T1w_res-bold_label-CGM_mask.json": {
+        "space-scanner_res-bold_label-CGM_mask.json": {
             "Type": "ROI",
             "Resolution": "Native BOLD resolution.",
         },
-        "space-T1w_res-bold_desc-totalMaskNoCSF_dseg.json": {
+        "space-scanner_res-bold_desc-totalMaskNoCSF_dseg.json": {
             "Resolution": "Native BOLD resolution.",
         },
-        "space-T1w_res-bold_desc-totalMaskNoCSF_dseg.tsv": pd.DataFrame(
+        "space-scanner_res-bold_desc-totalMaskNoCSF_dseg.tsv": pd.DataFrame(
             columns=["index", "name", "abbreviation", "mapping"],
             data=[
                 [1, "Cortical Ribbon", "CORT", 8],
@@ -520,10 +529,10 @@ def create_top_level_files(project_dir, dset):
                 [6, "Deepest WM", "WMero4", 2],
             ],
         ),
-        "space-T1w_res-bold_desc-totalMaskWithCSF_dseg.json": {
+        "space-scanner_res-bold_desc-totalMaskWithCSF_dseg.json": {
             "Resolution": "Native BOLD resolution.",
         },
-        "space-T1w_res-bold_desc-totalMaskWithCSF_dseg.tsv": pd.DataFrame(
+        "space-scanner_res-bold_desc-totalMaskWithCSF_dseg.tsv": pd.DataFrame(
             columns=["index", "name", "abbreviation", "mapping"],
             data=[
                 [1, "Cortical Ribbon", "CORT", 8],
@@ -536,11 +545,11 @@ def create_top_level_files(project_dir, dset):
                 [8, "Deeper CSF", "CSFero2", 3],
             ],
         ),
-        "space-T1w_res-bold_desc-totalMaskNoCSF_mask.json": {
+        "space-scanner_res-bold_desc-totalMaskNoCSF_mask.json": {
             "Type": "Brain",
             "Resolution": "Native BOLD resolution.",
         },
-        "space-T1w_res-bold_desc-totalMaskWithCSF_mask.json": {
+        "space-scanner_res-bold_desc-totalMaskWithCSF_mask.json": {
             "Type": "Brain",
             "Resolution": "Native BOLD resolution.",
         },
@@ -603,7 +612,7 @@ if __name__ == "__main__":
     print(op.basename(__file__), flush=True)
     for dset in dsets:
         print(f"\t{dset}", flush=True)
-        # preprocess(project_dir, dset)
-        # apply_xfms_to_masks(project_dir, dset)
+        create_masks(project_dir, dset)
+        # remove_nss_vols(project_dir, dset)
         compile_metadata(project_dir, dset)
         create_top_level_files(project_dir, dset)

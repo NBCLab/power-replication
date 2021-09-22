@@ -22,6 +22,7 @@ conda install \
 
 /home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/bin/pip install \
     accelerate \
+    ddmra \
     duecredit \
     ipython \
     ipywidgets \
