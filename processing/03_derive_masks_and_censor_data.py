@@ -70,7 +70,7 @@ def create_masks(project_dir, dset):
         assert len(aseg_boldres_t1wspace) == 1, aseg_boldres_t1wspace
         aseg_boldres_t1wspace = aseg_boldres_t1wspace[0]
 
-        # Linearly transform the aseg file to scanner-space
+        # Load T1w-space-to-BOLD-space transform
         xfm_files = sorted(
             glob(
                 op.join(
@@ -82,6 +82,7 @@ def create_masks(project_dir, dset):
         )
         assert len(xfm_files) == 1
         xfm_file = xfm_files[0]
+        xfm = nit.linear.load(xfm_file, fmt="itk")
 
         # Collect one example scanner-space file to use as a reference
         scanner_files = sorted(
@@ -95,9 +96,6 @@ def create_masks(project_dir, dset):
         )
         assert len(scanner_files) >= 3
         scanner_file = scanner_files[0]
-
-        # Load the linear transform
-        xfm = nit.linear.load(xfm_file, fmt="itk")
 
         # Apply the transform to the BOLD-resolution, T1w-space aseg file
         aseg_boldres_boldspace = aseg_boldres_t1wspace.replace("space-T1w", "space-scanner")
