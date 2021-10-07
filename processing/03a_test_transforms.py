@@ -10,6 +10,7 @@ import subprocess
 
 import nibabel as nib
 import nitransforms as nit
+import numpy as np
 from nilearn import image
 
 
@@ -44,7 +45,7 @@ def extract_cortical_ribbon(seg_file, out_file):
     """Create a cortical ribbon mask from an ASEG segmentation file."""
     CORTICAL_LABELS = [3, 17, 18, 19, 20, 42, 53, 54, 55, 56]
     cort_img = image.math_img(
-        f"np.isin(img, {CORTICAL_LABELS}).astype(int)",
+        f"np.isin(img, {CORTICAL_LABELS}).astype(np.int32)",
         img=seg_file,
     )
     cort_img.to_filename(out_file)
@@ -52,7 +53,8 @@ def extract_cortical_ribbon(seg_file, out_file):
 
 def run_3dresample(in_file, out_file, target_dims):
     """Downsample a file to target dimensions with 3dresample."""
-    dim_str = f"-dxyz {target_dims[0]} {target_dims[1]} {target_dims[2]}"
+    target_dims = [np.round(dim, decimals=3) for dim in target_dims]
+    dim_str = f"-dxyz {target_dims[0]:.3f} {target_dims[1]:.3f} {target_dims[2]:.3f}"
     cmd_str = f"3dresample -prefix {out_file} -input {in_file} {dim_str} -rmode NN"
     run_command(cmd_str)
 
@@ -71,17 +73,19 @@ def apply_xfm(in_file, out_file, xfm_file, scanner_file):
 
 def main(in_dir, out_dir, subject):
     """Run the variety of transforms and segmentations on a single subject's files."""
+    in_dir = os.path.join(in_dir, subject)
+
     # Step 1: Identify relevant files
     aseg_t1res_t1space = os.path.join(in_dir, f"anat/{subject}_desc-aseg_dseg.nii.gz")
     aseg_boldres_t1space = os.path.join(
-        in_dir, f"func/{subject}_task-rest_space-T1w_desc-aseg_dseg.nii.gz"
+        in_dir, f"func/{subject}_task-movie_space-T1w_desc-aseg_dseg.nii.gz"
     )
     xfm = os.path.join(
-        in_dir, f"func/{subject}_task-rest_from-scanner_to-T1w_mode-image_xfm.txt"
+        in_dir, f"func/{subject}_task-movie_from-scanner_to-T1w_mode-image_xfm.txt"
     )
     scanner_file = os.path.join(
         in_dir,
-        "func/{subject}_task_rest_echo-1_space-scanner_desc-partialPreproc_bold.nii.gz",
+        f"func/{subject}_task-movie_echo-1_space-scanner_desc-partialPreproc_bold.nii.gz",
     )
     scanner_img = nib.load(scanner_file)
     target_dims = scanner_img.header.get_zooms()[:3]

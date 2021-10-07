@@ -15,7 +15,7 @@
 export NPROCS=`echo $LSB_HOSTS | wc -w`
 export OMP_NUM_THREADS=4
 . $MODULESHOME/../global/profile.modules
-module load afni
+module load afni-20.2.06
 source /home/data/nbc/misc-projects/Salo_PowerReplication/code/activate_environment
 
 python /home/data/nbc/misc-projects/Salo_PowerReplication/code/processing/03a_test_transforms.py
