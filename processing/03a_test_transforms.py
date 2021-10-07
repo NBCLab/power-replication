@@ -136,7 +136,8 @@ def main(in_dir, out_dir, subject):
     )
     extract_cortical_ribbon(aseg_boldres_t1space, cort_boldres_t1space)
 
-    # Apply the transform to the T1-res aseg, then segment
+    # OUTPUT1: Apply the transform to the T1-resolution aseg, then segment
+    # (1) Transform T1-res (2) Segment
     cort_boldres_boldspace_from_t1res = os.path.join(
         out_dir, f"{subject}_desc-cortFromT1wRes_space-bold_res-bold_mask.nii.gz"
     )
@@ -144,7 +145,8 @@ def main(in_dir, out_dir, subject):
         aseg_boldres_boldspace_from_t1res, cort_boldres_boldspace_from_t1res
     )
 
-    # Apply the transform to the BOLD-res aseg, then segment
+    # OUTPUT2: Apply the transform to the BOLD-resolution aseg, then segment
+    # (1) Transform BOLD-res (2) Segment
     cort_boldres_boldspace_from_lowres = os.path.join(
         out_dir, f"{subject}_desc-cortFromLowRes_space-bold_res-bold_mask.nii.gz"
     )
@@ -152,7 +154,8 @@ def main(in_dir, out_dir, subject):
         aseg_boldres_boldspace_from_lowres, cort_boldres_boldspace_from_lowres
     )
 
-    # Downsample the T1-res aseg with 3dresample, apply the transform, then segment
+    # OUTPUT3: Downsample the T1-res aseg with 3dresample, apply the transform, then segment
+    # (1) Downsample T1-res (2) Transform (3) Segment
     cort_boldres_boldspace_from_3dresample = os.path.join(
         out_dir, f"{subject}_desc-cortFrom3dresample_space-bold_res-bold_mask.nii.gz"
     )
@@ -172,7 +175,8 @@ def main(in_dir, out_dir, subject):
     )
 
     # Step 5: Transform T1-space cortical ribbons to BOLD space
-    # Segment the T1-res aseg, then apply the transform.
+    # OUTPUT4: Segment the T1-res aseg, then apply the transform.
+    # (1) Segment T1-res (2) Transform
     cort_boldres_boldspace_from_segmented_t1res = os.path.join(
         out_dir, f"{subject}_desc-cortFromSegT1wRes_space-bold_res-bold_mask.nii.gz"
     )
@@ -183,7 +187,8 @@ def main(in_dir, out_dir, subject):
         scanner_file,
     )
 
-    # Segment the BOLD-res aseg, then apply the transform.
+    # OUTPUT5: Segment the BOLD-res aseg, then apply the transform.
+    # (1) Segment BOLD-res (2) Transform
     cort_boldres_boldspace_from_segmented_lowres = os.path.join(
         out_dir, f"{subject}_desc-cortFromSegLowRes_space-bold_res-bold_mask.nii.gz"
     )
@@ -194,7 +199,8 @@ def main(in_dir, out_dir, subject):
         scanner_file,
     )
 
-    # Segment the T1-res aseg, downsample with 3dresample, and then apply the transform.
+    # OUTPUT6: Segment the T1-res aseg, downsample with 3dresample, and then apply the transform.
+    # (1) Segment T1-res (2) Downsample (3) Transform
     cort_boldres_boldspace_from_segmented_t1res_and_3dresample = os.path.join(
         out_dir,
         f"{subject}_desc-cortFromSegT1wRes3dresample_space-bold_res-bold_mask.nii.gz",
