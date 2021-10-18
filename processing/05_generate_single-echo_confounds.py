@@ -45,7 +45,6 @@ def compile_nuisance_regressors(
     # Nuisance Regression Model
     # #########################
     # Extract white matter and CSF signals for nuisance regression
-    print(seg_file, flush=True)
     wm_img = image.math_img("img == 6", img=seg_file)
     wm_img = image.math_img(
         "wm_mask * brain_mask",
@@ -698,7 +697,7 @@ def main(project_dir, dset):
         seg_files = glob(
             op.join(
                 preproc_subj_anat_dir,
-                "*_space-scanner_res-bold_desc-totalMaskWithCSF_mask.nii.gz",
+                "*_space-scanner_res-bold_desc-totalMaskWithCSF_dseg.nii.gz",
             )
         )
         assert len(seg_files) == 1
