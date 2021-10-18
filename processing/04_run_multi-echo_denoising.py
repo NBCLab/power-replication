@@ -65,11 +65,15 @@ def run_tedana(project_dir, dset):
 
         # Collect metadata
         json_files = [f.replace(".nii.gz", ".json") for f in preproc_files]
-        echo_times = []
+        echo_times, raw_sources = [], []
         for json_file in json_files:
             with open(json_file, "r") as fo:
                 metadata = json.load(fo)
+                raw_sources += metadata["RawSources"]
                 echo_times.append(metadata["EchoTime"] * 1000)
+
+        # Set combined metadata fields (i.e., fields using info from all preproc files)
+        metadata["RawSources"] = raw_sources
 
         # Collect the TE30 files
         TARGET_TE = 30
