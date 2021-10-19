@@ -587,6 +587,10 @@ def run_peakdet(physio_file, physio_metadata, out_dir):
     resp_data = physio_data[:, resp_idx]
     card_data = physio_data[:, card_idx]
 
+    # Mean-center data prior to feeding it to peakdet
+    # Necessary for the respiratory data in order to detect peaks/troughs
+    resp_data = resp_data - np.mean(resp_data)
+
     card_physio = load_physio(card_data, fs=sampling_rate)
     resp_physio = load_physio(resp_data, fs=sampling_rate)
 
