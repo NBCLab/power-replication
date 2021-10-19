@@ -41,7 +41,7 @@ def run_tedana(project_dir, dset):
     ].tolist()
 
     for subject in subjects[:1]:
-        print(f"\t{subject}", flush=True)
+        print(f"\t\t{subject}", flush=True)
         preproc_subj_dir = op.join(preproc_dir, subject)
         preproc_subj_anat_dir = op.join(preproc_subj_dir, "anat")
         preproc_subj_func_dir = op.join(preproc_subj_dir, "func")
@@ -119,7 +119,7 @@ def run_tedana(project_dir, dset):
         # ############
         # We retain t2s and s0 timeseries from this method, but do not use
         # optcom or any other derivatives.
-        print("\t\tt2smap", flush=True)
+        print("\t\t\tt2smap", flush=True)
         workflows.t2smap_workflow(
             preproc_files,
             echo_times,
@@ -176,7 +176,7 @@ def run_tedana(project_dir, dset):
         # We use MEDN, reconstructed MEDN-noise, MEHK,
         # reconstructed MEHK-noise, optcom, mmix (component timeseries), and
         # comptable (classifications of components)
-        print("\t\ttedana", flush=True)
+        print("\t\t\ttedana", flush=True)
         workflows.tedana_workflow(
             preproc_files,
             echo_times,

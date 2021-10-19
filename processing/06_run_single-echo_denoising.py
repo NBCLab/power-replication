@@ -39,6 +39,7 @@ def run_rvtreg(medn_file, mask_file, confounds_file, out_dir):
     -   Scatter plot of MEDN-RVT+RVT*RRF SD of global signal against
         SD of ventilatory envelope (RPV) (S8).
     """
+    print("\t\t\tRVT", flush=True)
     # Parse input files
     medn_name = op.basename(medn_file)
     prefix = medn_name.split("desc-")[0].rstrip("_")
@@ -140,6 +141,7 @@ def run_rvreg(medn_file, mask_file, confounds_file, out_dir):
     -   Scatter plot of MEDN-RV+RV*RRF SD of global signal against
         SD of ventilatory envelope (RPV) (S8).
     """
+    print("\t\t\tRV", flush=True)
     # Parse input files
     medn_name = op.basename(medn_file)
     prefix = medn_name.split("desc-")[0].rstrip("_")
@@ -244,6 +246,7 @@ def run_dgsr(medn_file, mask_file, confounds_file, out_dir):
     -   Scatter plot of MEDN-dGSR SD of global signal against
         SD of ventilatory envelope (RPV) (not in paper).
     """
+    print("\t\t\trapidtide", flush=True)
     # I don't trust that tedana will retain the TR in the nifti header,
     # so will extract from json directly.
     medn_json_file = medn_file.replace(".nii.gz", ".json")
@@ -327,6 +330,7 @@ def run_godec(medn_file, mask_file, out_dir):
     -   Scatter plot of MEDN-GODEC SD of global signal against
         SD of ventilatory envelope (RPV) (2).
     """
+    print("\t\t\tgodec", flush=True)
     from godec import run_godec_denoising
 
     # Parse input files
@@ -397,6 +401,7 @@ def run_gsr(medn_file, mask_file, confounds_file, out_dir):
     -   Scatter plot of MEDN-GSR SD of global signal against
         SD of ventilatory envelope (RPV) (not in paper).
     """
+    print("\t\t\tGSR", flush=True)
     # Parse input files
     medn_name = op.basename(medn_file)
     prefix = medn_name.split("desc-")[0].rstrip("_")
@@ -495,6 +500,7 @@ def run_acompcor(medn_file, mask_file, confounds_file, out_dir):
     -   Scatter plot of MEDN-aCompCor SD of global signal against
         SD of ventilatory envelope (RPV) (2).
     """
+    print("\t\t\taCompCor", flush=True)
     # Parse input files
     medn_name = op.basename(medn_file)
     prefix = medn_name.split("desc-")[0].rstrip("_")
@@ -592,6 +598,7 @@ def run_nuisance(medn_file, mask_file, seg_file, confounds_file, out_dir):
     -   Scatter plot of FIT-R2-Nuis SD of global signal against
         SD of ventilatory envelope (RPV) (not in paper).
     """
+    print("\t\t\tnuisance", flush=True)
     # Parse input files
     medn_name = op.basename(medn_file)
     prefix = medn_name.split("desc-")[0].rstrip("_")
@@ -709,7 +716,7 @@ def main(project_dir, dset):
         json.dump(dgsr_dset_desc, fo, sort_keys=True, indent=4)
 
     for subject in subjects[:1]:
-        print(f"\t{subject}", flush=True)
+        print(f"\t\t{subject}", flush=True)
         preproc_subj_func_dir = op.join(preproc_dir, subject, "func")
         tedana_subj_dir = op.join(tedana_dir, subject, "func")
 

@@ -45,6 +45,7 @@ def compile_nuisance_regressors(
     # Nuisance Regression Model
     # #########################
     # Extract white matter and CSF signals for nuisance regression
+    print("\t\t\tnuisance", flush=True)
     wm_img = image.math_img("img == 6", img=seg_file)
     wm_img = image.math_img(
         "wm_mask * brain_mask",
@@ -76,6 +77,7 @@ def compile_nuisance_regressors(
     # aCompCor Model
     # ##############
     # Extract and run PCA on white matter for aCompCor
+    print("\t\t\taCompCor", flush=True)
     wm_img = image.math_img("img == 6", img=seg_file)
     wm_img = image.math_img(
         "wm_mask * brain_mask",
@@ -121,6 +123,7 @@ def compile_nuisance_regressors(
     # Global Signal Regression Model
     # ##############################
     # Extract mean cortical signal for GSR regression
+    print("\t\t\tGSR", flush=True)
     cgm_mask = image.math_img(
         "cgm_mask * brain_mask",
         cgm_mask=cgm_file,
@@ -205,6 +208,7 @@ def compile_physio_regressors(
     # ####################
     # Calculate RV and RV*RRF regressors
     # This includes -3 second and +3 second lags.
+    print("\t\t\tRV", flush=True)
     rv_regressors = chest_belt.rv(
         resp_data,
         samplerate=resp_samplerate,
@@ -307,6 +311,7 @@ def compile_physio_regressors(
     # ###########################
     # Respiratory Volume-per-Time
     # ###########################
+    print("\t\t\tRVT", flush=True)
     rvt_regressors = chest_belt.rvt(
         resp_data,
         resp_peaks,
@@ -477,6 +482,7 @@ def compile_physio_regressors(
     # Respiratory Pattern Variability
     # ################################
     # Calculate RPV values and add to participants tsv
+    print("\t\t\tRPV", flush=True)
     window = resp_samplerate * 10  # window should be 10s
     resp_data_from_scan = resp_data[resp_data_start:resp_data_end]
     rpv = chest_belt.rpv(resp_data_from_scan, window=window)
@@ -486,6 +492,7 @@ def compile_physio_regressors(
     # Instantaneous Heart Rate
     # ########################
     # Calculate IHR
+    print("\t\t\tIHR", flush=True)
     ihr = cardiac.ihr(card_data, card_peaks, card_samplerate)
 
     # TODO: Identify "suspicious periods" (bpm change > 25) and interpolate
@@ -537,6 +544,7 @@ def run_peakdet(physio_file, physio_metadata, out_dir):
         include in our limitations.
     """
     physio_filename = op.basename(physio_file)
+    print("\t\t\tpeakdet", flush=True)
 
     # ######################
     # Determine output files
