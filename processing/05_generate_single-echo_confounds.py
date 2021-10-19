@@ -677,7 +677,7 @@ def main(project_dir, dset):
     nss_file = op.join(preproc_dir, "nss_removed.tsv")
 
     for subject in subjects[:1]:
-        print(f"\t{subject}", flush=True)
+        print(f"\t\t{subject}", flush=True)
         dset_subj_dir = op.join(dset_dir, subject)
         dset_subj_func_dir = op.join(dset_subj_dir, "func")
         preproc_subj_func_dir = op.join(preproc_dir, subject, "func")
