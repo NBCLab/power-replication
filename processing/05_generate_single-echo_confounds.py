@@ -61,8 +61,8 @@ def compile_nuisance_regressors(
     )
     csf_data = masking.apply_mask(medn_file, csf_img)
 
-    confounds_df["NuisanceRegression_WhiteMatter"] = wm_data
-    confounds_df["NuisanceRegression_CerebrospinalFluid"] = csf_data
+    confounds_df["NuisanceRegression_WhiteMatter"] = np.mean(wm_data, axis=1)
+    confounds_df["NuisanceRegression_CerebrospinalFluid"] = np.mean(csf_data, axis=1)
     confounds_metadata["NuisanceRegression_WhiteMatter"] = {
         "Sources": [medn_file, seg_file, mask_file],
         "Description": "Mean signal from deepest white matter mask.",
