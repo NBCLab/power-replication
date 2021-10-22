@@ -346,10 +346,10 @@ def compile_physio_regressors(
     assert rvt_regressors_all.shape[1] == 10
 
     # Crop out non-steady-state volumes *and* any trailing time
-    rvt_regressors = rvt_regressors[resp_data_start:resp_data_end, :]
+    rvt_regressors_all = rvt_regressors_all[resp_data_start:resp_data_end, :]
 
     # Resample to TR
-    rvt_regressors = signal.resample(rvt_regressors, num=n_vols, axis=0)
+    rvt_regressors_all = signal.resample(rvt_regressors_all, num=n_vols, axis=0)
 
     # Add regressors to confounds and update metadata
     rvt_regressor_names = [
@@ -364,7 +364,7 @@ def compile_physio_regressors(
         "RVTRegression_RVT*RRF+15s",
         "RVTRegression_RVT*RRF+20s",
     ]
-    confounds_df[rvt_regressor_names] = rvt_regressors
+    confounds_df[rvt_regressor_names] = rvt_regressors_all
     temp_dict = {
         "RVTRegression_RVT": {
             "Sources": [
