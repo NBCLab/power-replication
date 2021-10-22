@@ -203,6 +203,20 @@ def compile_physio_regressors(
     card_data_end = int((n_vols + nss_count) * t_r * card_samplerate)
     assert card_data.shape[0] >= card_data_end
 
+    # Adjust the peaks based on NSS volumes as well
+    resp_peaks = resp_peaks[resp_peaks < resp_data_end]
+    resp_peaks -= resp_data_start
+    resp_peaks = resp_peaks[resp_peaks > 0]
+    resp_peaks = resp_peaks.astype(int)
+    resp_troughs = resp_troughs[resp_troughs < resp_data_end]
+    resp_troughs -= resp_data_start
+    resp_troughs = resp_troughs[resp_troughs > 0]
+    resp_troughs = resp_troughs.astype(int)
+    card_peaks = card_peaks[card_peaks < card_data_end]
+    card_peaks -= card_data_start
+    card_peaks = card_peaks[card_peaks > 0]
+    card_peaks = card_peaks.astype(int)
+
     # ####################
     # Respiratory Variance
     # ####################
