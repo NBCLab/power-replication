@@ -174,7 +174,7 @@ def compile_physio_regressors(
 
     n_vols = confounds_df.shape[0]
     t_r = medn_metadata["RepetitionTime"]
-    nss_count = nss_df.loc[nss_df["participant_id"] == subject, "nss_count"]
+    nss_count = nss_df.loc[nss_df["participant_id"] == subject, "nss_count"].values[0]
 
     # Load metadata
     with open(physio_files["respiratory-metadata"], "r") as fo:
@@ -196,11 +196,11 @@ def compile_physio_regressors(
 
     # Account for dropped non-steady state volumes in regressors
     sec_to_drop = nss_count * t_r
-    resp_data_start = sec_to_drop * resp_samplerate
-    resp_data_end = (n_vols + nss_count) * t_r * resp_samplerate
+    resp_data_start = int(sec_to_drop * resp_samplerate)
+    resp_data_end = int((n_vols + nss_count) * t_r * resp_samplerate)
     assert resp_data.shape[0] >= resp_data_end
-    card_data_start = sec_to_drop * card_samplerate
-    card_data_end = (n_vols + nss_count) * t_r * card_samplerate
+    card_data_start = int(sec_to_drop * card_samplerate)
+    card_data_end = int((n_vols + nss_count) * t_r * card_samplerate)
     assert card_data.shape[0] >= card_data_end
 
     # ####################
@@ -228,10 +228,10 @@ def compile_physio_regressors(
     assert rv_regressors_all.shape[1] == 6
 
     # Crop out non-steady-state volumes *and* any trailing time
-    rv_regressors = rv_regressors[resp_data_start:resp_data_end, :]
+    rv_regressors_all = rv_regressors_all[resp_data_start:resp_data_end, :]
 
     # Resample to TR
-    rv_regressors = signal.resample(rv_regressors, num=n_vols, axis=0)
+    rv_regressors_all = signal.resample(rv_regressors_all, num=n_vols, axis=0)
 
     # Add regressors to confounds and update metadata
     rv_regressor_names = [
@@ -242,7 +242,7 @@ def compile_physio_regressors(
         "RVRegression_RV*RRF",
         "RVRegression_RV*RRF+3s",
     ]
-    confounds_df[rv_regressor_names] = rv_regressors
+    confounds_df[rv_regressor_names] = rv_regressors_all
     temp_dict = {
         "RVRegression_RV-3s": {
             "Sources": [
@@ -816,6 +816,6 @@ if __name__ == "__main__":
         "dset-dupre",
     ]
     print(op.basename(__file__), flush=True)
-    for dset in dsets:
+    for dset in dsets[-1:]:
         print(f"\t{dset}", flush=True)
         main(project_dir, dset)
