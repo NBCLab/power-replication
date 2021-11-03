@@ -338,14 +338,14 @@ def run_godec(medn_file, mask_file, out_dir):
         SD of ventilatory envelope (RPV) (2).
     """
     print("\t\t\tgodec", flush=True)
-    from godec import run_godec_denoising
+    from godec import godec_fmri
 
     # Parse input files
     medn_name = op.basename(medn_file)
     prefix = medn_name.split("desc-")[0].rstrip("_")
     medn_json_file = medn_file.replace(".nii.gz", ".json")
 
-    run_godec_denoising(
+    godec_fmri(
         medn_file,
         mask_file,
         out_dir,
