@@ -35,7 +35,7 @@ def _generic_regression(medn_file, mask_file, nuisance_regressors, t_r):
     # Calculate mean-centered version of MEDN data
     mean_img = image.mean_img(medn_file)
     medn_mean_centered_img = image.math_img(
-        "img - avg_img",
+        "img - avg_img[..., None]",
         img=medn_file,
         avg_img=mean_img,
     )
