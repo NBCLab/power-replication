@@ -273,7 +273,7 @@ def run_dgsr(medn_file, mask_file, confounds_file, out_dir):
     cmd = (
         f"rapidtide --denoising --datatstep {t_r} "
         f"--motionfile {confounds_file} --denoising --spatialfilt -1 "
-        f"{medn_file} {prefix}"
+        f"{medn_file} {op.join(out_dir, prefix)}"
     )
     run_command(cmd)
 
