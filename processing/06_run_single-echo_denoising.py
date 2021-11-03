@@ -15,6 +15,7 @@ import os
 import os.path as op
 from glob import glob
 
+import numpy as np
 import pandas as pd
 import rapidtide
 from nilearn import image
@@ -81,6 +82,9 @@ def run_rvtreg(medn_file, mask_file, confounds_file, out_dir):
             "rot_z_derivative1",
         ]
     ].values
+
+    # Some fMRIPrep nuisance regressors have NaN in the first row (e.g., derivatives)
+    nuisance_regressors = np.nan_to_num(nuisance_regressors, 0)
 
     denoised_img, noise_img = _generic_regression(
         medn_file,
@@ -179,6 +183,9 @@ def run_rvreg(medn_file, mask_file, confounds_file, out_dir):
             "rot_z_derivative1",
         ]
     ].values
+
+    # Some fMRIPrep nuisance regressors have NaN in the first row (e.g., derivatives)
+    nuisance_regressors = np.nan_to_num(nuisance_regressors, 0)
 
     denoised_img, noise_img = _generic_regression(
         medn_file,
@@ -435,6 +442,9 @@ def run_gsr(medn_file, mask_file, confounds_file, out_dir):
         ]
     ].values
 
+    # Some fMRIPrep nuisance regressors have NaN in the first row (e.g., derivatives)
+    nuisance_regressors = np.nan_to_num(nuisance_regressors, 0)
+
     denoised_img, noise_img = _generic_regression(
         medn_file,
         mask_file,
@@ -538,6 +548,9 @@ def run_acompcor(medn_file, mask_file, confounds_file, out_dir):
         ]
     ].values
 
+    # Some fMRIPrep nuisance regressors have NaN in the first row (e.g., derivatives)
+    nuisance_regressors = np.nan_to_num(nuisance_regressors, 0)
+
     denoised_img, noise_img = _generic_regression(
         medn_file,
         mask_file,
@@ -632,6 +645,9 @@ def run_nuisance(medn_file, mask_file, seg_file, confounds_file, out_dir):
             "rot_z_derivative1",
         ]
     ].values
+
+    # Some fMRIPrep nuisance regressors have NaN in the first row (e.g., derivatives)
+    nuisance_regressors = np.nan_to_num(nuisance_regressors, 0)
 
     denoised_img, noise_img = _generic_regression(
         medn_file,
