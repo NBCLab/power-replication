@@ -32,7 +32,7 @@ conda install \
     nitransforms \
     git+https://github.com/tsalo/rapidtide.git@f86237d8867222d645dd53556cc4617ba4d7ebde \
     git+https://github.com/tsalo/tedana.git@099d508db7ad13164918ad48178638ae935fed52 \
-    git+https://github.com/ME-ICA/godec.git@094129688775e0c07ad81e946974fa0ef72f34c4 \
+    git+https://github.com/ME-ICA/godec.git@fa95ac88854c79325afc18ed32d16d69a430d391 \
     git+https://github.com/tsalo/peakdet.git@0034b2c76669a227295501e0d7c7d1fd207259d1 \
     git+https://github.com/tsalo/phys2denoise.git@cd5a6297dc2860063ad971430986bb4c3166c10e
 
