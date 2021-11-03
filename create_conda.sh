@@ -34,6 +34,6 @@ conda install \
     git+https://github.com/tsalo/tedana.git@099d508db7ad13164918ad48178638ae935fed52 \
     git+https://github.com/ME-ICA/godec.git@094129688775e0c07ad81e946974fa0ef72f34c4 \
     git+https://github.com/tsalo/peakdet.git@0034b2c76669a227295501e0d7c7d1fd207259d1 \
-    git+https://github.com/tsalo/phys2denoise.git@d87d9e610511d5bdf17908f10972b3803d7b584d
+    git+https://github.com/tsalo/phys2denoise.git@cd5a6297dc2860063ad971430986bb4c3166c10e
 
 conda list > python_requirements.txt
