@@ -12,19 +12,215 @@ import pandas as pd
 from nilearn import image
 from scipy.ndimage.morphology import binary_erosion
 
+# Renumbering for aparc+aseg from
+# https://github.com/afni/afni/blob/25e77d564f2c67ff480fa99a7b8e48ec2d9a89fc/src/scripts_install/%40SUMA_renumber_FS
+RENUMBER_VALUES = (
+    (0, 0),
+    (2, 1),
+    (3, 2),
+    (4, 3),
+    (5, 4),
+    (7, 5),
+    (8, 6),
+    (10, 7),
+    (11, 8),
+    (12, 9),
+    (13, 10),
+    (14, 11),
+    (15, 12),
+    (16, 13),
+    (17, 14),
+    (18, 15),
+    (24, 16),
+    (26, 17),
+    (28, 18),
+    (30, 19),
+    (31, 20),
+    (41, 21),
+    (42, 22),
+    (43, 23),
+    (44, 24),
+    (46, 25),
+    (47, 26),
+    (49, 27),
+    (50, 28),
+    (51, 29),
+    (52, 30),
+    (53, 31),
+    (54, 32),
+    (58, 33),
+    (60, 34),
+    (62, 35),
+    (63, 36),
+    (72, 37),
+    (77, 38),
+    (80, 39),
+    (85, 40),
+    (251, 41),
+    (252, 42),
+    (253, 43),
+    (254, 44),
+    (255, 45),
+    (1000, 46),
+    (1001, 47),
+    (1002, 48),
+    (1003, 49),
+    (1005, 50),
+    (1006, 51),
+    (1007, 52),
+    (1008, 53),
+    (1009, 54),
+    (1010, 55),
+    (1011, 56),
+    (1012, 57),
+    (1013, 58),
+    (1014, 59),
+    (1015, 60),
+    (1016, 61),
+    (1017, 62),
+    (1018, 63),
+    (1019, 64),
+    (1020, 65),
+    (1021, 66),
+    (1022, 67),
+    (1023, 68),
+    (1024, 69),
+    (1025, 70),
+    (1026, 71),
+    (1027, 72),
+    (1028, 73),
+    (1029, 74),
+    (1030, 75),
+    (1031, 76),
+    (1032, 77),
+    (1033, 78),
+    (1034, 79),
+    (1035, 80),
+    (2000, 81),
+    (2001, 82),
+    (2002, 83),
+    (2003, 84),
+    (2005, 85),
+    (2006, 86),
+    (2007, 87),
+    (2008, 88),
+    (2009, 89),
+    (2010, 90),
+    (2011, 91),
+    (2012, 92),
+    (2013, 93),
+    (2014, 94),
+    (2015, 95),
+    (2016, 96),
+    (2017, 97),
+    (2018, 98),
+    (2019, 99),
+    (2020, 100),
+    (2021, 101),
+    (2022, 102),
+    (2023, 103),
+    (2024, 104),
+    (2025, 105),
+    (2026, 106),
+    (2027, 107),
+    (2028, 108),
+    (2029, 109),
+    (2030, 110),
+    (2031, 111),
+    (2032, 112),
+    (2033, 113),
+    (2034, 114),
+    (2035, 115),
+    (29, 220),
+    (61, 221),
+)
+
+CORTICAL_LABELS = [
+    2,
+    14,
+    15,
+    22,
+    31,
+    32,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63,
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79,
+    80,
+    82,
+    83,
+    84,
+    85,
+    86,
+    87,
+    88,
+    89,
+    90,
+    91,
+    92,
+    93,
+    94,
+    95,
+    96,
+    97,
+    98,
+    99,
+    100,
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110,
+    111,
+    112,
+    113,
+    114,
+    115,
+]
+# NOTE: I removed brain-stem (13)
+SUBCORTICAL_LABELS = [7, 8, 9, 10, 17, 18, 27, 28, 29, 30, 33, 34]
+CEREBELLUM_LABELS = [6, 26]
+WM_LABELS = [1, 5, 21, 25, 38, 41, 42, 43, 44, 45]
+CSF_LABELS = [3, 4, 11, 12, 16, 20, 23, 24, 36, 37]
+
 
 def create_masks(project_dir, dset):
     """Create GM, WM, and CSF masks and resample to functional resolution."""
     print("\t\tcreate_masks", flush=True)
-    # LUT values from
-    # https://surfer.nmr.mgh.harvard.edu/fswiki/FsTutorial/AnatomicalROI/FreeSurferColorLUT
-    # These apply to aseg, not aparcaseg
-    CORTICAL_LABELS = [3, 17, 18, 19, 20, 42, 53, 54, 55, 56]
-    SUBCORTICAL_LABELS = [9, 10, 11, 12, 13, 26, 48, 49, 50, 51, 52, 58]
-    WM_LABELS = [2, 7, 41, 46, 77, 78, 79, 192]
-    CSF_LABELS = [4, 5, 14, 15, 24, 43, 44, 72]
-    CEREBELLUM_LABELS = [8, 47]
-
     dset_dir = op.join(project_dir, dset)
     fmriprep_dir = op.join(dset_dir, "derivatives/fmriprep")
     out_dir = op.join(dset_dir, "derivatives/power")
@@ -51,24 +247,24 @@ def create_masks(project_dir, dset):
             os.mkdir(anat_out_dir)
 
         # Create GM, WM, and CSF masks
-        # WM and CSF masks must be created from the high resolution Freesurfer aseg file
+        # WM and CSF masks must be created from the high resolution Freesurfer aparc+aseg file
         # Then they must be eroded
-        aseg_t1wres_t1wspace = op.join(
+        aparcaseg_t1wres_t1wspace = op.join(
             subj_fmriprep_dir,
             "anat",
-            f"{subject}_desc-aseg_dseg.nii.gz",
+            f"{subject}_desc-aparcaseg_dseg.nii.gz",
         )
-        aseg_boldres_t1wspace = sorted(
+        aparcaseg_boldres_t1wspace = sorted(
             glob(
                 op.join(
                     subj_fmriprep_dir,
                     "func",
-                    f"{subject}_task-*_space-T1w_desc-aseg_dseg.nii.gz",
+                    f"{subject}_task-*_space-T1w_desc-aparcaseg_dseg.nii.gz",
                 )
             )
         )
-        assert len(aseg_boldres_t1wspace) == 1, aseg_boldres_t1wspace
-        aseg_boldres_t1wspace = aseg_boldres_t1wspace[0]
+        assert len(aparcaseg_boldres_t1wspace) == 1, aparcaseg_boldres_t1wspace
+        aparcaseg_boldres_t1wspace = aparcaseg_boldres_t1wspace[0]
 
         # Load T1w-space-to-BOLD-space transform
         xfm_files = sorted(
@@ -97,27 +293,29 @@ def create_masks(project_dir, dset):
         assert len(scanner_files) >= 3
         scanner_file = scanner_files[0]
 
-        # Apply the transform to the BOLD-resolution, T1w-space aseg file
-        aseg_boldres_boldspace = aseg_boldres_t1wspace.replace("space-T1w", "space-scanner")
-        aseg_boldres_boldspace_img = xfm.apply(
-            spatialimage=aseg_boldres_t1wspace,
+        # Apply the transform to the BOLD-resolution, T1w-space aparcaseg file
+        aparcaseg_boldres_boldspace = aparcaseg_boldres_t1wspace.replace(
+            "space-T1w", "space-scanner"
+        )
+        aparcaseg_boldres_boldspace_img = xfm.apply(
+            spatialimage=aparcaseg_boldres_t1wspace,
             reference=scanner_file,
             order=0,
         )
-        aseg_boldres_boldspace_img.to_filename(aseg_boldres_boldspace)
+        aparcaseg_boldres_boldspace_img.to_filename(aparcaseg_boldres_boldspace)
 
         # Create GM masks in BOLD resolution
         cort_img = image.math_img(
             f"np.isin(img, {CORTICAL_LABELS}).astype(int)",
-            img=aseg_boldres_boldspace,
+            img=aparcaseg_boldres_boldspace,
         )
         subcort_img = image.math_img(
             f"np.isin(img, {SUBCORTICAL_LABELS}).astype(int)",
-            img=aseg_boldres_boldspace,
+            img=aparcaseg_boldres_boldspace,
         )
         cereb_img = image.math_img(
             f"np.isin(img, {CEREBELLUM_LABELS}).astype(int)",
-            img=aseg_boldres_boldspace,
+            img=aparcaseg_boldres_boldspace,
         )
 
         # Save cortical mask to file
@@ -130,10 +328,12 @@ def create_masks(project_dir, dset):
         )
 
         # Create T1w-space, T1w-resolution WM and CSF masks
-        wm_img = image.math_img(f"np.isin(img, {WM_LABELS}).astype(int)", img=aseg_t1wres_t1wspace)
+        wm_img = image.math_img(
+            f"np.isin(img, {WM_LABELS}).astype(int)", img=aparcaseg_t1wres_t1wspace
+        )
         csf_img = image.math_img(
             f"np.isin(img, {CSF_LABELS}).astype(int)",
-            img=aseg_t1wres_t1wspace,
+            img=aparcaseg_t1wres_t1wspace,
         )
 
         # Erode WM mask
@@ -157,17 +357,17 @@ def create_masks(project_dir, dset):
         # Resample WM masks to functional resolution with NN interp
         res_wm_ero02 = image.resample_to_img(
             wm_ero02,
-            aseg_boldres_t1wspace,
+            aparcaseg_boldres_t1wspace,
             interpolation="nearest",
         )
         res_wm_ero24 = image.resample_to_img(
             wm_ero24,
-            aseg_boldres_t1wspace,
+            aparcaseg_boldres_t1wspace,
             interpolation="nearest",
         )
         res_wm_ero4 = image.resample_to_img(
             wm_ero4,
-            aseg_boldres_t1wspace,
+            aparcaseg_boldres_t1wspace,
             interpolation="nearest",
         )
 
@@ -187,12 +387,12 @@ def create_masks(project_dir, dset):
         # Resample CSF masks to functional resolution with NN interp
         res_csf_ero02 = image.resample_to_img(
             csf_ero02,
-            aseg_boldres_t1wspace,
+            aparcaseg_boldres_t1wspace,
             interpolation="nearest",
         )
         res_csf_ero2 = image.resample_to_img(
             csf_ero2,
-            aseg_boldres_t1wspace,
+            aparcaseg_boldres_t1wspace,
             interpolation="nearest",
         )
 
