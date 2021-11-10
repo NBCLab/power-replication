@@ -254,6 +254,25 @@ def create_masks(project_dir, dset):
             "anat",
             f"{subject}_desc-aparcaseg_dseg.nii.gz",
         )
+
+        # Load the T1w-res aparc+aseg image and renumber it
+        aparcaseg_t1wres_t1wspace_img = nib.load(aparcaseg_t1wres_t1wspace)
+        aparcaseg_t1wres_t1wspace_data = aparcaseg_t1wres_t1wspace_img.get_fdata()
+        aparcaseg_t1wres_t1wspace_renum_data = np.zeros_like(
+            aparcaseg_t1wres_t1wspace_data
+        )
+        for before, after in RENUMBER_VALUES:
+            aparcaseg_t1wres_t1wspace_renum_data[
+                aparcaseg_t1wres_t1wspace_data == before
+            ] = after
+
+        aparcaseg_t1wres_t1wspace_renum_img = nib.Nifti1Image(
+            aparcaseg_t1wres_t1wspace_renum_data,
+            aparcaseg_t1wres_t1wspace_img.affine,
+            header=aparcaseg_t1wres_t1wspace_img.header,
+        )
+
+        # Find the BOLD-res aparc+aseg
         aparcaseg_boldres_t1wspace = sorted(
             glob(
                 op.join(
@@ -265,6 +284,23 @@ def create_masks(project_dir, dset):
         )
         assert len(aparcaseg_boldres_t1wspace) == 1, aparcaseg_boldres_t1wspace
         aparcaseg_boldres_t1wspace = aparcaseg_boldres_t1wspace[0]
+
+        # Load the BOLD-res aparc+aseg image and renumber it
+        aparcaseg_boldres_t1wspace_img = nib.load(aparcaseg_boldres_t1wspace)
+        aparcaseg_boldres_t1wspace_data = aparcaseg_boldres_t1wspace_img.get_fdata()
+        aparcaseg_boldres_t1wspace_renum_data = np.zeros_like(
+            aparcaseg_boldres_t1wspace_data
+        )
+        for before, after in RENUMBER_VALUES:
+            aparcaseg_boldres_t1wspace_renum_data[
+                aparcaseg_boldres_t1wspace_data == before
+            ] = after
+
+        aparcaseg_boldres_t1wspace_renum_img = nib.Nifti1Image(
+            aparcaseg_boldres_t1wspace_renum_data,
+            aparcaseg_boldres_t1wspace_img.affine,
+            header=aparcaseg_boldres_t1wspace_img.header,
+        )
 
         # Load T1w-space-to-BOLD-space transform
         xfm_files = sorted(
@@ -298,7 +334,7 @@ def create_masks(project_dir, dset):
             "space-T1w", "space-scanner"
         )
         aparcaseg_boldres_boldspace_img = xfm.apply(
-            spatialimage=aparcaseg_boldres_t1wspace,
+            spatialimage=aparcaseg_boldres_t1wspace_renum_img,
             reference=scanner_file,
             order=0,
         )
@@ -329,11 +365,12 @@ def create_masks(project_dir, dset):
 
         # Create T1w-space, T1w-resolution WM and CSF masks
         wm_img = image.math_img(
-            f"np.isin(img, {WM_LABELS}).astype(int)", img=aparcaseg_t1wres_t1wspace
+            f"np.isin(img, {WM_LABELS}).astype(int)",
+            img=aparcaseg_t1wres_t1wspace_renum_img,
         )
         csf_img = image.math_img(
             f"np.isin(img, {CSF_LABELS}).astype(int)",
-            img=aparcaseg_t1wres_t1wspace,
+            img=aparcaseg_t1wres_t1wspace_renum_img,
         )
 
         # Erode WM mask
@@ -357,17 +394,17 @@ def create_masks(project_dir, dset):
         # Resample WM masks to functional resolution with NN interp
         res_wm_ero02 = image.resample_to_img(
             wm_ero02,
-            aparcaseg_boldres_t1wspace,
+            aparcaseg_boldres_t1wspace_renum_img,
             interpolation="nearest",
         )
         res_wm_ero24 = image.resample_to_img(
             wm_ero24,
-            aparcaseg_boldres_t1wspace,
+            aparcaseg_boldres_t1wspace_renum_img,
             interpolation="nearest",
         )
         res_wm_ero4 = image.resample_to_img(
             wm_ero4,
-            aparcaseg_boldres_t1wspace,
+            aparcaseg_boldres_t1wspace_renum_img,
             interpolation="nearest",
         )
 
@@ -387,12 +424,12 @@ def create_masks(project_dir, dset):
         # Resample CSF masks to functional resolution with NN interp
         res_csf_ero02 = image.resample_to_img(
             csf_ero02,
-            aparcaseg_boldres_t1wspace,
+            aparcaseg_boldres_t1wspace_renum_img,
             interpolation="nearest",
         )
         res_csf_ero2 = image.resample_to_img(
             csf_ero2,
-            aparcaseg_boldres_t1wspace,
+            aparcaseg_boldres_t1wspace_renum_img,
             interpolation="nearest",
         )
 
