@@ -329,29 +329,18 @@ def create_masks(project_dir, dset):
         assert len(scanner_files) >= 3
         scanner_file = scanner_files[0]
 
-        # Apply the transform to the BOLD-resolution, T1w-space aparcaseg file
-        aparcaseg_boldres_boldspace = aparcaseg_boldres_t1wspace.replace(
-            "space-T1w", "space-scanner"
-        )
-        aparcaseg_boldres_boldspace_img = xfm.apply(
-            spatialimage=aparcaseg_boldres_t1wspace_renum_img,
-            reference=scanner_file,
-            order=0,
-        )
-        aparcaseg_boldres_boldspace_img.to_filename(aparcaseg_boldres_boldspace)
-
-        # Create GM masks in BOLD resolution
+        # Create GM masks in T1w space, BOLD resolution
         cort_img = image.math_img(
             f"np.isin(img, {CORTICAL_LABELS}).astype(int)",
-            img=aparcaseg_boldres_boldspace,
+            img=aparcaseg_boldres_t1wspace,
         )
         subcort_img = image.math_img(
             f"np.isin(img, {SUBCORTICAL_LABELS}).astype(int)",
-            img=aparcaseg_boldres_boldspace,
+            img=aparcaseg_boldres_t1wspace,
         )
         cereb_img = image.math_img(
             f"np.isin(img, {CEREBELLUM_LABELS}).astype(int)",
-            img=aparcaseg_boldres_boldspace,
+            img=aparcaseg_boldres_t1wspace,
         )
 
         # Save cortical mask to file
@@ -359,7 +348,7 @@ def create_masks(project_dir, dset):
         cort_img.to_filename(
             op.join(
                 anat_out_dir,
-                f"{subject}_space-scanner_res-bold_label-CGM_mask.nii.gz",
+                f"{subject}_space-T1w_res-bold_label-CGM_mask.nii.gz",
             )
         )
 
@@ -485,6 +474,27 @@ def create_masks(project_dir, dset):
                 f"{subject}_space-T1w_res-bold_desc-totalMaskWithCSF_mask.nii.gz",
             )
         )
+
+        # Apply the transform to the BOLD-resolution, T1w-space output files
+        # to produce BOLD-resolution, BOLD-space files
+        output_filenames = [
+            f"{subject}_space-T1w_res-bold_label-CGM_mask.nii.gz",
+            f"{subject}_space-T1w_res-bold_desc-totalMaskNoCSF_dseg.nii.gz",
+            f"{subject}_space-T1w_res-bold_desc-totalMaskNoCSF_mask.nii.gz",
+            f"{subject}_space-T1w_res-bold_desc-totalMaskWithCSF_dseg.nii.gz",
+            f"{subject}_space-T1w_res-bold_desc-totalMaskWithCSF_mask.nii.gz",
+        ]
+        for output_filename in output_filenames:
+            output_file_boldres_t1wspace = op.join(anat_out_dir, output_filename)
+            output_file_boldres_boldspace = output_file_boldres_t1wspace.replace(
+                "space-T1w", "space-scanner"
+            )
+            output_img_boldres_boldspace = xfm.apply(
+                spatialimage=output_file_boldres_t1wspace,
+                reference=scanner_file,
+                order=0,
+            )
+            output_img_boldres_boldspace.to_filename(output_file_boldres_boldspace)
 
 
 def remove_nss_vols(project_dir, dset):
