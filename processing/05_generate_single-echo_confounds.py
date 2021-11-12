@@ -702,7 +702,7 @@ def main(project_dir, dset):
     # Also get non-steady-state volume information
     nss_file = op.join(preproc_dir, "nss_removed.tsv")
 
-    for subject in subjects[:1]:
+    for subject in subjects[:10]:
         print(f"\t\t{subject}", flush=True)
         dset_subj_dir = op.join(dset_dir, subject)
         dset_subj_func_dir = op.join(dset_subj_dir, "func")
@@ -830,6 +830,6 @@ if __name__ == "__main__":
         "dset-dupre",
     ]
     print(op.basename(__file__), flush=True)
-    for dset in dsets[-1:]:
+    for dset in dsets:
         print(f"\t{dset}", flush=True)
         main(project_dir, dset)

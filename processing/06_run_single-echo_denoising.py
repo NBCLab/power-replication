@@ -731,7 +731,7 @@ def main(project_dir, dset):
     with open(op.join(dgsr_dir, "dataset_description.json"), "w") as fo:
         json.dump(dgsr_dset_desc, fo, sort_keys=True, indent=4)
 
-    for subject in subjects[:1]:
+    for subject in subjects[:10]:
         print(f"\t\t{subject}", flush=True)
         preproc_subj_func_dir = op.join(preproc_dir, subject, "func")
         tedana_subj_dir = op.join(tedana_dir, subject, "func")

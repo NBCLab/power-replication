@@ -5,6 +5,7 @@ This includes tedana, MIR, and FIT (via t2smap).
 Additionally, we create the TE30 files in this script as well.
 """
 import json
+import logging
 import os
 import os.path as op
 from glob import glob
@@ -14,6 +15,8 @@ import numpy as np
 import pandas as pd
 from nilearn import image
 from tedana import workflows
+
+LGR = logging.getLogger(__file__)
 
 
 def run_tedana(project_dir, dset):
@@ -40,7 +43,7 @@ def run_tedana(project_dir, dset):
         participants_df["exclude"] == 0, "participant_id"
     ].tolist()
 
-    for subject in subjects[:1]:
+    for subject in subjects[:10]:
         print(f"\t\t{subject}", flush=True)
         preproc_subj_dir = op.join(preproc_dir, subject)
         preproc_subj_anat_dir = op.join(preproc_subj_dir, "anat")
@@ -215,7 +218,8 @@ def run_tedana(project_dir, dset):
         }
         for suffix, description in SUFFIXES.items():
             nii_file = op.join(tedana_subj_dir, f"{prefix}_{suffix}.nii.gz")
-            assert op.isfile(nii_file)
+            if not op.isfile(nii_file):
+                LGR.warning(f"File not found: {suffix}")
 
             suff_json_file = op.join(tedana_subj_dir, f"{prefix}_{suffix}.json")
             metadata["Description"] = description
