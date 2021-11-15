@@ -23,5 +23,5 @@ if __name__ == "__main__":
         df = df[["dset", "participant_id"]]
         dfs.append(df)
 
-    out_df = pd.merge(dfs)
+    out_df = pd.concat(dfs)
     out_df.to_csv(out_file, sep="\t", index=False)
