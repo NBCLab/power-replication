@@ -10,6 +10,7 @@ Methods:
 -   RVT (with lags) regression
 -   RV (with lags) regression
 """
+import argparse
 import json
 import os.path as op
 from glob import glob
@@ -45,7 +46,7 @@ def compile_nuisance_regressors(
     # Nuisance Regression Model
     # #########################
     # Extract white matter and CSF signals for nuisance regression
-    print("\t\t\tnuisance", flush=True)
+    print("\tnuisance", flush=True)
     wm_img = image.math_img("img == 6", img=seg_file)
     wm_img = image.math_img(
         "wm_mask * brain_mask",
@@ -77,7 +78,7 @@ def compile_nuisance_regressors(
     # aCompCor Model
     # ##############
     # Extract and run PCA on white matter for aCompCor
-    print("\t\t\taCompCor", flush=True)
+    print("\taCompCor", flush=True)
     wm_img = image.math_img("img == 6", img=seg_file)
     wm_img = image.math_img(
         "wm_mask * brain_mask",
@@ -123,7 +124,7 @@ def compile_nuisance_regressors(
     # Global Signal Regression Model
     # ##############################
     # Extract mean cortical signal for GSR regression
-    print("\t\t\tGSR", flush=True)
+    print("\tGSR", flush=True)
     cgm_mask = image.math_img(
         "cgm_mask * brain_mask",
         cgm_mask=cgm_file,
@@ -222,7 +223,7 @@ def compile_physio_regressors(
     # ####################
     # Calculate RV and RV*RRF regressors
     # This includes -3 second and +3 second lags.
-    print("\t\t\tRV", flush=True)
+    print("\tRV", flush=True)
     rv_regressors = chest_belt.rv(
         resp_data,
         samplerate=resp_samplerate,
@@ -325,7 +326,7 @@ def compile_physio_regressors(
     # ###########################
     # Respiratory Volume-per-Time
     # ###########################
-    print("\t\t\tRVT", flush=True)
+    print("\tRVT", flush=True)
     rvt_regressors = chest_belt.rvt(
         resp_data,
         resp_peaks,
@@ -496,7 +497,7 @@ def compile_physio_regressors(
     # Respiratory Pattern Variability
     # ################################
     # Calculate RPV values and add to participants tsv
-    print("\t\t\tRPV", flush=True)
+    print("\tRPV", flush=True)
     window = resp_samplerate * 10  # window should be 10s
     resp_data_from_scan = resp_data[resp_data_start:resp_data_end]
     rpv = chest_belt.rpv(resp_data_from_scan, window=window)
@@ -506,7 +507,7 @@ def compile_physio_regressors(
     # Instantaneous Heart Rate
     # ########################
     # Calculate IHR
-    print("\t\t\tIHR", flush=True)
+    print("\tIHR", flush=True)
     ihr = cardiac.ihr(card_data, card_peaks, card_samplerate)
 
     # TODO: Identify "suspicious periods" (bpm change > 25) and interpolate
@@ -558,7 +559,7 @@ def run_peakdet(physio_file, physio_metadata, out_dir):
         include in our limitations.
     """
     physio_filename = op.basename(physio_file)
-    print("\t\t\tpeakdet", flush=True)
+    print("\tpeakdet", flush=True)
 
     # ######################
     # Determine output files
@@ -675,7 +676,7 @@ def run_peakdet(physio_file, physio_metadata, out_dir):
     return out_files
 
 
-def main(project_dir, dset):
+def main(project_dir, dset, subject):
     """Run the confound-generation workflow.
 
     TODO: Create dataset_description.json files.
@@ -692,144 +693,158 @@ def main(project_dir, dset):
     tedana_dir = op.join(deriv_dir, "tedana")
     preproc_dir = op.join(deriv_dir, "power")
 
-    # Get list of participants with good data
+    # Get list of participants with good data,
+    # just to determine if the subject is the first in the dataset
     participants_file = op.join(dset_dir, "participants.tsv")
     participants_df = pd.read_table(participants_file)
     subjects = participants_df.loc[
         participants_df["exclude"] == 0, "participant_id"
     ].tolist()
+    first_subject = subjects[0]
 
     # Also get non-steady-state volume information
     nss_file = op.join(preproc_dir, "nss_removed.tsv")
 
-    for subject in subjects[:10]:
-        print(f"\t\t{subject}", flush=True)
-        dset_subj_dir = op.join(dset_dir, subject)
-        dset_subj_func_dir = op.join(dset_subj_dir, "func")
-        preproc_subj_func_dir = op.join(preproc_dir, subject, "func")
-        preproc_subj_anat_dir = op.join(preproc_dir, subject, "anat")
-        tedana_subj_dir = op.join(tedana_dir, subject, "func")
+    dset_subj_dir = op.join(dset_dir, subject)
+    dset_subj_func_dir = op.join(dset_subj_dir, "func")
+    preproc_subj_func_dir = op.join(preproc_dir, subject, "func")
+    preproc_subj_anat_dir = op.join(preproc_dir, subject, "anat")
+    tedana_subj_dir = op.join(tedana_dir, subject, "func")
 
-        # Collect important files
-        confounds_files = glob(
-            op.join(
-                preproc_subj_func_dir,
-                "*_desc-confounds_timeseries.tsv",
-            )
+    # Collect important files
+    confounds_files = glob(
+        op.join(
+            preproc_subj_func_dir,
+            "*_desc-confounds_timeseries.tsv",
         )
-        assert len(confounds_files) == 1
-        confounds_file = confounds_files[0]
+    )
+    assert len(confounds_files) == 1
+    confounds_file = confounds_files[0]
 
-        seg_files = glob(
-            op.join(
-                preproc_subj_anat_dir,
-                "*_space-scanner_res-bold_desc-totalMaskWithCSF_dseg.nii.gz",
-            )
+    seg_files = glob(
+        op.join(
+            preproc_subj_anat_dir,
+            "*_space-scanner_res-bold_desc-totalMaskWithCSF_dseg.nii.gz",
         )
-        assert len(seg_files) == 1
-        seg_file = seg_files[0]
+    )
+    assert len(seg_files) == 1
+    seg_file = seg_files[0]
 
-        cgm_files = glob(
-            op.join(
-                preproc_subj_anat_dir, "*_space-scanner_res-bold_label-CGM_mask.nii.gz"
-            )
+    cgm_files = glob(
+        op.join(
+            preproc_subj_anat_dir, "*_space-scanner_res-bold_label-CGM_mask.nii.gz"
         )
-        assert len(cgm_files) == 1
-        cgm_file = cgm_files[0]
+    )
+    assert len(cgm_files) == 1
+    cgm_file = cgm_files[0]
 
-        medn_files = glob(op.join(tedana_subj_dir, "*_desc-optcomDenoised_bold.nii.gz"))
-        assert len(medn_files) == 1
-        medn_file = medn_files[0]
+    medn_files = glob(op.join(tedana_subj_dir, "*_desc-optcomDenoised_bold.nii.gz"))
+    assert len(medn_files) == 1
+    medn_file = medn_files[0]
 
-        mask_files = glob(op.join(tedana_subj_dir, "*_desc-goodSignal_mask.nii.gz"))
-        assert len(mask_files) == 1
-        mask_file = mask_files[0]
+    mask_files = glob(op.join(tedana_subj_dir, "*_desc-goodSignal_mask.nii.gz"))
+    assert len(mask_files) == 1
+    mask_file = mask_files[0]
 
-        # Generate and compile nuisance regressors for aCompCor, GSR, and the nuisance model
-        compile_nuisance_regressors(
+    # Generate and compile nuisance regressors for aCompCor, GSR, and the nuisance model
+    compile_nuisance_regressors(
+        medn_file,
+        mask_file,
+        seg_file,
+        cgm_file,
+        confounds_file,
+    )
+    if dset == "dset-dupre":
+        # Get physio data
+        physio_metadata_file = op.join(
+            dset_subj_dir,
+            f"{subject}_task-rest_physio.json",
+        )
+        assert op.isfile(physio_metadata_file)
+        physio_file = op.join(
+            dset_subj_func_dir,
+            f"{subject}_task-rest_run-01_physio.tsv.gz",
+        )
+        assert op.isfile(physio_file)
+
+        with open(physio_metadata_file, "r") as fo:
+            physio_metadata = json.load(fo)
+
+        # Run peakdet
+        new_physio_files = run_peakdet(
+            physio_file,
+            physio_metadata,
+            preproc_subj_func_dir,
+        )
+
+        compile_physio_regressors(
             medn_file,
             mask_file,
-            seg_file,
-            cgm_file,
             confounds_file,
+            new_physio_files,
+            participants_file,
+            nss_file,
+            subject,
         )
-        if dset == "dset-dupre":
-            # Get physio data
-            physio_metadata_file = op.join(
-                dset_subj_dir,
-                f"{subject}_task-rest_physio.json",
-            )
-            assert op.isfile(physio_metadata_file)
-            physio_file = op.join(
-                dset_subj_func_dir,
-                f"{subject}_task-rest_run-01_physio.tsv.gz",
-            )
-            assert op.isfile(physio_file)
 
-            with open(physio_metadata_file, "r") as fo:
-                physio_metadata = json.load(fo)
+        if subject == first_subject:
+            data_desc_file = op.join(preproc_dir, "dataset_description.json")
+            with open(data_desc_file, "r") as fo:
+                dataset_description = json.load(fo)
 
-            # Run peakdet
-            new_physio_files = run_peakdet(
-                physio_file,
-                physio_metadata,
-                preproc_subj_func_dir,
-            )
+            dataset_description["GeneratedBy"] = [
+                {
+                    "Name": "phys2denoise",
+                    "Description": (
+                        "Physiological metric calculation with phys2denoise. "
+                        "Metrics calculated with this include RVT, RV, RPV, and IHR."
+                    ),
+                    "CodeURL": (
+                        "https://github.com/tsalo/phys2denoise.git@"
+                        "be8251db24b157c9a7717f3e2e41eca60ed23649"
+                    ),
+                },
+                {
+                    "Name": "peakdet",
+                    "Description": (
+                        "Low-pass filtering, and peak detection of physiological data with "
+                        "peakdet."
+                    ),
+                    "CodeURL": (
+                        "https://github.com/physiopy/peakdet.git@"
+                        "f6908e3cebf2fdc31ba73f2b3d3370bf7dfae89c"
+                    ),
+                },
+            ] + dataset_description["GeneratedBy"]
 
-            compile_physio_regressors(
-                medn_file,
-                mask_file,
-                confounds_file,
-                new_physio_files,
-                participants_file,
-                nss_file,
-                subject,
-            )
+            with open(data_desc_file, "w") as fo:
+                json.dump(dataset_description, fo, sort_keys=True, indent=4)
 
-            if subject == subjects[0]:
-                data_desc_file = op.join(preproc_dir, "dataset_description.json")
-                with open(data_desc_file, "r") as fo:
-                    dataset_description = json.load(fo)
 
-                dataset_description["GeneratedBy"] = [
-                    {
-                        "Name": "phys2denoise",
-                        "Description": (
-                            "Physiological metric calculation with phys2denoise. "
-                            "Metrics calculated with this include RVT, RV, RPV, and IHR."
-                        ),
-                        "CodeURL": (
-                            "https://github.com/tsalo/phys2denoise.git@"
-                            "be8251db24b157c9a7717f3e2e41eca60ed23649"
-                        ),
-                    },
-                    {
-                        "Name": "peakdet",
-                        "Description": (
-                            "Low-pass filtering, and peak detection of physiological data with "
-                            "peakdet."
-                        ),
-                        "CodeURL": (
-                            "https://github.com/physiopy/peakdet.git@"
-                            "f6908e3cebf2fdc31ba73f2b3d3370bf7dfae89c"
-                        ),
-                    },
-                ] + dataset_description["GeneratedBy"]
+def _get_parser():
+    parser = argparse.ArgumentParser(description="Grab cell from TSV file.")
+    parser.add_argument(
+        "--dset",
+        dest="dset",
+        required=True,
+        help="Dataset name.",
+    )
+    parser.add_argument(
+        "--subject",
+        dest="subject",
+        required=True,
+        help="Subject identifier, with the sub- prefix.",
+    )
+    return parser
 
-                with open(data_desc_file, "w") as fo:
-                    json.dump(dataset_description, fo, sort_keys=True, indent=4)
+
+def _main(argv=None):
+    options = _get_parser().parse_args(argv)
+    kwargs = vars(options)
+    project_dir = "/home/data/nbc/misc-projects/Salo_PowerReplication/"
+    main(project_dir=project_dir, **kwargs)
 
 
 if __name__ == "__main__":
-    project_dir = "/home/data/nbc/misc-projects/Salo_PowerReplication/"
-    dsets = [
-        "dset-cambridge",
-        "dset-camcan",
-        "dset-cohen",
-        "dset-dalenberg",
-        "dset-dupre",
-    ]
-    print(op.basename(__file__), flush=True)
-    for dset in dsets:
-        print(f"\t{dset}", flush=True)
-        main(project_dir, dset)
+    print(__file__, flush=True)
+    _main()

@@ -10,6 +10,7 @@ Methods:
 -   RVT (with lags) regression
 -   RV (with lags) regression
 """
+import argparse
 import json
 import os
 import os.path as op
@@ -40,7 +41,7 @@ def run_rvtreg(medn_file, mask_file, confounds_file, out_dir):
     -   Scatter plot of MEDN-RVT+RVT*RRF SD of global signal against
         SD of ventilatory envelope (RPV) (S8).
     """
-    print("\t\t\tRVT", flush=True)
+    print("\tRVT", flush=True)
     # Parse input files
     medn_name = op.basename(medn_file)
     prefix = medn_name.split("desc-")[0].rstrip("_")
@@ -145,7 +146,7 @@ def run_rvreg(medn_file, mask_file, confounds_file, out_dir):
     -   Scatter plot of MEDN-RV+RV*RRF SD of global signal against
         SD of ventilatory envelope (RPV) (S8).
     """
-    print("\t\t\tRV", flush=True)
+    print("\tRV", flush=True)
     # Parse input files
     medn_name = op.basename(medn_file)
     prefix = medn_name.split("desc-")[0].rstrip("_")
@@ -253,7 +254,7 @@ def run_dgsr(medn_file, mask_file, confounds_file, out_dir):
     -   Scatter plot of MEDN-dGSR SD of global signal against
         SD of ventilatory envelope (RPV) (not in paper).
     """
-    print("\t\t\trapidtide", flush=True)
+    print("\trapidtide", flush=True)
     # I don't trust that tedana will retain the TR in the nifti header,
     # so will extract from json directly.
     medn_json_file = medn_file.replace(".nii.gz", ".json")
@@ -337,7 +338,7 @@ def run_godec(medn_file, mask_file, out_dir):
     -   Scatter plot of MEDN-GODEC SD of global signal against
         SD of ventilatory envelope (RPV) (2).
     """
-    print("\t\t\tgodec", flush=True)
+    print("\tgodec", flush=True)
     from godec import godec_fmri
 
     # Parse input files
@@ -408,7 +409,7 @@ def run_gsr(medn_file, mask_file, confounds_file, out_dir):
     -   Scatter plot of MEDN-GSR SD of global signal against
         SD of ventilatory envelope (RPV) (not in paper).
     """
-    print("\t\t\tGSR", flush=True)
+    print("\tGSR", flush=True)
     # Parse input files
     medn_name = op.basename(medn_file)
     prefix = medn_name.split("desc-")[0].rstrip("_")
@@ -510,7 +511,7 @@ def run_acompcor(medn_file, mask_file, confounds_file, out_dir):
     -   Scatter plot of MEDN-aCompCor SD of global signal against
         SD of ventilatory envelope (RPV) (2).
     """
-    print("\t\t\taCompCor", flush=True)
+    print("\taCompCor", flush=True)
     # Parse input files
     medn_name = op.basename(medn_file)
     prefix = medn_name.split("desc-")[0].rstrip("_")
@@ -611,7 +612,7 @@ def run_nuisance(medn_file, mask_file, seg_file, confounds_file, out_dir):
     -   Scatter plot of FIT-R2-Nuis SD of global signal against
         SD of ventilatory envelope (RPV) (not in paper).
     """
-    print("\t\t\tnuisance", flush=True)
+    print("\tnuisance", flush=True)
     # Parse input files
     medn_name = op.basename(medn_file)
     prefix = medn_name.split("desc-")[0].rstrip("_")
@@ -686,7 +687,7 @@ def run_nuisance(medn_file, mask_file, seg_file, confounds_file, out_dir):
             json.dump(json_info, fo, sort_keys=True, indent=4)
 
 
-def main(project_dir, dset):
+def main(project_dir, dset, subject):
     """Run single-echo denoising workflows on a given dataset."""
     dset_dir = op.join(project_dir, dset)
     deriv_dir = op.join(dset_dir, "derivatives")
@@ -703,6 +704,7 @@ def main(project_dir, dset):
     subjects = participants_df.loc[
         participants_df["exclude"] == 0, "participant_id"
     ].tolist()
+    first_subject = subjects[0]
 
     with open(op.join(preproc_dir, "dataset_description.json"), "r") as fo:
         preproc_dset_desc = json.load(fo)
@@ -731,84 +733,96 @@ def main(project_dir, dset):
     with open(op.join(dgsr_dir, "dataset_description.json"), "w") as fo:
         json.dump(dgsr_dset_desc, fo, sort_keys=True, indent=4)
 
-    for subject in subjects[:10]:
-        print(f"\t\t{subject}", flush=True)
-        preproc_subj_func_dir = op.join(preproc_dir, subject, "func")
-        tedana_subj_dir = op.join(tedana_dir, subject, "func")
+    preproc_subj_func_dir = op.join(preproc_dir, subject, "func")
+    tedana_subj_dir = op.join(tedana_dir, subject, "func")
 
-        # Collect important files
-        confounds_files = glob(
-            op.join(preproc_subj_func_dir, "*_desc-confounds_timeseries.tsv")
-        )
-        assert len(confounds_files) == 1
-        confounds_file = confounds_files[0]
+    # Collect important files
+    confounds_files = glob(
+        op.join(preproc_subj_func_dir, "*_desc-confounds_timeseries.tsv")
+    )
+    assert len(confounds_files) == 1
+    confounds_file = confounds_files[0]
 
-        medn_files = glob(op.join(tedana_subj_dir, "*_desc-optcomDenoised_bold.nii.gz"))
-        assert len(medn_files) == 1
-        medn_file = medn_files[0]
+    medn_files = glob(op.join(tedana_subj_dir, "*_desc-optcomDenoised_bold.nii.gz"))
+    assert len(medn_files) == 1
+    medn_file = medn_files[0]
 
-        mask_files = glob(op.join(tedana_subj_dir, "*_desc-goodSignal_mask.nii.gz"))
-        assert len(mask_files) == 1
-        mask_file = mask_files[0]
+    mask_files = glob(op.join(tedana_subj_dir, "*_desc-goodSignal_mask.nii.gz"))
+    assert len(mask_files) == 1
+    mask_file = mask_files[0]
 
-        nuis_subj_dir = op.join(nuis_dir, subject, "func")
-        os.makedirs(nuis_subj_dir, exist_ok=True)
+    nuis_subj_dir = op.join(nuis_dir, subject, "func")
+    os.makedirs(nuis_subj_dir, exist_ok=True)
 
-        # ########
-        # aCompCor
-        # ########
-        run_acompcor(medn_file, mask_file, confounds_file, nuis_subj_dir)
+    # ########
+    # aCompCor
+    # ########
+    run_acompcor(medn_file, mask_file, confounds_file, nuis_subj_dir)
 
-        # ###
-        # GSR
-        # ###
-        run_gsr(medn_file, mask_file, confounds_file, nuis_subj_dir)
+    # ###
+    # GSR
+    # ###
+    run_gsr(medn_file, mask_file, confounds_file, nuis_subj_dir)
 
-        # ####
-        # dGSR
-        # ####
-        dgsr_subj_dir = op.join(dgsr_dir, subject, "func")
-        os.makedirs(dgsr_subj_dir, exist_ok=True)
-        run_dgsr(medn_file, mask_file, confounds_file, dgsr_subj_dir)
+    # ####
+    # dGSR
+    # ####
+    dgsr_subj_dir = op.join(dgsr_dir, subject, "func")
+    os.makedirs(dgsr_subj_dir, exist_ok=True)
+    run_dgsr(medn_file, mask_file, confounds_file, dgsr_subj_dir)
 
-        # #####
-        # GODEC
-        # #####
-        godec_subj_dir = op.join(godec_dir, subject, "func")
-        os.makedirs(godec_subj_dir, exist_ok=True)
-        run_godec(medn_file, mask_file, godec_subj_dir)
+    # #####
+    # GODEC
+    # #####
+    godec_subj_dir = op.join(godec_dir, subject, "func")
+    os.makedirs(godec_subj_dir, exist_ok=True)
+    run_godec(medn_file, mask_file, godec_subj_dir)
 
-        # Clean up dataset description files
-        if subject == subjects[0]:
-            with open(op.join(godec_subj_dir, "dataset_description.json"), "r") as fo:
-                godec_dset_desc = json.load(fo)
+    # Clean up dataset description files
+    if subject == first_subject:
+        with open(op.join(godec_subj_dir, "dataset_description.json"), "r") as fo:
+            godec_dset_desc = json.load(fo)
 
-            godec_dset_desc["GeneratedBy"] += preproc_dset_desc["GeneratedBy"]
+        godec_dset_desc["GeneratedBy"] += preproc_dset_desc["GeneratedBy"]
 
-            with open(op.join(godec_dir, "dataset_description.json"), "w") as fo:
-                json.dump(godec_dset_desc, fo, sort_keys=True, indent=4)
+        with open(op.join(godec_dir, "dataset_description.json"), "w") as fo:
+            json.dump(godec_dset_desc, fo, sort_keys=True, indent=4)
 
-        if op.isfile(op.join(godec_dir, "dataset_description.json")):
-            os.remove(op.join(godec_subj_dir, "dataset_description.json"))
+    if op.isfile(op.join(godec_dir, "dataset_description.json")):
+        os.remove(op.join(godec_subj_dir, "dataset_description.json"))
 
-        # ################
-        # Physio Denoising
-        # ################
-        if dset == "dset-dupre":
-            run_rvtreg(medn_file, mask_file, confounds_file, nuis_subj_dir)
-            run_rvreg(medn_file, mask_file, confounds_file, nuis_subj_dir)
+    # ################
+    # Physio Denoising
+    # ################
+    if dset == "dset-dupre":
+        run_rvtreg(medn_file, mask_file, confounds_file, nuis_subj_dir)
+        run_rvreg(medn_file, mask_file, confounds_file, nuis_subj_dir)
+
+
+def _get_parser():
+    parser = argparse.ArgumentParser(description="Grab cell from TSV file.")
+    parser.add_argument(
+        "--dset",
+        dest="dset",
+        required=True,
+        help="Dataset name.",
+    )
+    parser.add_argument(
+        "--subject",
+        dest="subject",
+        required=True,
+        help="Subject identifier, with the sub- prefix.",
+    )
+    return parser
+
+
+def _main(argv=None):
+    options = _get_parser().parse_args(argv)
+    kwargs = vars(options)
+    project_dir = "/home/data/nbc/misc-projects/Salo_PowerReplication/"
+    main(project_dir=project_dir, **kwargs)
 
 
 if __name__ == "__main__":
-    project_dir = "/home/data/nbc/misc-projects/Salo_PowerReplication/"
-    dsets = [
-        "dset-cambridge",
-        "dset-camcan",
-        "dset-cohen",
-        "dset-dalenberg",
-        "dset-dupre",
-    ]
-    print(op.basename(__file__), flush=True)
-    for dset in dsets:
-        print(f"\t{dset}", flush=True)
-        main(project_dir, dset)
+    print(__file__, flush=True)
+    _main()

@@ -38,9 +38,6 @@ tsv_file=${CODE_DIR}/participants.tsv
 dset_name="$(python ${CODE_DIR}/processing/get_tsv_cell.py --column dataset --row ${SLURM_ARRAY_TASK_ID} ${tsv_file})"
 subject="$(python ${CODE_DIR}/processing/get_tsv_cell.py --column participant_id --row ${SLURM_ARRAY_TASK_ID} ${tsv_file})"
 
-# Remove "sub-" from subject ID
-subject=${subject#"sub-"}
-
 # Run python script inside fmriprep environment
 cmd="python ${CODE_DIR}/processing/04_run_multi-echo_denoising.py \
       --dset ${dset_name} --subject $subject"
