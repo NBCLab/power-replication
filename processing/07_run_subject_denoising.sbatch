@@ -36,7 +36,7 @@ tsv_file=${DATA_DIR}/${PROJECT}/participants.tsv
 
 # Parse the participants.tsv file and extract one subject ID from the line corresponding
 # to this SLURM task.
-dset_name="$(python ${CODE_DIR}/processing/get_tsv_cell.py --column dataset --row ${SLURM_ARRAY_TASK_ID} ${tsv_file})"
+dset_name="$(python ${CODE_DIR}/processing/get_tsv_cell.py --column dset --row ${SLURM_ARRAY_TASK_ID} ${tsv_file})"
 subject="$(python ${CODE_DIR}/processing/get_tsv_cell.py --column participant_id --row ${SLURM_ARRAY_TASK_ID} ${tsv_file})"
 
 # Run python script inside fmriprep environment
