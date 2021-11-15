@@ -13,7 +13,8 @@
 # ------------------------------------------
 # USAGE information:
 # Use the -array= option.
-# Start with 1.
+# Start with 0.
+# sbatch 07_run_subject_denoising.sbatch --array=0-778%10
 pwd; hostname; date
 set -e
 
