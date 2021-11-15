@@ -31,7 +31,7 @@ source ${CODE_DIR}/activate_environment
 
 # I have created a combined participants.tsv file only containing the included subjects
 # and two columns: participant_id and dataset
-tsv_file=${CODE_DIR}/participants.tsv
+tsv_file=${DATA_DIR}/${PROJECT}/participants.tsv
 
 # Parse the participants.tsv file and extract one subject ID from the line corresponding
 # to this SLURM task.
