@@ -149,12 +149,13 @@ def run_tedana(project_dir, dset, subject):
         with open(suff_json_file, "w") as fo:
             json.dump(metadata, fo, sort_keys=True, indent=4)
 
+    t2smap_data_desc = op.join(
+        t2smap_subj_dir, f"{prefix}_dataset_description.json"
+    )
+
     if subject == first_subject:
         # Merge dataset descriptions
         preproc_data_desc = op.join(preproc_dir, "dataset_description.json")
-        t2smap_data_desc = op.join(
-            t2smap_subj_dir, f"{prefix}_dataset_description.json"
-        )
         out_data_desc = op.join(t2smap_dir, "dataset_description.json")
 
         with open(preproc_data_desc, "r") as fo:
@@ -172,87 +173,88 @@ def run_tedana(project_dir, dset, subject):
         with open(out_data_desc, "w") as fo:
             json.dump(data_description, fo, sort_keys=True, indent=4)
 
-        # Remove subject-level dataset descriptions
-        os.remove(t2smap_data_desc)
+    # Remove subject-level dataset descriptions
+    os.remove(t2smap_data_desc)
 
-        # ############
-        # TEDANA + MIR
-        # ############
-        # We use MEDN, reconstructed MEDN-noise, MEHK,
-        # reconstructed MEHK-noise, optcom, mmix (component timeseries), and
-        # comptable (classifications of components)
-        print("\ttedana", flush=True)
-        workflows.tedana_workflow(
-            preproc_files,
-            echo_times,
-            fittype="curvefit",
-            gscontrol="mir",
-            maxit=500,
-            maxrestart=100,
-            mask=mask_img,  # The docs say str, but workflows should work fine with an img
-            out_dir=tedana_subj_dir,
-            prefix=prefix,
-        )
+    # ############
+    # TEDANA + MIR
+    # ############
+    # We use MEDN, reconstructed MEDN-noise, MEHK,
+    # reconstructed MEHK-noise, optcom, mmix (component timeseries), and
+    # comptable (classifications of components)
+    print("\ttedana", flush=True)
+    workflows.tedana_workflow(
+        preproc_files,
+        echo_times,
+        fittype="curvefit",
+        gscontrol="mir",
+        maxit=500,
+        maxrestart=100,
+        mask=mask_img,  # The docs say str, but workflows should work fine with an img
+        out_dir=tedana_subj_dir,
+        prefix=prefix,
+    )
 
-        # Derive binary mask from adaptive mask
-        adaptive_mask = op.join(
-            tedana_subj_dir, f"{prefix}_desc-adaptiveGoodSignal_mask.nii.gz"
-        )
-        updated_mask = image.math_img("img >= 1", img=adaptive_mask)
-        updated_mask.to_filename(
-            op.join(tedana_subj_dir, f"{prefix}_desc-goodSignal_mask.nii.gz")
-        )
+    # Derive binary mask from adaptive mask
+    adaptive_mask = op.join(
+        tedana_subj_dir, f"{prefix}_desc-adaptiveGoodSignal_mask.nii.gz"
+    )
+    updated_mask = image.math_img("img >= 1", img=adaptive_mask)
+    updated_mask.to_filename(
+        op.join(tedana_subj_dir, f"{prefix}_desc-goodSignal_mask.nii.gz")
+    )
 
-        # Merge metadata into relevant jsons
-        SUFFIXES = {
-            "desc-goodSignal_mask": "Mask of voxels with good signal in at least the first echo.",
-            "desc-optcomDenoised_bold": "Multi-echo denoised data from tedana.",
-            "desc-optcomAccepted_bold": (
-                "Multi-echo high Kappa data from tedana, compiled from accepted components."
-            ),
-            "desc-optcom_bold": "Optimally combined data from tedana.",
-            "desc-optcomMIRDenoised_bold": (
-                "Multi-echo denoised data, further denoised with minimum image regression."
-            ),
-            "desc-optcomAcceptedMIRDenoised_bold": (
-                "Multi-echo high Kappa data, further denoised with minimum image regression."
-            ),
-        }
-        for suffix, description in SUFFIXES.items():
-            nii_file = op.join(tedana_subj_dir, f"{prefix}_{suffix}.nii.gz")
-            if not op.isfile(nii_file):
-                LGR.warning(f"File not found: {suffix}")
+    # Merge metadata into relevant jsons
+    SUFFIXES = {
+        "desc-goodSignal_mask": "Mask of voxels with good signal in at least the first echo.",
+        "desc-optcomDenoised_bold": "Multi-echo denoised data from tedana.",
+        "desc-optcomAccepted_bold": (
+            "Multi-echo high Kappa data from tedana, compiled from accepted components."
+        ),
+        "desc-optcom_bold": "Optimally combined data from tedana.",
+        "desc-optcomMIRDenoised_bold": (
+            "Multi-echo denoised data, further denoised with minimum image regression."
+        ),
+        "desc-optcomAcceptedMIRDenoised_bold": (
+            "Multi-echo high Kappa data, further denoised with minimum image regression."
+        ),
+    }
+    for suffix, description in SUFFIXES.items():
+        nii_file = op.join(tedana_subj_dir, f"{prefix}_{suffix}.nii.gz")
+        if not op.isfile(nii_file):
+            LGR.warning(f"File not found: {suffix}")
 
-            suff_json_file = op.join(tedana_subj_dir, f"{prefix}_{suffix}.json")
-            metadata["Description"] = description
-            with open(suff_json_file, "w") as fo:
-                json.dump(metadata, fo, sort_keys=True, indent=4)
+        suff_json_file = op.join(tedana_subj_dir, f"{prefix}_{suffix}.json")
+        metadata["Description"] = description
+        with open(suff_json_file, "w") as fo:
+            json.dump(metadata, fo, sort_keys=True, indent=4)
 
+    tedana_data_desc = op.join(
+        tedana_subj_dir, f"{prefix}_dataset_description.json"
+    )
+
+    if subject == first_subject:
         # Merge dataset descriptions
-        tedana_data_desc = op.join(
-            tedana_subj_dir, f"{prefix}_dataset_description.json"
-        )
         preproc_data_desc = op.join(preproc_dir, "dataset_description.json")
         out_data_desc = op.join(tedana_dir, "dataset_description.json")
 
-        if not op.isfile(out_data_desc):
-            with open(preproc_data_desc, "r") as fo:
-                data_description = json.load(fo)
+        with open(preproc_data_desc, "r") as fo:
+            data_description = json.load(fo)
 
-            with open(tedana_data_desc, "r") as fo:
-                ted_data_description = json.load(fo)
+        with open(tedana_data_desc, "r") as fo:
+            ted_data_description = json.load(fo)
 
-            data_description["Name"] = ted_data_description["Name"]
-            data_description["BIDSVersion"] = ted_data_description["BIDSVersion"]
-            data_description["GeneratedBy"] = (
-                ted_data_description["GeneratedBy"] + data_description["GeneratedBy"]
-            )
+        data_description["Name"] = ted_data_description["Name"]
+        data_description["BIDSVersion"] = ted_data_description["BIDSVersion"]
+        data_description["GeneratedBy"] = (
+            ted_data_description["GeneratedBy"] + data_description["GeneratedBy"]
+        )
 
-            with open(out_data_desc, "w") as fo:
-                json.dump(data_description, fo, sort_keys=True, indent=4)
+        with open(out_data_desc, "w") as fo:
+            json.dump(data_description, fo, sort_keys=True, indent=4)
 
-        # Remove subject-level dataset descriptions
-        os.remove(tedana_data_desc)
+    # Remove subject-level dataset descriptions
+    os.remove(tedana_data_desc)
 
 
 def _get_parser():

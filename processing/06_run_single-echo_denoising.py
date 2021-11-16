@@ -788,8 +788,7 @@ def main(project_dir, dset, subject):
         with open(op.join(godec_dir, "dataset_description.json"), "w") as fo:
             json.dump(godec_dset_desc, fo, sort_keys=True, indent=4)
 
-    if op.isfile(op.join(godec_dir, "dataset_description.json")):
-        os.remove(op.join(godec_subj_dir, "dataset_description.json"))
+    os.remove(op.join(godec_subj_dir, "dataset_description.json"))
 
     # ################
     # Physio Denoising
