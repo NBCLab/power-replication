@@ -268,7 +268,6 @@ def run_dgsr(medn_file, mask_file, confounds_file, out_dir):
     dgsr_file = op.join(out_dir, f"{prefix}_desc-lfofilterCleaned_bold.nii.gz")
     dgsr_noise_file = op.join(out_dir, f"{prefix}_desc-lfofilterCleaned_errorts.nii.gz")
 
-    # TODO: Check settings with Blaise Frederick
     # Use the standard denoising settings, with a smoothing kernel equal to 1/2 voxel size,
     # per rapidtide's recommendation.
     cmd = (
@@ -278,7 +277,7 @@ def run_dgsr(medn_file, mask_file, confounds_file, out_dir):
     )
     run_command(cmd)
 
-    # TODO: Will the scale of the denoised data be correct? Or is it mean-centered or something?
+    # Per the rapidtide documentation, the lfofilterCleaned data have mean included.
     dgsr_noise_img = image.math_img("img1 - img2", img1=medn_file, img2=dgsr_file)
     dgsr_noise_img.to_filename(dgsr_noise_file)
 

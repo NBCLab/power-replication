@@ -23,6 +23,7 @@ from peakdet import load_physio, operations
 from phys2denoise.metrics import cardiac, chest_belt
 from phys2denoise.metrics import utils as physutils
 from scipy import signal
+from scipy.interpolate import interp1d
 
 
 def compile_nuisance_regressors(
@@ -510,17 +511,26 @@ def compile_physio_regressors(
     print("\tIHR", flush=True)
     ihr = cardiac.ihr(card_data, card_peaks, card_samplerate)
 
-    # TODO: Identify "suspicious periods" (bpm change > 25) and interpolate
+    # Identify "suspicious periods" (bpm change > 25) and interpolate
+    bpm_change = np.diff(ihr, prepend=ihr[0])
+
+    # From https://stackoverflow.com/a/45795263/2589328
+    value_idx = np.arange(ihr.shape)
+    unsus_idx = np.where(bpm_change <= 0)
+    sus_interpolator = interp1d(value_idx[unsus_idx], ihr[unsus_idx])
+    new_ihr = sus_interpolator(value_idx)
 
     # Crop out non-steady-state volumes *and* any trailing time
     ihr_regressor = ihr[card_data_start:card_data_end]
+    new_ihr_regressor = new_ihr[card_data_start:card_data_end]
 
     # Resample to TR
     ihr_regressor = signal.resample(ihr_regressor, num=n_vols, axis=0)
+    new_ihr_regressor = signal.resample(new_ihr_regressor, num=n_vols, axis=0)
 
     # Add regressors to confounds and update metadata
-    ihr_regressor_name = "IHRRegression_IHR"
-    confounds_df[ihr_regressor_name] = ihr_regressor
+    confounds_df["IHRRegression_IHR"] = ihr_regressor
+    confounds_df["IHRRegression_IHR_Interpolated"] = new_ihr_regressor
 
     temp_dict = {
         "IHRRegression_IHR": {
@@ -532,6 +542,20 @@ def compile_physio_regressors(
             "Description": (
                 "Instantaneous heart rate calculated from cardiac data upsampled to "
                 f"{card_samplerate} Hertz, then downsampled to the repetition time of the "
+                "fMRI data."
+            ),
+        },
+        "IHRRegression_IHR_Interpolated": {
+            "Sources": [
+                physio_files["cardiac-data"],
+                physio_files["cardiac-metadata"],
+                physio_files["cardiac-peaks"],
+            ],
+            "Description": (
+                "Instantaneous heart rate calculated from cardiac data upsampled to "
+                f"{card_samplerate} Hertz, then denoised by linearly interpolating "
+                "across any periods where instantaneous change in beats-per-minute was "
+                "greater than 25, and then downsampled to the repetition time of the "
                 "fMRI data."
             ),
         },
@@ -678,8 +702,6 @@ def run_peakdet(physio_file, physio_metadata, out_dir):
 
 def main(project_dir, dset, subject):
     """Run the confound-generation workflow.
-
-    TODO: Create dataset_description.json files.
 
     Notes
     -----
