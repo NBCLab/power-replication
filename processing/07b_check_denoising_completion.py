@@ -1,5 +1,6 @@
 """Combine individual datasets' participants.tsv files into one."""
 import os.path as op
+from glob import glob
 
 import pandas as pd
 
@@ -29,18 +30,26 @@ PHYSIO_TARGET_FILES = [
 if __name__ == "__main__":
     PROJECT_DIR = "/home/data/nbc/misc-projects/Salo_PowerReplication/"
     participants_file = op.join(PROJECT_DIR, "participants.tsv")
+    bad_subs = []
     df = pd.read_table(participants_file)
-    for row in df.iterrows():
+    for _, row in df.iterrows():
         dataset = row["dset"]
         sub = row["participant_id"]
         deriv_dir = op.join(PROJECT_DIR, dataset, "derivatives")
         for target_file in TARGET_FILES:
-            full_filename = op.join(deriv_dir, target_file.format(sub=sub))
-            if not op.isfile(full_filename):
-                print(f"Dataset {dataset} subject {sub} missing {target_file}")
+            full_file_pattern = op.join(deriv_dir, target_file.format(sub=sub))
+            matching_files = sorted(glob(full_file_pattern))
+            if len(matching_files) == 0:
+                print(f"Dataset {dataset} subject {sub} missing {full_file_pattern}")
+                bad_subs.append((dataset, sub))
 
         if dataset == "dset-dupre":
             for target_file in PHYSIO_TARGET_FILES:
-                full_filename = op.join(deriv_dir, target_file.format(sub=sub))
-                if not op.isfile(full_filename):
-                    print(f"Dataset {dataset} subject {sub} missing {target_file}")
+                full_file_pattern = op.join(deriv_dir, target_file.format(sub=sub))
+                matching_files = sorted(glob(full_file_pattern))
+                if len(matching_files) == 0:
+                    print(f"Dataset {dataset} subject {sub} missing {full_file_pattern}")
+                    bad_subs.append((dataset, sub))
+
+    bad_subs = sorted(list(set(bad_subs)))
+    print(bad_subs)
