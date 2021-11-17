@@ -1,4 +1,4 @@
-"""Combine individual datasets' participants.tsv files into one."""
+"""Identify any subjects without all expected denoising derivatives."""
 import os.path as op
 from glob import glob
 
