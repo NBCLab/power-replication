@@ -49,7 +49,7 @@ def run_rvtreg(medn_file, mask_file, confounds_file, out_dir):
 
     # Determine output files
     denoised_file = op.join(out_dir, f"{prefix}_desc-RVTReg_bold.nii.gz")
-    noise_file = op.join(out_dir, f"{prefix}_desc-RVTRegNoise_bold.nii.gz")
+    noise_file = op.join(out_dir, f"{prefix}_desc-RVTReg_errorts.nii.gz")
 
     confounds_df = pd.read_table(confounds_file)
 
@@ -110,7 +110,7 @@ def run_rvtreg(medn_file, mask_file, confounds_file, out_dir):
             "the respiratory response function, six realigment parameters, "
             "and the realignment parameters' first derivatives."
         ),
-        "desc-RVTRegNoise_bold": (
+        "desc-RVTReg_errorts": (
             "Residuals from respiratory-volume-per-time-based regression model applied to "
             "multi-echo denoised data. This model includes RVT lagged 0 seconds, "
             "5 seconds forward, 10 seconds forward, 15 seconds forward, and 20 seconds forward, "
@@ -154,7 +154,7 @@ def run_rvreg(medn_file, mask_file, confounds_file, out_dir):
 
     # Determine output files
     denoised_file = op.join(out_dir, f"{prefix}_desc-RVReg_bold.nii.gz")
-    noise_file = op.join(out_dir, f"{prefix}_desc-RVRegNoise_bold.nii.gz")
+    noise_file = op.join(out_dir, f"{prefix}_desc-RVReg_errorts.nii.gz")
 
     confounds_df = pd.read_table(confounds_file)
 
@@ -210,7 +210,7 @@ def run_rvreg(medn_file, mask_file, confounds_file, out_dir):
             "the respiratory response function, six realigment parameters, "
             "and the realignment parameters' first derivatives."
         ),
-        "desc-RVRegNoise_bold": (
+        "desc-RVReg_errorts": (
             "Residuals from respiratory variance-based regression model applied to multi-echo "
             "denoised data. This model includes RV lagged 3 seconds back, 0 seconds, "
             "3 seconds forward, along with those three RV-based regressors convolved with "
@@ -266,7 +266,7 @@ def run_dgsr(medn_file, mask_file, confounds_file, out_dir):
     prefix = medn_name.split("desc-")[0].rstrip("_")
 
     dgsr_file = op.join(out_dir, f"{prefix}_desc-lfofilterCleaned_bold.nii.gz")
-    dgsr_noise_file = op.join(out_dir, f"{prefix}_desc-noise_bold.nii.gz")
+    dgsr_noise_file = op.join(out_dir, f"{prefix}_desc-lfofilterCleaned_errorts.nii.gz")
 
     # TODO: Check settings with Blaise Frederick
     # Use the standard denoising settings, with a smoothing kernel equal to 1/2 voxel size,
@@ -287,7 +287,7 @@ def run_dgsr(medn_file, mask_file, confounds_file, out_dir):
 
     SUFFIXES = {
         "desc-lfofilterCleaned_bold": "Multi-echo denoised data further denoised with rapidtide.",
-        "desc-noise_bold": (
+        "desc-lfofilterCleaned_errorts": (
             "Noise time series retained from further denoising multi-echo denoised data with "
             "rapidtide."
         ),
@@ -390,7 +390,7 @@ def run_gsr(medn_file, mask_file, confounds_file, out_dir):
     ----------
     medn_file
     mask_file
-    cgm_mask
+    confounds_file
     out_dir
 
     Notes
@@ -417,7 +417,7 @@ def run_gsr(medn_file, mask_file, confounds_file, out_dir):
 
     # Determine output files
     denoised_file = op.join(out_dir, f"{prefix}_desc-GSR_bold.nii.gz")
-    noise_file = op.join(out_dir, f"{prefix}_desc-GSRNoise_bold.nii.gz")
+    noise_file = op.join(out_dir, f"{prefix}_desc-GSR_errorts.nii.gz")
 
     confounds_df = pd.read_table(confounds_file)
 
@@ -465,7 +465,7 @@ def run_gsr(medn_file, mask_file, confounds_file, out_dir):
             "Multi-echo denoised data further denoised with a GSR regression model including "
             "mean signal from the cortical gray matter ribbon."
         ),
-        "desc-GSRNoise_bold": (
+        "desc-GSR_errorts": (
             "Residuals from GSR regression model applied to multi-echo denoised data. "
             "The GSR regression model includes mean signal from the cortical gray matter ribbon."
         ),
@@ -487,7 +487,7 @@ def run_acompcor(medn_file, mask_file, confounds_file, out_dir):
     ----------
     medn_file
     mask_file
-    seg_file
+    confounds_file
     out_dir
 
     Notes
@@ -519,7 +519,7 @@ def run_acompcor(medn_file, mask_file, confounds_file, out_dir):
 
     # Determine output files
     denoised_file = op.join(out_dir, f"{prefix}_desc-aCompCor_bold.nii.gz")
-    noise_file = op.join(out_dir, f"{prefix}_desc-aCompCorNoise_bold.nii.gz")
+    noise_file = op.join(out_dir, f"{prefix}_desc-aCompCor_errorts.nii.gz")
 
     confounds_df = pd.read_table(confounds_file)
 
@@ -572,7 +572,7 @@ def run_acompcor(medn_file, mask_file, confounds_file, out_dir):
             "including 5 PCA components from deepest white matter, 6 motion parameters, and "
             "first temporal derivatives of motion parameters."
         ),
-        "desc-aCompCorNoise_bold": (
+        "desc-aCompCor_errorts": (
             "Residuals from aCompCor regression model applied to multi-echo denoised data. "
             "The aCompCor regression model includes 5 PCA components from deepest white matter, "
             "6 motion parameters, and first temporal derivatives of motion parameters."
@@ -588,7 +588,7 @@ def run_acompcor(medn_file, mask_file, confounds_file, out_dir):
             json.dump(json_info, fo, sort_keys=True, indent=4)
 
 
-def run_nuisance(medn_file, mask_file, seg_file, confounds_file, out_dir):
+def run_nuisance(medn_file, mask_file, confounds_file, out_dir):
     """Clean MEDN data with nuisance model.
 
     Regressors include mean deepest white matter, mean deepest CSF,
@@ -598,7 +598,6 @@ def run_nuisance(medn_file, mask_file, seg_file, confounds_file, out_dir):
     ----------
     medn_file
     mask_file
-    seg_file
     confounds_file
     out_dir
 
@@ -620,7 +619,7 @@ def run_nuisance(medn_file, mask_file, seg_file, confounds_file, out_dir):
 
     # Determine output files
     denoised_file = op.join(out_dir, f"{prefix}_desc-NuisReg_bold.nii.gz")
-    noise_file = op.join(out_dir, f"{prefix}_desc-NuisRegNoise_bold.nii.gz")
+    noise_file = op.join(out_dir, f"{prefix}_desc-NuisReg_errorts.nii.gz")
 
     confounds_df = pd.read_table(confounds_file)
 
@@ -670,7 +669,7 @@ def run_nuisance(medn_file, mask_file, seg_file, confounds_file, out_dir):
             "signal from mean deepest white matter, mean deepest CSF, 6 motion parameters, and "
             "first temporal derivatives of motion parameters."
         ),
-        "desc-NuisRegNoise_bold": (
+        "desc-NuisReg_errorts": (
             "Residuals from nuisance regression model applied to multi-echo denoised data. "
             "The nuisance regression model includes signal from mean deepest white matter, "
             "mean deepest CSF, 6 motion parameters, and first temporal derivatives of motion "
@@ -753,6 +752,11 @@ def main(project_dir, dset, subject):
 
     nuis_subj_dir = op.join(nuis_dir, subject, "func")
     os.makedirs(nuis_subj_dir, exist_ok=True)
+
+    # ###################
+    # Nuisance Regression
+    # ###################
+    run_nuisance(medn_file, mask_file, confounds_file, nuis_subj_dir)
 
     # ########
     # aCompCor

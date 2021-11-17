@@ -55,11 +55,7 @@ def run_tedana(project_dir, dset, subject):
     os.makedirs(tedana_subj_dir, exist_ok=True)
 
     preproc_files = sorted(
-        glob(
-            op.join(
-                preproc_subj_func_dir, f"{subject}_*_desc-NSSRemoved_bold.nii.gz"
-            )
-        )
+        glob(op.join(preproc_subj_func_dir, f"{subject}_*_desc-NSSRemoved_bold.nii.gz"))
     )
 
     # Get prefix from first filename
@@ -88,9 +84,7 @@ def run_tedana(project_dir, dset, subject):
     te30_out_nii_file = op.join(
         preproc_subj_func_dir, f"{prefix}_desc-TE30_bold.nii.gz"
     )
-    te30_out_json_file = op.join(
-        preproc_subj_func_dir, f"{prefix}_desc-TE30_bold.json"
-    )
+    te30_out_json_file = op.join(preproc_subj_func_dir, f"{prefix}_desc-TE30_bold.json")
 
     with open(te30_json_file, "r") as fo:
         te30_metadata = json.load(fo)
@@ -149,9 +143,7 @@ def run_tedana(project_dir, dset, subject):
         with open(suff_json_file, "w") as fo:
             json.dump(metadata, fo, sort_keys=True, indent=4)
 
-    t2smap_data_desc = op.join(
-        t2smap_subj_dir, f"{prefix}_dataset_description.json"
-    )
+    t2smap_data_desc = op.join(t2smap_subj_dir, f"{prefix}_dataset_description.json")
 
     if subject == first_subject:
         # Merge dataset descriptions
@@ -204,19 +196,41 @@ def run_tedana(project_dir, dset, subject):
         op.join(tedana_subj_dir, f"{prefix}_desc-goodSignal_mask.nii.gz")
     )
 
+    # Derive noise time series for MEDN and MEDN+MIR files
+    optcom_file = op.join(tedana_subj_dir, f"{prefix}_desc-optcom_bold.nii.gz")
+
+    medn_file = op.join(tedana_subj_dir, f"{prefix}_desc-optcomDenoised_bold.nii.gz")
+    medn_noise_file = op.join(
+        tedana_subj_dir, f"{prefix}_desc-optcomDenoised_errorts.nii.gz"
+    )
+    medn_noise_img = image.math_img("img1 - img2", img1=optcom_file, img2=medn_file)
+    medn_noise_img.to_filename(medn_noise_file)
+
+    medn_mir_file = op.join(
+        tedana_subj_dir, f"{prefix}_desc-optcomMIRDenoised_bold.nii.gz"
+    )
+    medn_mir_noise_file = op.join(
+        tedana_subj_dir, f"{prefix}_desc-optcomMIRDenoised_errorts.nii.gz"
+    )
+    medn_mir_noise_img = image.math_img(
+        "img1 - img2", img1=optcom_file, img2=medn_mir_file
+    )
+    medn_mir_noise_img.to_filename(medn_mir_noise_file)
+
     # Merge metadata into relevant jsons
     SUFFIXES = {
         "desc-goodSignal_mask": "Mask of voxels with good signal in at least the first echo.",
         "desc-optcomDenoised_bold": "Multi-echo denoised data from tedana.",
-        "desc-optcomAccepted_bold": (
-            "Multi-echo high Kappa data from tedana, compiled from accepted components."
-        ),
         "desc-optcom_bold": "Optimally combined data from tedana.",
         "desc-optcomMIRDenoised_bold": (
             "Multi-echo denoised data, further denoised with minimum image regression."
         ),
-        "desc-optcomAcceptedMIRDenoised_bold": (
-            "Multi-echo high Kappa data, further denoised with minimum image regression."
+        "desc-optcomDenoised_errorts": (
+            "Noise time series retained from multi-echo denoising the optimally combined data."
+        ),
+        "desc-optcomMIRDenoised_errorts": (
+            "Noise time series retained from multi-echo denoising (with minimum image regression) "
+            "the optimally combined data."
         ),
     }
     for suffix, description in SUFFIXES.items():
@@ -229,9 +243,7 @@ def run_tedana(project_dir, dset, subject):
         with open(suff_json_file, "w") as fo:
             json.dump(metadata, fo, sort_keys=True, indent=4)
 
-    tedana_data_desc = op.join(
-        tedana_subj_dir, f"{prefix}_dataset_description.json"
-    )
+    tedana_data_desc = op.join(tedana_subj_dir, f"{prefix}_dataset_description.json")
 
     if subject == first_subject:
         # Merge dataset descriptions
