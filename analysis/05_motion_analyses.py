@@ -36,260 +36,223 @@ ME-DN+GODEC, and ME-DN+GSR data
 - Figure S10
 - To expand with ME-DN+dGSR and ME-DN+MIR.
 """
+import logging
 import os.path as op
-import sys
+from os import makedirs
 
-import matplotlib.pyplot as plt
 import nibabel as nib
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from bids.grabbids import BIDSLayout
+from ddmra import analysis, plotting, utils
+from nilearn import input_data
+from scipy.spatial.distance import pdist, squareform
 
-# Distance-dependent motion-related artifact analysis code
-sys.path.append("/Users/tsalo/Documents/tsalo/ddmra/")
-import ddmra
-
+LGR = logging.getLogger("workflows")
 sns.set_style("white")
 
 
-def run_analyses(dset, pathstr, method, in_dir="/scratch/tsalo006/power-replication/"):
-    """"""
-    # Constants
-    fd_thresh = 0.2
-    n_iters = 10000
+def run_ddmra_in_native_space(
+    files,
+    mask_files,
+    standard_space_coordinates,
+    qc,
+    out_dir=".",
+    confounds=None,
+    n_iters=10000,
+    n_jobs=1,
+    qc_thresh=0.2,
+    window=1000,
+):
+    """Run scrubbing, high-low motion, and QCRSFC analyses.
 
-    dset_dir = op.join(in_dir, dset)
-    layout = BIDSLayout(dset_dir)
-    subjects = layout.get_subjects()
+    This is a copy of the ddmra package's workflow with changes to support
+    native-space analysis.
 
-    power_dir = op.join(dset_dir, "derivatives/power")
-    fp_dir = op.join(dset_dir, "derivatives/fmriprep")
-    out_dir = op.abspath("../figures/{m}/".format(m=method))
+    Parameters
+    ----------
+    files : (N,) list of nifti files
+        List of 4D (X x Y x Z x T) images in MNI space.
+    qc : (N,) list of array_like
+        List of 1D (T) numpy arrays with QC metric values per img (e.g., FD or respiration).
+    out_dir : str, optional
+        Output directory. Default is current directory.
+    confounds : None or (N,) list of array-like, optional
+        List of 2D (T) numpy arrays with confounds per img.
+        Default is None (no confounds are removed).
+    n_iters : int, optional
+        Number of iterations to run to generate null distributions. Default is 10000.
+    n_jobs : int, optional
+        The number of CPUs to use to do the computation. -1 means 'all CPUs'. Default is 1.
+    qc_thresh : float, optional
+        Threshold for QC metric used in scrubbing analysis. Default is 0.2 (for FD).
+    window : int, optional
+        Number of units (pairs of ROIs) to include when averaging to generate smoothing curve.
+        Default is 1000.
+    """
+    makedirs(out_dir, exist_ok=True)
 
-    imgs = []
-    fd_all = []
-    for subj in subjects:
-        fp_subj_dir = op.join(fp_dir, subj)
-        power_subj_dir = op.join(power_dir, subj)
-        preproc_dir = op.join(power_subj_dir, "preprocessed")
+    # create LGR with 'spam_application'
+    LGR.setLevel(logging.DEBUG)
+    # create file handler which logs even debug messages
+    fh = logging.FileHandler(op.join(out_dir, "log.tsv"))
+    fh.setLevel(logging.DEBUG)
+    # create formatter and add it to the handlers
+    formatter = logging.Formatter("%(asctime)s\t%(name)-12s\t%(levelname)-8s\t%(message)s")
+    fh.setFormatter(formatter)
+    # add the handlers to the LGR
+    LGR.addHandler(fh)
 
-        # Get confounds
-        conf_file = op.join(
-            fp_subj_dir,
-            "func",
-            "sub-{0}_task-rest_run-01_bold_confounds.tsv".format(subj),
+    LGR.info("Preallocating matrices")
+    n_subjects = len(files)
+    assert n_subjects == len(mask_files), f"{n_subjects} != {len(mask_files)}"
+
+    # Load atlas and associated masker
+    n_rois = standard_space_coordinates.shape[0]
+    triu_idx = np.triu_indices(n_rois, k=1)
+    distances = squareform(pdist(standard_space_coordinates))
+    distances = distances[triu_idx]
+
+    # Sorting index for distances
+    edge_sorting_idx = distances.argsort()
+    distances = distances[edge_sorting_idx]
+
+    # prep for qcrsfc and high-low motion analyses
+    mean_qc = np.array([np.mean(subj_qc) for subj_qc in qc])
+    z_corr_mats = np.zeros((n_subjects, distances.size))
+
+    # Get correlation matrices
+    ts_all = []
+    LGR.info("Building correlation matrices")
+    if confounds:
+        LGR.info("Regressing confounds out of data.")
+
+    for i_subj in range(n_subjects):
+        mask_file = mask_files[i_subj]
+        mask_data = nib.load(mask_file).get_fdata()
+        assert len(np.unique(mask_data)) == n_rois + 1, (
+            f"{len(np.unique(mask_data))} != {n_rois + 1}"
         )
-        conf_df = pd.read_csv(conf_file, sep="\t")
-        fd = conf_df["FramewiseDisplacement"].values
-        fd_all.append(fd)
+        del mask_data
 
-        # Functional data
-        func_file = op.join(preproc_dir, pathstr.format(subj=subj))
-        imgs.append(nib.load(func_file))
+        subj_space_masker = input_data.NiftiLabelsMasker(
+            labels_img=mask_file,
+            t_r=None,
+            smoothing_fwhm=4.0,
+            detrend=False,
+            standardize=False,
+            low_pass=None,
+            high_pass=None,
+        )
 
-    res_file = op.join(out_dir, "results.txt")
-    v1, v2 = 35, 100  # distances to evaluate
-    n_lines = min((n_iters, 50))
+        if confounds:
+            raw_ts = subj_space_masker.fit_transform(files[i_subj], confounds=confounds[i_subj]).T
+        else:
+            raw_ts = subj_space_masker.fit_transform(files[i_subj]).T
 
-    # Run analyses
-    ddmra.run(imgs, fd_all, out_dir=out_dir, n_iters=n_iters, qc_thresh=fd_thresh)
-    smc_sorted_dists = np.loadtxt(op.join(out_dir, "smc_sorted_distances.txt"))
-    all_sorted_dists = np.loadtxt(op.join(out_dir, "all_sorted_distances.txt"))
+        assert raw_ts.shape[0] == n_rois, f"{raw_ts.shape[0]} != {n_rois}"
 
-    # QC:RSFC analysis
-    # Assess significance
-    qcrsfc_rs = np.loadtxt(op.join(out_dir, "qcrsfc_analysis_values.txt"))
-    qcrsfc_smc = np.loadtxt(op.join(out_dir, "qcrsfc_analysis_smoothing_curve.txt"))
-    perm_qcrsfc_smc = np.loadtxt(op.join(out_dir, "qcrsfc_analysis_null_smoothing_curves.txt"))
-    intercept = ddmra.get_val(smc_sorted_dists, qcrsfc_smc, v1)
-    slope = ddmra.get_val(smc_sorted_dists, qcrsfc_smc, v1) - ddmra.get_val(
-        smc_sorted_dists, qcrsfc_smc, v2
+        ts_all.append(raw_ts)
+        raw_corrs = np.corrcoef(raw_ts)
+        raw_corrs = raw_corrs[triu_idx]
+        raw_corrs = raw_corrs[edge_sorting_idx]  # Sort from close to far ROI pairs
+        z_corr_mats[i_subj, :] = np.arctanh(raw_corrs)
+
+        del subj_space_masker
+
+    del (raw_corrs, raw_ts)
+
+    analysis_values = pd.DataFrame(columns=["qcrsfc", "highlow", "scrubbing"], index=distances)
+    analysis_values.index.name = "distance"
+
+    # QC:RSFC r analysis
+    LGR.info("Performing QC:RSFC analysis")
+    qcrsfc_values = analysis.qcrsfc_analysis(mean_qc, z_corr_mats)
+    analysis_values["qcrsfc"] = qcrsfc_values
+    qcrsfc_smoothing_curve = utils.moving_average(qcrsfc_values, window)
+    qcrsfc_smoothing_curve, smoothing_curve_distances = utils.average_across_distances(
+        qcrsfc_smoothing_curve,
+        distances,
     )
-    perm_intercepts = ddmra.get_val(smc_sorted_dists, perm_qcrsfc_smc, v1)
-    perm_slopes = ddmra.get_val(smc_sorted_dists, perm_qcrsfc_smc, v1) - ddmra.get_val(
-        smc_sorted_dists, perm_qcrsfc_smc, v2
-    )
 
-    p_inter = ddmra.rank_p(intercept, perm_intercepts, tail="upper")
-    p_slope = ddmra.rank_p(slope, perm_slopes, tail="upper")
-    with open(res_file, "w") as fo:
-        fo.write("QCRSFC analysis results:\n")
-        fo.write("\tIntercept = {0:.04f}, p = {1:.04f}\n".format(intercept, p_inter))
-        fo.write("\tSlope = {0:.04f}, p = {1:.04f}\n".format(-1 * slope, p_slope))
+    # Quick interlude to create the smoothing_curves DataFrame
+    smoothing_curves = pd.DataFrame(
+        columns=["qcrsfc", "highlow", "scrubbing"],
+        index=smoothing_curve_distances,
+    )
+    smoothing_curves.index.name = "distance"
 
-    # Generate plot
-    fig, ax = plt.subplots(figsize=(10, 14))
-    sns.regplot(
-        all_sorted_dists,
-        qcrsfc_rs,
-        ax=ax,
-        scatter=True,
-        fit_reg=False,
-        scatter_kws={"color": "red", "s": 2.0, "alpha": 1},
-    )
-    ax.axhline(0, xmin=0, xmax=200, color="black", linewidth=3)
-    for i in range(n_lines):
-        ax.plot(smc_sorted_dists, perm_qcrsfc_smc[i, :], color="black")
-    ax.plot(smc_sorted_dists, qcrsfc_smc, color="white")
-    ax.set_xlabel("Distance (mm)", fontsize=32)
-    ax.set_ylabel("QC:RSFC r\n(QC = mean FD)", fontsize=32, labelpad=-30)
-    ax.set_ylim(-0.5, 0.5)
-    ax.set_yticks([-0.5, 0.5])
-    ax.set_yticklabels([-0.5, 0.5], fontsize=32)
-    ax.set_xticks([0, 50, 100, 150])
-    ax.set_xticklabels([])
-    ax.set_xlim(0, 160)
-    ax.annotate(
-        "35 mm: {0:.04f}\n35-100 mm: {1:.04f}".format(p_inter, p_slope),
-        xy=(1, 0),
-        xycoords="axes fraction",
-        xytext=(-20, 20),
-        textcoords="offset pixels",
-        horizontalalignment="right",
-        verticalalignment="bottom",
-        fontsize=32,
-    )
-    fig.tight_layout()
-    fig.savefig(op.join(out_dir, "qcrsfc_analysis.png"), dpi=400)
-    del qcrsfc_rs, qcrsfc_smc, perm_qcrsfc_smc
+    smoothing_curves.loc[smoothing_curve_distances, "qcrsfc"] = qcrsfc_smoothing_curve
+    del qcrsfc_values, qcrsfc_smoothing_curve
 
     # High-low motion analysis
-    # Assess significance
-    hl_corr_diff = np.loadtxt(op.join(out_dir, "highlow_analysis_values.txt"))
-    hl_smc = np.loadtxt(op.join(out_dir, "highlow_analysis_smoothing_curve.txt"))
-    perm_hl_smc = np.loadtxt(op.join(out_dir, "highlow_analysis_null_smoothing_curves.txt"))
-    intercept = ddmra.get_val(smc_sorted_dists, hl_smc, v1)
-    slope = ddmra.get_val(smc_sorted_dists, hl_smc, v1) - ddmra.get_val(
-        smc_sorted_dists, hl_smc, v2
+    LGR.info("Performing high-low motion analysis")
+    highlow_values = analysis.highlow_analysis(mean_qc, z_corr_mats)
+    analysis_values["highlow"] = highlow_values
+    hl_smoothing_curve = utils.moving_average(highlow_values, window)
+    hl_smoothing_curve, smoothing_curve_distances = utils.average_across_distances(
+        hl_smoothing_curve,
+        distances,
     )
-    perm_intercepts = ddmra.get_val(smc_sorted_dists, perm_hl_smc, v1)
-    perm_slopes = ddmra.get_val(smc_sorted_dists, perm_hl_smc, v1) - ddmra.get_val(
-        smc_sorted_dists, perm_hl_smc, v2
-    )
-
-    p_inter = ddmra.rank_p(intercept, perm_intercepts, tail="upper")
-    p_slope = ddmra.rank_p(slope, perm_slopes, tail="upper")
-    with open(res_file, "a") as fo:
-        fo.write("High-low motion analysis results:\n")
-        fo.write("\tIntercept = {0:.04f}, p = {1:.04f}\n".format(intercept, p_inter))
-        fo.write("\tSlope = {0:.04f}, p = {1:.04f}\n".format(-1 * slope, p_slope))
-
-    # Generate plot
-    fig, ax = plt.subplots(figsize=(10, 14))
-    sns.regplot(
-        all_sorted_dists,
-        hl_corr_diff,
-        ax=ax,
-        scatter=True,
-        fit_reg=False,
-        scatter_kws={"color": "red", "s": 2, "alpha": 1},
-    )
-    ax.axhline(0, xmin=0, xmax=200, color="black", linewidth=3)
-    for i in range(n_lines):
-        ax.plot(smc_sorted_dists, perm_hl_smc[i, :], color="black")
-    ax.plot(smc_sorted_dists, hl_smc, color="white")
-    ax.set_xlabel("Distance (mm)", fontsize=32)
-    ax.set_ylabel(r"High-low motion $\Delta$r", fontsize=32)
-    ax.set_ylim(-0.5, 0.5)
-    ax.set_yticks([-0.5, 0.5])
-    ax.set_yticklabels([-0.5, 0.5], fontsize=32)
-    ax.set_xticks([0, 50, 100, 150])
-    ax.set_xticklabels([])
-    ax.set_xlim(0, 160)
-    ax.annotate(
-        "35 mm: {0:.04f}\n35-100 mm: {1:.04f}".format(p_inter, p_slope),
-        xy=(1, 0),
-        xycoords="axes fraction",
-        xytext=(-20, 20),
-        textcoords="offset pixels",
-        horizontalalignment="right",
-        verticalalignment="bottom",
-        fontsize=32,
-    )
-    fig.tight_layout()
-    fig.savefig(op.join(out_dir, "highlow_analysis.png"), dpi=400)
-    del hl_corr_diff, hl_smc, perm_hl_smc
+    smoothing_curves.loc[smoothing_curve_distances, "highlow"] = hl_smoothing_curve
+    del highlow_values, hl_smoothing_curve
 
     # Scrubbing analysis
-    mean_delta_r = np.loadtxt(op.join(out_dir, "scrubbing_analysis_values.txt"))
-    scrub_smc = np.loadtxt(op.join(out_dir, "scrubbing_analysis_smoothing_curve.txt"))
-    perm_scrub_smc = np.loadtxt(op.join(out_dir, "scrubbing_analysis_null_smoothing_curves.txt"))
+    LGR.info("Performing scrubbing analysis")
+    scrub_values = analysis.scrubbing_analysis(qc, ts_all, edge_sorting_idx, qc_thresh, perm=False)
+    analysis_values["scrubbing"] = scrub_values
+    scrub_smoothing_curve = utils.moving_average(scrub_values, window)
+    scrub_smoothing_curve, smoothing_curve_distances = utils.average_across_distances(
+        scrub_smoothing_curve,
+        distances,
+    )
+    smoothing_curves.loc[smoothing_curve_distances, "scrubbing"] = scrub_smoothing_curve
+    del scrub_values, scrub_smoothing_curve
 
-    # Assess significance
-    intercept = ddmra.get_val(smc_sorted_dists, scrub_smc, v1)
-    slope = ddmra.get_val(smc_sorted_dists, scrub_smc, v1) - ddmra.get_val(
-        smc_sorted_dists, scrub_smc, v2
+    analysis_values.reset_index(inplace=True)
+    smoothing_curves.reset_index(inplace=True)
+
+    analysis_values.to_csv(
+        op.join(out_dir, "analysis_values.tsv.gz"),
+        sep="\t",
+        line_terminator="\n",
+        index=False,
+    )
+    smoothing_curves.to_csv(
+        op.join(out_dir, "smoothing_curves.tsv.gz"),
+        sep="\t",
+        line_terminator="\n",
+        index=False,
     )
 
-    perm_intercepts = ddmra.get_val(smc_sorted_dists, perm_scrub_smc, v1)
-    perm_slopes = ddmra.get_val(smc_sorted_dists, perm_scrub_smc, v1) - ddmra.get_val(
-        smc_sorted_dists, perm_scrub_smc, v2
+    # Null distributions
+    LGR.info("Building null distributions with permutations")
+    qcrsfc_null_smoothing_curves, hl_null_smoothing_curves = analysis.other_null_distributions(
+        qc,
+        z_corr_mats,
+        distances,
+        window=window,
+        n_iters=n_iters,
+        n_jobs=n_jobs,
     )
-    p_inter = ddmra.rank_p(intercept, perm_intercepts, tail="upper")
-    p_slope = ddmra.rank_p(slope, perm_slopes, tail="upper")
-    with open(res_file, "a") as fo:
-        fo.write("Scrubbing analysis results:\n")
-        fo.write("\tIntercept = {0:.04f}, p = {1:.04f}\n".format(intercept, p_inter))
-        fo.write("\tSlope = {0:.04f}, p = {1:.04f}\n".format(-1 * slope, p_slope))
-
-    # Generate plot
-    fig, ax = plt.subplots(figsize=(10, 14))
-    sns.regplot(
-        all_sorted_dists,
-        mean_delta_r,
-        ax=ax,
-        scatter=True,
-        fit_reg=False,
-        scatter_kws={"color": "red", "s": 2, "alpha": 1},
+    scrub_null_smoothing_curves = analysis.scrubbing_null_distribution(
+        qc,
+        ts_all,
+        distances,
+        qc_thresh,
+        edge_sorting_idx,
+        window=window,
+        n_iters=n_iters,
+        n_jobs=n_jobs,
     )
-    ax.axhline(0, xmin=0, xmax=200, color="black", linewidth=3)
-    for i in range(n_lines):
-        ax.plot(smc_sorted_dists, perm_scrub_smc[i, :], color="black")
-    ax.plot(smc_sorted_dists, scrub_smc, color="white")
-    ax.set_xlabel("Distance (mm)", fontsize=32)
-    ax.set_ylabel(r"Scrubbing $\Delta$r", fontsize=32)
-    ax.set_ylim(-0.05, 0.05)
-    ax.set_yticks([-0.05, 0.05])
-    ax.set_yticklabels([-0.05, 0.05], fontsize=32)
-    ax.set_xticks([0, 50, 100, 150])
-    ax.set_xticklabels([])
-    ax.set_xlim(0, 160)
-    ax.annotate(
-        "35 mm: {0:.04f}\n35-100 mm: {1:.04f}".format(p_inter, p_slope),
-        xy=(1, 0),
-        xycoords="axes fraction",
-        xytext=(-20, 20),
-        textcoords="offset pixels",
-        horizontalalignment="right",
-        verticalalignment="bottom",
-        fontsize=32,
+
+    np.savez_compressed(
+        op.join(out_dir, "null_smoothing_curves.npz"),
+        qcrsfc=qcrsfc_null_smoothing_curves,
+        highlow=hl_null_smoothing_curves,
+        scrubbing=scrub_null_smoothing_curves,
     )
-    fig.tight_layout()
-    fig.savefig(op.join(out_dir, "scrubbing_analysis.png"), dpi=400)
-    del mean_delta_r, scrub_smc, perm_scrub_smc
 
+    del qcrsfc_null_smoothing_curves, hl_null_smoothing_curves, scrub_null_smoothing_curves
 
-def run(in_dir="/scratch/tsalo006/power-replication/"):
-    dsets = ["ds0", "ds1"]
-    methods = [
-        "fit_denoised",
-        "v3_2_no_gsr",
-        "v3_2_wavelet",
-        "v3_2_gsr",
-        "v2_5_no_gsr",
-        "v2_5_wavelet",
-        "v2_5_gsr",
-    ]
-    pathstrs = [
-        "denoised/fit_denoised/sub-{subj}_task-rest_run-01_t2smap.nii.gz",
-        "denoised/v3_2_no_gsr/sub-{subj}_task-rest_run-01_dn_ts_OC.nii.gz",
-        "denoised/v3_2_wavelet/sub-{subj}_task-rest_run-01_dn_ts_OC.nii.gz",
-        "denoised/v3_2_gsr/sub-{subj}_task-rest_run-01_dn_ts_OC_T1c.nii.gz",
-        "denoised/v2_5_no_gsr/sub-{subj}_task-rest_run-01_dn_ts_OC.nii.gz",
-        "denoised/v2_5_wavelet/sub-{subj}_task-rest_run-01_dn_ts_OC.nii.gz",
-        "denoised/v2_5_gsr/sub-{subj}_task-rest_run-01_dn_ts_OC_T1c.nii.gz",
-    ]
-    for dset in dsets:
-        for j, method in enumerate(methods):
-            run_analyses(dset, pathstrs[j], method, in_dir=in_dir)
+    plotting.plot_results(out_dir)
