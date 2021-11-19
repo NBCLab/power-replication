@@ -515,7 +515,7 @@ def compile_physio_regressors(
     bpm_change = np.diff(ihr, prepend=ihr[0])
 
     # From https://stackoverflow.com/a/45795263/2589328
-    value_idx = np.arange(ihr.shape)
+    value_idx = np.arange(ihr.shape[0])
     unsus_idx = np.where(bpm_change <= 0)
     sus_interpolator = interp1d(value_idx[unsus_idx], ihr[unsus_idx])
     new_ihr = sus_interpolator(value_idx)
