@@ -16,168 +16,161 @@ sns.set_style("whitegrid")
 
 FIGURES_CONFIG = {
     # Based on Fig. 1.
-    "denoising_plot.png":
-        {
-            "carpet": [
-                {
-                    "ref": "OC",
-                    "title": "Optimally combined (not denoised)",
-                },
-                {
-                    "ref": "MEDN Noise",
-                    "title": "Noise components (S0-dependent; non-BOLD-like; discarded)",
-                },
-                {
-                    "ref": "MEDN",
-                    "title": "Multi-echo ICA denoised (R2*-dependent; BOLD-like; retained)",
-                },
-            ],
-            "timeseries": [
-                "trans_x",
-                "trans_y",
-                "trans_z",
-                "rot_x",
-                "rot_y",
-                "rot_z",
-                "framewise_displacement",
-            ],
-        },
+    "denoising_plot.png": {
+        "carpet": [
+            {
+                "ref": "OC",
+                "title": "Optimally combined (not denoised)",
+            },
+            {
+                "ref": "MEDN Noise",
+                "title": "Noise components (S0-dependent; non-BOLD-like; discarded)",
+            },
+            {
+                "ref": "MEDN",
+                "title": "Multi-echo ICA denoised (R2*-dependent; BOLD-like; retained)",
+            },
+        ],
+        "timeseries": [
+            "trans_x",
+            "trans_y",
+            "trans_z",
+            "rot_x",
+            "rot_y",
+            "rot_z",
+            "framewise_displacement",
+        ],
+    },
     # Based on Fig. 3A.
-    "godec_plot.png":
-        {
-            "carpet": [
-                {
-                    "ref": "MEDN",
-                    "title": "Multi-echo ICA denoised",
-                },
-                {
-                    "ref": "MEDN+GODEC Noise (lowrank)",
-                    "title": "Low-rank components",
-                },
-                {
-                    "ref": "MEDN+GODEC (sparse)",
-                    "title": "Sparse components",
-                },
-            ],
-            "timeseries": [
-                "trans_x",
-                "trans_y",
-                "trans_z",
-                "rot_x",
-                "rot_y",
-                "rot_z",
-                "framewise_displacement",
-            ],
-        },
+    "godec_plot.png": {
+        "carpet": [
+            {
+                "ref": "MEDN",
+                "title": "Multi-echo ICA denoised",
+            },
+            {
+                "ref": "MEDN+GODEC Noise (lowrank)",
+                "title": "Low-rank components",
+            },
+            {
+                "ref": "MEDN+GODEC (sparse)",
+                "title": "Sparse components",
+            },
+        ],
+        "timeseries": [
+            "trans_x",
+            "trans_y",
+            "trans_z",
+            "rot_x",
+            "rot_y",
+            "rot_z",
+            "framewise_displacement",
+        ],
+    },
     # Based on Fig. 3B.
-    "gsr_plot.png":
-        {
-            "carpet": [
-                {
-                    "ref": "MEDN",
-                    "title": "Multi-echo ICA denoised",
-                },
-                {
-                    "ref": "MEDN+GSR Noise",
-                    "title": "Removed by global signal regression",
-                },
-                {
-                    "ref": "MEDN+GSR",
-                    "title": "Residual signal",
-                },
-            ],
-            "timeseries": [
-                "trans_x",
-                "trans_y",
-                "trans_z",
-                "rot_x",
-                "rot_y",
-                "rot_z",
-                "framewise_displacement",
-            ],
-        },
+    "gsr_plot.png": {
+        "carpet": [
+            {
+                "ref": "MEDN",
+                "title": "Multi-echo ICA denoised",
+            },
+            {
+                "ref": "MEDN+GSR Noise",
+                "title": "Removed by global signal regression",
+            },
+            {
+                "ref": "MEDN+GSR",
+                "title": "Residual signal",
+            },
+        ],
+        "timeseries": [
+            "trans_x",
+            "trans_y",
+            "trans_z",
+            "rot_x",
+            "rot_y",
+            "rot_z",
+            "framewise_displacement",
+        ],
+    },
     # Based on Fig. S3B.
-    "fit_plot.png":
-        {
-            "carpet": [
-                {
-                    "ref": "TE30",
-                    "title": "TE30",  # was "TE2 (28ms)" in original paper
-                },
-                {
-                    "ref": "FIT-S0",
-                    "title": "S0 estimate",
-                },
-                {
-                    "ref": "FIT-R2",
-                    "title": "T2* estimate",  # was "R2* estimate" in original paper
-                },
-            ],
-            "timeseries": [
-                "trans_x",
-                "trans_y",
-                "trans_z",
-                "rot_x",
-                "rot_y",
-                "rot_z",
-                "framewise_displacement",
-            ],
-        },
-
+    "fit_plot.png": {
+        "carpet": [
+            {
+                "ref": "TE30",
+                "title": "TE30",  # was "TE2 (28ms)" in original paper
+            },
+            {
+                "ref": "FIT-S0",
+                "title": "S0 estimate",
+            },
+            {
+                "ref": "FIT-R2",
+                "title": "T2* estimate",  # was "R2* estimate" in original paper
+            },
+        ],
+        "timeseries": [
+            "trans_x",
+            "trans_y",
+            "trans_z",
+            "rot_x",
+            "rot_y",
+            "rot_z",
+            "framewise_displacement",
+        ],
+    },
     # Novel, but based on Fig. 3B.
-    "dgsr_plot.png":
-        {
-            "carpet": [
-                {
-                    "ref": "MEDN",
-                    "title": "Multi-echo ICA denoised",
-                },
-                {
-                    "ref": "MEDN+dGSR Noise",
-                    "title": "Removed by dynamic global signal regression (rapidtide)",
-                },
-                {
-                    "ref": "MEDN+dGSR",
-                    "title": "Residual signal",
-                },
-            ],
-            "timeseries": [
-                "trans_x",
-                "trans_y",
-                "trans_z",
-                "rot_x",
-                "rot_y",
-                "rot_z",
-                "framewise_displacement",
-            ],
-        },
+    "dgsr_plot.png": {
+        "carpet": [
+            {
+                "ref": "MEDN",
+                "title": "Multi-echo ICA denoised",
+            },
+            {
+                "ref": "MEDN+dGSR Noise",
+                "title": "Removed by dynamic global signal regression (rapidtide)",
+            },
+            {
+                "ref": "MEDN+dGSR",
+                "title": "Residual signal",
+            },
+        ],
+        "timeseries": [
+            "trans_x",
+            "trans_y",
+            "trans_z",
+            "rot_x",
+            "rot_y",
+            "rot_z",
+            "framewise_displacement",
+        ],
+    },
     # Novel, but based on Fig. 3B.
-    "acompcor_plot.png":
-        {
-            "carpet": [
-                {
-                    "ref": "MEDN",
-                    "title": "Multi-echo ICA denoised",
-                },
-                {
-                    "ref": "MEDN+aCompCor Noise",
-                    "title": "Removed by aCompCor",
-                },
-                {
-                    "ref": "MEDN+aCompCor",
-                    "title": "Residual signal",
-                },
-            ],
-            "timeseries": [
-                "trans_x",
-                "trans_y",
-                "trans_z",
-                "rot_x",
-                "rot_y",
-                "rot_z",
-                "framewise_displacement",
-            ],
-        },
+    "acompcor_plot.png": {
+        "carpet": [
+            {
+                "ref": "MEDN",
+                "title": "Multi-echo ICA denoised",
+            },
+            {
+                "ref": "MEDN+aCompCor Noise",
+                "title": "Removed by aCompCor",
+            },
+            {
+                "ref": "MEDN+aCompCor",
+                "title": "Residual signal",
+            },
+        ],
+        "timeseries": [
+            "trans_x",
+            "trans_y",
+            "trans_z",
+            "rot_x",
+            "rot_y",
+            "rot_z",
+            "framewise_displacement",
+        ],
+    },
 }
 
 TIMESERIES_RENAMER = {
@@ -310,9 +303,9 @@ def _plot_carpet(dseg, bold, title, fig, ax):
     display.axes[-1].axhline(n_gm_voxels, color="#0ffb03", linewidth=2)
     display.axes[-1].set_title(title, fontsize=16)
     display.axes[-2].annotate(
-        'Gray\nMatter',
+        "Gray\nMatter",
         xy=(-1.6, n_gm_voxels / 2),
-        xycoords='data',
+        xycoords="data",
         rotation=90,
         fontsize=14,
         annotation_clip=False,
@@ -320,9 +313,9 @@ def _plot_carpet(dseg, bold, title, fig, ax):
         ha="center",
     )
     display.axes[-2].annotate(
-        'White\nMatter / CSF',
+        "White\nMatter / CSF",
         xy=(-1.6, n_gm_voxels + ((n_brain_voxels - n_gm_voxels) / 2)),
-        xycoords='data',
+        xycoords="data",
         rotation=90,
         fontsize=14,
         annotation_clip=False,
@@ -337,7 +330,9 @@ def plot_three_part_carpet(out_file, seg_file, t_r, config, sub, prefix):
     timeseries = config["timeseries"]
     confounds_file = TARGET_FILES["confounds"].format(sub=sub, prefix=prefix)
     carpet_config = config["carpet"]
-    target_files = [TARGET_FILES[f["ref"]].format(sub=sub, prefix=prefix) for f in carpet_config]
+    target_files = [
+        TARGET_FILES[f["ref"]].format(sub=sub, prefix=prefix) for f in carpet_config
+    ]
     titles = [f["title"] for f in carpet_config]
 
     # Get confounds
@@ -376,7 +371,7 @@ def plot_three_part_carpet(out_file, seg_file, t_r, config, sub, prefix):
         [0, f"{int(x_arr[-1] // 60)}:{str(int(x_arr[-1] % 60)).zfill(2)}"],
     )
     display.axes[-3].tick_params(axis="x", which="both", length=0, labelsize=12)
-    display.axes[-3].spines['bottom'].set_position(('outward', 0))
+    display.axes[-3].spines["bottom"].set_position(("outward", 0))
 
     fig.savefig(out_file)
 
