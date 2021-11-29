@@ -2,10 +2,15 @@
 import os.path as op
 from glob import glob
 
+import matplotlib as mpl
 import matplotlib.pyplot as plt
+import nibabel as nib
+import numpy as np
 import pandas as pd
 import seaborn as sns
-from nilearn import plotting
+from matplotlib import gridspec as mgs
+from nilearn import image, masking, plotting
+from scipy import stats
 
 sns.set_style("whitegrid")
 
@@ -186,7 +191,7 @@ TIMESERIES_RENAMER = {
 }
 
 TARGET_FILES = {
-    "confounds": "fmriprep/{sub}/func/{prefix}_desc-confounds_timeseries.tsv",
+    "confounds": "power/{sub}/func/{prefix}_desc-confounds_timeseries.tsv",
     "TE30": "power/{sub}/func/{prefix}_desc-TE30_bold.nii.gz",
     "OC": "tedana/{sub}/func/{prefix}_desc-optcom_bold.nii.gz",
     "FIT-R2": "t2smap/{sub}/func/{prefix}_T2starmap.nii.gz",
@@ -209,10 +214,131 @@ TARGET_FILES = {
 }
 
 
-def plot_three_part_carpet(out_file, seg_file, config, sub, prefix):
+def _plot_timeseries(df, x_arr, fig, ax):
+    assert df.shape[0] == x_arr.size, f"{df.shape[0]} != {x_arr.shape}"
+
+    palette = {
+        "X": "#ea2807",
+        "Y": "#66ff6b",
+        "Z": "#2e35fd",
+        "P": "#5ffffc",
+        "R": "#fe4fff",
+        "Ya": "#e9e65d",
+        "FD": "#fe2a32",
+        "Heart rate": "#a6fe96",
+        "Resp. belt": "#625afd",
+    }
+
+    ax_right = None
+    if "FD" in df.columns:
+        fd_arr = df["FD"].values
+        df = df[[c for c in df.columns if c != "FD"]]
+        ax_right = ax.twinx()
+        ax_right.plot(x_arr, fd_arr, color=palette["FD"], label="FD", linewidth=2)
+        ax_right.set_ylim(np.floor(np.min(fd_arr)), np.ceil(np.max(fd_arr)))
+        ax_right.set_yticks((np.floor(np.min(fd_arr)), np.ceil(np.max(fd_arr))))
+        ax_right.tick_params(axis="y", which="both", colors=palette["FD"])
+        ax_right.set_ylabel(
+            "FD\n(mm)",
+            color=palette["FD"],
+            rotation=270,
+            labelpad=30,
+            fontsize=14,
+        )
+        ax_right.legend()
+        ax_right.tick_params(axis="y", which="both", length=0)
+
+    all_min, all_max = 0, 0
+    for i_col, label in enumerate(df.columns):
+        arr = df[label].values
+        ax.plot(x_arr, arr, color=palette[label], label=label)
+        all_min = np.minimum(all_min, np.min(arr))
+        all_max = np.maximum(all_max, np.max(arr))
+
+    ax.set_ylim(np.floor(all_min), np.ceil(all_max))
+    ax.set_yticks((np.floor(all_min), np.ceil(all_max)))
+    ax.set_xlim(x_arr[0], x_arr[-1])
+    ax.tick_params(axis="y", which="both", length=0)
+    ax.xaxis.set_visible(False)
+    ax.set_ylabel("Position\n(mm)", fontsize=14)
+    ax.legend(ncol=3)
+    ax.set_title("Head position & motion", fontsize=16)
+
+    return fig, ax, ax_right
+
+
+def _plot_carpet(dseg, bold, title, fig, ax):
+    palette = [
+        "#002d65",
+        "#014c93",
+        "#0365cb",
+        "#02cd00",
+        "#018901",
+        "#006601",
+        "#e7ef13",
+        "#c2c503",
+    ]
+    cmap = mpl.colors.LinearSegmentedColormap.from_list("Power", palette, len(palette))
+
+    mask_img = image.math_img("img > 0", img=dseg)
+    bold_data = masking.apply_mask(bold, mask_img)
+    modes = stats.mode(bold_data, axis=0)  # voxelwise mode
+    modes = np.squeeze(modes[0])
+    scalars = 1000 - modes
+    bold_mode1000 = bold_data + scalars[None, :]
+    bold_mode1000 = masking.unmask(bold_mode1000, mask_img)
+
+    dseg_vals = nib.load(dseg).get_fdata()
+    n_gm_voxels = np.sum(np.logical_and(dseg_vals <= 3, dseg_vals > 0)) + 1
+    n_brain_voxels = np.sum(dseg_vals > 0)
+
+    display = plotting.plot_carpet(
+        bold_mode1000,
+        mask_img=dseg,
+        detrend=False,
+        figure=fig,
+        axes=ax,
+        cmap=cmap,
+    )
+
+    display.axes[-1].xaxis.set_visible(False)
+    display.axes[-1].yaxis.set_visible(False)
+    display.axes[-1].spines["top"].set_visible(False)
+    display.axes[-1].spines["bottom"].set_visible(False)
+    display.axes[-1].spines["left"].set_visible(False)
+    display.axes[-1].spines["right"].set_visible(False)
+    display.axes[-1].axhline(n_gm_voxels, color="#0ffb03", linewidth=2)
+    display.axes[-1].set_title(title, fontsize=16)
+    display.axes[-2].annotate(
+        'Gray\nMatter',
+        xy=(-1.6, n_gm_voxels / 2),
+        xycoords='data',
+        rotation=90,
+        fontsize=14,
+        annotation_clip=False,
+        va="center",
+        ha="center",
+    )
+    display.axes[-2].annotate(
+        'White\nMatter / CSF',
+        xy=(-1.6, n_gm_voxels + ((n_brain_voxels - n_gm_voxels) / 2)),
+        xycoords='data',
+        rotation=90,
+        fontsize=14,
+        annotation_clip=False,
+        va="center",
+        ha="center",
+    )
+    return display
+
+
+def plot_three_part_carpet(out_file, seg_file, t_r, config, sub, prefix):
     """Based on Figure 1."""
     timeseries = config["timeseries"]
     confounds_file = TARGET_FILES["confounds"].format(sub=sub, prefix=prefix)
+    carpet_config = config["carpet"]
+    target_files = [TARGET_FILES[f["ref"]].format(sub=sub, prefix=prefix) for f in carpet_config]
+    titles = [f["title"] for f in carpet_config]
 
     # Get confounds
     confounds_df = pd.read_table(confounds_file)
@@ -220,11 +346,37 @@ def plot_three_part_carpet(out_file, seg_file, config, sub, prefix):
     confounds_df = confounds_df.rename(columns=TIMESERIES_RENAMER)
     confounds_df = confounds_df[new_columns]
 
-    fig, axes = plt.subplots(figsize=(16, 8), nrows=4, gridspec_kw={"height_ratios": [1, 3, 3, 3]})
+    x_arr = np.linspace(0, (confounds_df.shape[0] - 1) * t_r, confounds_df.shape[0])
 
-    for i_carpet, carpet_target in enumerate(config["carpet"]):
-        target_file = TARGET_FILES[carpet_target["ref"]].format(sub=sub, prefix=prefix)
-        display = plotting.plot_carpet(target_file, mask_img=seg_file, figure=fig, axes=axes[i_carpet + 1])
+    fig, axes = plt.subplots(
+        figsize=(16, 16), nrows=4, gridspec_kw={"height_ratios": [1, 3, 3, 3]}
+    )
+
+    _plot_carpet(seg_file, target_files[0], titles[0], fig, axes[1])
+    _plot_carpet(seg_file, target_files[1], titles[1], fig, axes[2])
+    display = _plot_carpet(seg_file, target_files[2], titles[2], fig, axes[3])
+
+    last_carpet_ax = display.axes[1]
+    width_ratio = last_carpet_ax.get_subplotspec().get_gridspec().get_width_ratios()
+
+    gs = mgs.GridSpecFromSubplotSpec(
+        1,
+        2,
+        subplot_spec=axes[0],
+        width_ratios=width_ratio,
+        wspace=0.0,
+    )
+    ax0 = plt.subplot(gs[1])
+
+    _plot_timeseries(confounds_df, x_arr, fig, ax0)
+    display.axes[-3].xaxis.set_visible(True)
+    display.axes[-3].set_xlabel("Time (min)", fontsize=14, labelpad=-10)
+    display.axes[-3].set_xticks([0, len(x_arr)])
+    display.axes[-3].set_xticklabels(
+        [0, f"{int(x_arr[-1] // 60)}:{str(int(x_arr[-1] % 60)).zfill(2)}"],
+    )
+    display.axes[-3].tick_params(axis="x", which="both", length=0, labelsize=12)
+    display.axes[-3].spines['bottom'].set_position(('outward', 0))
 
     fig.savefig(out_file)
 
