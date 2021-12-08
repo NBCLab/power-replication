@@ -376,9 +376,54 @@ def plot_three_part_carpet(out_file, seg_file, t_r, config, sub, prefix):
     fig.savefig(out_file)
 
 
-def plot_two_part_carpet():
+def plot_two_part_carpet(out_file, seg_file, t_r, config, sub, prefix):
     """Based on Figure S7. Similar to three-part carpet, but without a "noise" subplot."""
-    ...
+    timeseries = config["timeseries"]
+    confounds_file = TARGET_FILES["confounds"].format(sub=sub, prefix=prefix)
+    carpet_config = config["carpet"]
+    target_files = [
+        TARGET_FILES[f["ref"]].format(sub=sub, prefix=prefix) for f in carpet_config
+    ]
+    titles = [f["title"] for f in carpet_config]
+
+    # Get confounds
+    confounds_df = pd.read_table(confounds_file)
+    new_columns = [TIMESERIES_RENAMER.get(k, k) for k in timeseries]
+    confounds_df = confounds_df.rename(columns=TIMESERIES_RENAMER)
+    confounds_df = confounds_df[new_columns]
+
+    x_arr = np.linspace(0, (confounds_df.shape[0] - 1) * t_r, confounds_df.shape[0])
+
+    fig, axes = plt.subplots(
+        figsize=(16, 11.2), nrows=3, gridspec_kw={"height_ratios": [1, 3, 3]}
+    )
+
+    _plot_carpet(seg_file, target_files[0], titles[0], fig, axes[1])
+    display = _plot_carpet(seg_file, target_files[1], titles[1], fig, axes[2])
+
+    last_carpet_ax = display.axes[1]
+    width_ratio = last_carpet_ax.get_subplotspec().get_gridspec().get_width_ratios()
+
+    gs = mgs.GridSpecFromSubplotSpec(
+        1,
+        2,
+        subplot_spec=axes[0],
+        width_ratios=width_ratio,
+        wspace=0.0,
+    )
+    ax0 = plt.subplot(gs[1])
+
+    _plot_timeseries(confounds_df, x_arr, fig, ax0)
+    display.axes[-3].xaxis.set_visible(True)
+    display.axes[-3].set_xlabel("Time (min)", fontsize=14, labelpad=-10)
+    display.axes[-3].set_xticks([0, len(x_arr)])
+    display.axes[-3].set_xticklabels(
+        [0, f"{int(x_arr[-1] // 60)}:{str(int(x_arr[-1] % 60)).zfill(2)}"],
+    )
+    display.axes[-3].tick_params(axis="x", which="both", length=0, labelsize=12)
+    display.axes[-3].spines["bottom"].set_position(("outward", 0))
+
+    fig.savefig(out_file)
 
 
 def plot_three_part_carpet_with_physio():
