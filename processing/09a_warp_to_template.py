@@ -130,7 +130,7 @@ def main(project_dir, dset, subject):
         out_file = op.join(out_dir, out_name)
 
         transform_to_standard_space(
-            native_space_target_file,
+            temp_name,
             standard_space_file,
             out_file,
             xform_native_to_t1w,
