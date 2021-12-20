@@ -130,7 +130,6 @@ def main(project_dir, dset, subject):
             split_name = temp_name.split("_")
             split_name.insert(-1, "space-MNI152NLin6Asym")
             out_name = "_".join(split_name)
-            raise ValueError(f"No usable entities found for {temp_name}")
 
         out_file = op.join(out_dir, out_name)
         full_native_space_file = op.join(deriv_dir, temp_name)
