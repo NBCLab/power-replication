@@ -1,6 +1,7 @@
 """Identify any subjects without all expected denoising derivatives."""
 import os.path as op
 from glob import glob
+from pprint import pprint
 
 import pandas as pd
 
@@ -69,6 +70,7 @@ if __name__ == "__main__":
             )
         )
         if len(medn_files) != 1:
+            print(f"Dataset {dataset} subject {sub} missing MEDN file.")
             bad_subs.append((dataset, sub))
             continue
 
@@ -98,4 +100,4 @@ if __name__ == "__main__":
                     bad_subs.append((dataset, sub))
 
     bad_subs = sorted(list(set(bad_subs)))
-    print(bad_subs)
+    pprint(bad_subs)

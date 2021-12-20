@@ -73,7 +73,8 @@ def main(project_dir, dset, subject):
 
     # Find native-space map to break down into prefix
     medn_files = glob(op.join(tedana_subj_dir, "*_desc-optcomDenoised_bold.nii.gz"))
-    assert len(medn_files) == 1
+    medn_files = [f for f in medn_files if "space-MNI152NLin6Asym" not in f]
+    assert len(medn_files) == 1, medn_files
     medn_file = medn_files[0]
     medn_name = op.basename(medn_file)
     prefix = medn_name.split("desc-")[0].rstrip("_")
