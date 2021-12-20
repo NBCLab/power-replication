@@ -28,7 +28,7 @@ conda install \
     ipywidgets \
     jupyterlab \
     nibabel \
-    nilearn \
+    git+https://github.com/tsalo/nilearn.git@e90e3f9f63474b63c56e8e7fcaa1ca604dd06156 \
     nitransforms \
     git+https://github.com/tsalo/rapidtide.git@f86237d8867222d645dd53556cc4617ba4d7ebde \
     git+https://github.com/tsalo/tedana.git@099d508db7ad13164918ad48178638ae935fed52 \
