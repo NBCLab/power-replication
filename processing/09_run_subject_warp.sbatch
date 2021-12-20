@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=denoising
+#SBATCH --job-name=warp
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
@@ -8,8 +8,8 @@
 #SBATCH --qos=pq_nbc
 #SBATCH --partition=investor
 # Outputs ----------------------------------
-#SBATCH --output=/home/data/nbc/misc-projects/Salo_PowerReplication/code/jobs/denoising-%j-%A-%a.out
-#SBATCH --error=/home/data/nbc/misc-projects/Salo_PowerReplication/code/jobs/denoising-%j-%A-%a.err
+#SBATCH --output=/home/data/nbc/misc-projects/Salo_PowerReplication/code/jobs/warp-%j-%A-%a.out
+#SBATCH --error=/home/data/nbc/misc-projects/Salo_PowerReplication/code/jobs/warp-%j-%A-%a.err
 # ------------------------------------------
 # USAGE information:
 # Use the -array= option.
