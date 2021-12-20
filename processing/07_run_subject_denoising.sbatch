@@ -47,11 +47,12 @@ echo Commandline: $cmd
 eval $cmd
 
 # Run python script inside fmriprep environment
-cmd="python ${CODE_DIR}/processing/05_generate_single-echo_confounds.py \
-      --dset ${dset_name} --subject $subject"
+# Already been run, don't need to re-run.
+# cmd="python ${CODE_DIR}/processing/05_generate_single-echo_confounds.py \
+#       --dset ${dset_name} --subject $subject"
 # Setup done, run the command
-echo Commandline: $cmd
-eval $cmd
+# echo Commandline: $cmd
+# eval $cmd
 
 # Run python script inside fmriprep environment
 cmd="python ${CODE_DIR}/processing/06_run_single-echo_denoising.py \
