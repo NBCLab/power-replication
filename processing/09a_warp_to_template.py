@@ -12,8 +12,6 @@ TARGET_FILES = [
     "tedana/{sub}/func/{prefix}_desc-optcom_bold.nii.gz",
     # MEDN
     "tedana/{sub}/func/{prefix}_desc-optcomDenoised_bold.nii.gz",
-    # MEDN Noise
-    "tedana/{sub}/func/{prefix}_desc-optcomDenoised_errorts.nii.gz",
     # MEDN+MIR
     "tedana/{sub}/func/{prefix}_desc-optcomMIRDenoised_bold.nii.gz",
     # MEDN+MIR Noise
@@ -40,6 +38,8 @@ TARGET_FILES = [
     "nuisance-regressions/{sub}/func/{prefix}_desc-GSR_errorts.nii.gz",
     # MEDN+Nuis-Reg
     "nuisance-regressions/{sub}/func/{prefix}_desc-NuisReg_bold.nii.gz",
+    # MEDN Noise
+    "tedana/{sub}/func/{prefix}_desc-optcomDenoised_errorts.nii.gz",
 ]
 PHYSIO_TARGET_FILES = [
     # MEDN+RV-Reg
