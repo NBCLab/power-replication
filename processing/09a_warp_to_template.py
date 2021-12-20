@@ -128,9 +128,10 @@ def main(project_dir, dset, subject):
             raise ValueError(f"No usable entities found for {temp_name}")
 
         out_file = op.join(out_dir, out_name)
+        full_native_space_file = op.join(out_dir, temp_name)
 
         transform_to_standard_space(
-            temp_name,
+            full_native_space_file,
             standard_space_file,
             out_file,
             xform_native_to_t1w,
