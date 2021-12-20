@@ -20,7 +20,7 @@ set -e
 
 #==============Shell script==============#
 # Load the software needed
-module load singularity-3.5.3
+module load ants-2.3.5
 
 PROJECT="Salo_PowerReplication"
 DATA_DIR="/home/data/nbc/misc-projects"
