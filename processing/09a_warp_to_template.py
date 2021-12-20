@@ -66,11 +66,9 @@ def transform_to_standard_space(
 
 def main(project_dir, dset, subject):
     deriv_dir = op.join(project_dir, dset, "derivatives")
-    power_dir = op.join(deriv_dir, "power")
     tedana_dir = op.join(deriv_dir, "tedana")
     tedana_subj_dir = op.join(tedana_dir, subject, "func")
     fmriprep_subj_dir = op.join(deriv_dir, "fmriprep", subject)
-    out_dir = op.join(power_dir, subject, "func")
 
     # Find native-space map to break down into prefix
     medn_files = glob(op.join(tedana_subj_dir, "*_desc-optcomDenoised_bold.nii.gz"))
@@ -131,7 +129,7 @@ def main(project_dir, dset, subject):
             split_name.insert(-1, "space-MNI152NLin6Asym")
             out_name = "_".join(split_name)
 
-        out_file = op.join(out_dir, out_name)
+        out_file = op.join(deriv_dir, out_name)
         full_native_space_file = op.join(deriv_dir, temp_name)
 
         transform_to_standard_space(
