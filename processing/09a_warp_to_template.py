@@ -56,6 +56,7 @@ def transform_to_standard_space(
     xform_native_to_t1w,
     xform_t1w_to_std,
 ):
+    print(f"Transforming {native_space_target_file}", flush=True)
     str_ = (
         f"antsApplyTransforms -d 3 -i {native_space_target_file} "
         f"-r {template} -o {out_file} "
