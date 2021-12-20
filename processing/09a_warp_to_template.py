@@ -126,6 +126,10 @@ def main(project_dir, dset, subject):
             out_name = temp1 + "_space-MNI152NLin6Asym_desc-" + temp2
 
         else:
+            # Just add it right before the suffix.
+            split_name = temp_name.split("_")
+            split_name.insert(-1, "space-MNI152NLin6Asym")
+            out_name = "_".join(split_name)
             raise ValueError(f"No usable entities found for {temp_name}")
 
         out_file = op.join(out_dir, out_name)
