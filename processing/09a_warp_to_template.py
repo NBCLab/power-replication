@@ -64,8 +64,8 @@ def transform_to_standard_space(
     )
     try:
         run_command(str_)
-    except Exception as exc:
-        print(f"Failed due to:\n{exc.message}")
+    except:
+        print(f"Failed.", flush=True)
 
 
 def main(project_dir, dset, subject):
