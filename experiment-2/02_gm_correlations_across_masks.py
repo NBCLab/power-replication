@@ -1,9 +1,12 @@
-"""
-Mean cortical signal correlated with signal of all gray matter
+"""Experiment 2, Analysis Group 2.
+
+Comparing measures of global signal.
+
+Mean cortical signal of MEDN correlated with signal of all gray matter
 -   Distribution of Pearson correlation coefficients
 -   Page 2, right column, first paragraph
 
-Mean cortical signal correlated with signal of whole brain
+Mean cortical signal of MEDN correlated with signal of whole brain
 -   Distribution of Pearson correlation coefficients
 -   Page 2, right column, first paragraph
 """
@@ -11,7 +14,6 @@ import os.path as op
 
 import nibabel as nib
 import numpy as np
-from bids.grabbids import BIDSLayout
 from nilearn.masking import apply_mask
 from scipy.stats import ttest_1samp
 

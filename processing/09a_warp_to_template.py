@@ -65,7 +65,7 @@ def transform_to_standard_space(
     try:
         run_command(str_)
     except:
-        print(f"Failed.", flush=True)
+        print("Failed.", flush=True)
 
 
 def main(project_dir, dset, subject):
