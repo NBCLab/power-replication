@@ -69,7 +69,7 @@ if __name__ == "__main__":
                 )
             )
         )
-        if len(medn_files) != 1:
+        if len(medn_files) == 0:
             print(f"Dataset {dataset} subject {sub} missing MEDN file.")
             bad_subs.append((dataset, sub))
             continue
