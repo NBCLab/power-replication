@@ -60,7 +60,7 @@ def transform_to_standard_space(
     str_ = (
         f"antsApplyTransforms -d 3 -i {native_space_target_file} "
         f"-r {template} -o {out_file} "
-        f"-n NearestNeighbor -t {xform_native_to_t1w} {xform_t1w_to_std}"
+        f"-n LanczosWindowedSinc -t {xform_native_to_t1w} {xform_t1w_to_std}"
     )
     try:
         run_command(str_)
