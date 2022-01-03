@@ -18,3 +18,8 @@ DDMRA analyses on the following inputs:
 - MEDN+MIR
 - MEDN+MIR Noise
 """
+
+
+def run_ddmra_analyses():
+    """Run DDMRA analyses on each of the required derivatives, across datasets."""
+    ...
