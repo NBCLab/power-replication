@@ -7,45 +7,45 @@ import pandas as pd
 
 TARGET_FILES = [
     # TE30
-    "power/{sub}/func/{prefix}_space-MNI152NLin6Asym_desc-TE30_bold.nii.gz",
+    "power/{sub}/func/{prefix}_desc-TE30_bold.nii.gz",
     # OC
-    "tedana/{sub}/func/{prefix}_space-MNI152NLin6Asym_desc-optcom_bold.nii.gz",
+    "tedana/{sub}/func/{prefix}_desc-optcom_bold.nii.gz",
     # MEDN
-    "tedana/{sub}/func/{prefix}_space-MNI152NLin6Asym_desc-optcomDenoised_bold.nii.gz",
+    "tedana/{sub}/func/{prefix}_desc-optcomDenoised_bold.nii.gz",
     # MEDN+MIR
-    "tedana/{sub}/func/{prefix}_space-MNI152NLin6Asym_desc-optcomMIRDenoised_bold.nii.gz",
+    "tedana/{sub}/func/{prefix}_desc-optcomMIRDenoised_bold.nii.gz",
     # MEDN+MIR Noise
-    "tedana/{sub}/func/{prefix}_space-MNI152NLin6Asym_desc-optcomMIRDenoised_errorts.nii.gz",
+    "tedana/{sub}/func/{prefix}_desc-optcomMIRDenoised_errorts.nii.gz",
     # FIT-R2
-    "t2smap/{sub}/func/{prefix}_space-MNI152NLin6Asym_T2starmap.nii.gz",
+    "t2smap/{sub}/func/{prefix}_T2starmap.nii.gz",
     # FIT-S0
-    "t2smap/{sub}/func/{prefix}_space-MNI152NLin6Asym_S0map.nii.gz",
+    "t2smap/{sub}/func/{prefix}_S0map.nii.gz",
     # MEDN+GODEC (sparse)
-    "godec/{sub}/func/{prefix}_space-MNI152NLin6Asym_desc-GODEC_rank-4_bold.nii.gz",
+    "godec/{sub}/func/{prefix}_desc-GODEC_rank-4_bold.nii.gz",
     # MEDN+GODEC Noise (lowrank)
-    "godec/{sub}/func/{prefix}_space-MNI152NLin6Asym_desc-GODEC_rank-4_lowrankts.nii.gz",
+    "godec/{sub}/func/{prefix}_desc-GODEC_rank-4_lowrankts.nii.gz",
     # MEDN+dGSR
-    "rapidtide/{sub}/func/{prefix}_space-MNI152NLin6Asym_desc-lfofilterCleaned_bold.nii.gz",
+    "rapidtide/{sub}/func/{prefix}_desc-lfofilterCleaned_bold.nii.gz",
     # MEDN+dGSR Noise
-    "rapidtide/{sub}/func/{prefix}_space-MNI152NLin6Asym_desc-lfofilterCleaned_errorts.nii.gz",
+    "rapidtide/{sub}/func/{prefix}_desc-lfofilterCleaned_errorts.nii.gz",
     # MEDN+aCompCor
-    "nuisance-regressions/{sub}/func/{prefix}_space-MNI152NLin6Asym_desc-aCompCor_bold.nii.gz",
+    "nuisance-regressions/{sub}/func/{prefix}_desc-aCompCor_bold.nii.gz",
     # MEDN+aCompCor Noise
-    "nuisance-regressions/{sub}/func/{prefix}_space-MNI152NLin6Asym_desc-aCompCor_errorts.nii.gz",
+    "nuisance-regressions/{sub}/func/{prefix}_desc-aCompCor_errorts.nii.gz",
     # MEDN+GSR
-    "nuisance-regressions/{sub}/func/{prefix}_space-MNI152NLin6Asym_desc-GSR_bold.nii.gz",
+    "nuisance-regressions/{sub}/func/{prefix}_desc-GSR_bold.nii.gz",
     # MEDN+GSR Noise
-    "nuisance-regressions/{sub}/func/{prefix}_space-MNI152NLin6Asym_desc-GSR_errorts.nii.gz",
+    "nuisance-regressions/{sub}/func/{prefix}_desc-GSR_errorts.nii.gz",
     # MEDN+Nuis-Reg
-    "nuisance-regressions/{sub}/func/{prefix}_space-MNI152NLin6Asym_desc-NuisReg_bold.nii.gz",
+    "nuisance-regressions/{sub}/func/{prefix}_desc-NuisReg_bold.nii.gz",
     # MEDN Noise
-    "tedana/{sub}/func/{prefix}_space-MNI152NLin6Asym_desc-optcomDenoised_errorts.nii.gz",
+    "tedana/{sub}/func/{prefix}_desc-optcomDenoised_errorts.nii.gz",
 ]
 PHYSIO_TARGET_FILES = [
     # MEDN+RV-Reg
-    "nuisance-regressions/{sub}/func/{prefix}_space-MNI152NLin6Asym_desc-RVReg_bold.nii.gz",
+    "nuisance-regressions/{sub}/func/{prefix}_desc-RVReg_bold.nii.gz",
     # MEDN+RVT-Reg
-    "nuisance-regressions/{sub}/func/{prefix}_space-MNI152NLin6Asym_desc-RVTReg_bold.nii.gz",
+    "nuisance-regressions/{sub}/func/{prefix}_desc-RVTReg_bold.nii.gz",
 ]
 
 if __name__ == "__main__":
@@ -65,11 +65,11 @@ if __name__ == "__main__":
                     "tedana",
                     sub,
                     "func",
-                    "*_desc-optcomDenoised_bold.nii.gz",
+                    "*_space-MNI152NLin6Asym_desc-optcomDenoised_bold.nii.gz",
                 )
             )
         )
-        if len(medn_files) == 0:
+        if len(medn_files) != 1:
             print(f"Dataset {dataset} subject {sub} missing MEDN file.")
             bad_subs.append((dataset, sub))
             continue
