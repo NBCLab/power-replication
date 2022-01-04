@@ -10,7 +10,9 @@ HRV correlated with SD of mean cortical signal from:
 """
 
 
-def correlate_hrv_with_cortical_sd():
+def correlate_hrv_with_cortical_sd(
+    participants_file, target_file_patterns, mask_pattern
+):
     """Perform analysis 1.
 
     Correlate HRV with standard deviation of mean cortical signal from each of the derivatives,

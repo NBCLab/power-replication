@@ -10,7 +10,7 @@ RV correlated with framewise displacement.
 """
 
 
-def correlate_rpv_with_mean_fd():
+def correlate_rpv_with_mean_fd(participants_file, confounds_pattern):
     """Perform analysis 1.
 
     Correlate RPV with mean FD across participants.
@@ -20,7 +20,7 @@ def correlate_rpv_with_mean_fd():
     ...
 
 
-def correlate_rvt_with_fd():
+def correlate_rvt_with_fd(participants_file, confounds_pattern):
     """Perform analysis 2.
 
     Correlate RVT with FD for each participant, then z-transform the correlation coefficients
@@ -29,7 +29,7 @@ def correlate_rvt_with_fd():
     ...
 
 
-def correlate_rv_with_fd():
+def correlate_rv_with_fd(participants_file, confounds_pattern):
     """Perform analysis 3.
 
     Correlate RV with FD for each participant, then z-transform the correlation coefficients

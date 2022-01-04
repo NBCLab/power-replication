@@ -23,7 +23,13 @@ def plot_components_and_physio():
     ...
 
 
-def correlate_ica_with_cortical_signal():
+def correlate_ica_with_cortical_signal(
+    participants_file,
+    ica_pattern,
+    ctab_pattern,
+    oc_pattern,
+    mask_pattern,
+):
     """Perform analysis 2.
 
     Correlate each ICA component's time series with the mean cortical signal of the OC dataset.
@@ -35,7 +41,7 @@ def correlate_ica_with_cortical_signal():
     ...
 
 
-def correlate_medn_with_oc():
+def correlate_medn_with_oc(participants_file, medn_pattern, oc_pattern, mask_pattern):
     """Perform analysis 3.
 
     Correlate mean cortical signal from MEDN with OC equivalent for each participant,

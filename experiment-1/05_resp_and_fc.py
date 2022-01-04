@@ -23,16 +23,16 @@ with each of the following used as the quality measure:
 """
 
 
-def run_ddmra_of_rpv():
+def run_ddmra_of_rpv(participants_file, target_file_patterns):
     """Run QC:RSFC and high-low analyses on derivatives against RPV."""
     ...
 
 
-def run_ddmra_of_mean_rv():
+def run_ddmra_of_mean_rv(participants_file, confounds_pattern, target_file_patterns):
     """Run QC:RSFC and high-low analyses on derivatives against mean RV."""
     ...
 
 
-def run_ddmra_of_mean_rvt():
+def run_ddmra_of_mean_rvt(participants_file, confounds_pattern, target_file_patterns):
     """Run QC:RSFC and high-low analyses on derivatives against mean RVT."""
     ...

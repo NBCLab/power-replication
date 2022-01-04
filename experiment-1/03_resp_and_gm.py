@@ -32,7 +32,9 @@ Plot respiration time series for deep breaths against mean signal from:
 """
 
 
-def correlate_rpv_with_cortical_sd():
+def correlate_rpv_with_cortical_sd(
+    participants_file, target_file_patterns, mask_pattern
+):
     """Perform analysis 1.
 
     Correlate RPV with standard deviation of mean cortical signal from each of the derivatives,
@@ -44,7 +46,12 @@ def correlate_rpv_with_cortical_sd():
     ...
 
 
-def plot_deep_breath_cortical_signal():
+def plot_deep_breath_cortical_signal(
+    participants_file,
+    deep_breath_indices,
+    target_file_patterns,
+    dseg_pattern,
+):
     """Generate plots for analysis 2.
 
     Use visually-identified indices of deep breaths from the respiratory trace to extract
