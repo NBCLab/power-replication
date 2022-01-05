@@ -17,6 +17,8 @@ from scipy.stats import ttest_1samp
 
 def correlate_medn_with_oc(project_dir, participants_df):
     """Correlate mean cortical signal from MEDN files with mean cortical signal from OC files."""
+    ALPHA = 0.05
+
     corrs = []
     for i_run, participant_row in participants_df.iterrows():
         if participant_row["include"] == 0:
@@ -70,18 +72,36 @@ def correlate_medn_with_oc(project_dir, participants_df):
 
     # Convert r values to normally distributed z values with Fisher's
     # transformation (not test statistics though)
-    z_vals = np.arctanh(corrs)
+    z_values = np.arctanh(corrs)
+    mean_z = np.mean(z_values)
+    sd_z = np.std(z_values)
 
     # And now a significance test!!
     # TODO: Should we compute confidence intervals from z-values then
     # convert back to r-values? I think so, but there's so little in the
     # literature about dealing with *distributions* of correlation
     # coefficients.
-    t, p = ttest_1samp(z_vals, popmean=0)
+    t, p = ttest_1samp(z_values, popmean=0, alternative="greater")
+    if p <= ALPHA:
+        print(
+            "ANALYSIS 1: Correlations between the mean cortical ribbon signal from the multi-echo "
+            "denoised data and the optimally combined data "
+            f"(M[Z] = {mean_z}, SD[Z] = {sd_z}) were significantly higher than zero, "
+            f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
+        )
+    else:
+        print(
+            "ANALYSIS 1: Correlations between the mean cortical ribbon signal from the multi-echo "
+            "denoised data and the optimally combined data "
+            f"(M[Z] = {mean_z}, SD[Z] = {sd_z}) were not significantly higher than zero, "
+            f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
+        )
 
 
 def correlate_medn_with_fitr2(project_dir, participants_df):
     """Correlate mean cortical signal from MEDN files with equivalent from FIT-R2 files."""
+    ALPHA = 0.05
+
     corrs = []
     for i_run, participant_row in participants_df.iterrows():
         if participant_row["include"] == 0:
@@ -107,7 +127,7 @@ def correlate_medn_with_fitr2(project_dir, participants_df):
             "tedana",
             subj_id,
             "func",
-            "sub-01_task-rest_run-1_desc-optcomDenoised_bold.nii.gz",
+            f"{subj_id}_task-rest_run-1_desc-optcomDenoised_bold.nii.gz",
         )
         fitr2_file = op.join(
             project_dir,
@@ -116,7 +136,7 @@ def correlate_medn_with_fitr2(project_dir, participants_df):
             "t2smap",
             subj_id,
             "func",
-            "sub-01_task-rest_run-1_T2starmap.nii.gz",
+            f"{subj_id}_task-rest_run-1_T2starmap.nii.gz",
         )
 
         medn_data = masking.apply_mask(medn_file, cort_mask)
@@ -135,11 +155,27 @@ def correlate_medn_with_fitr2(project_dir, participants_df):
 
     # Convert r values to normally distributed z values with Fisher's
     # transformation (not test statistics though)
-    z_vals = np.arctanh(corrs)
+    z_values = np.arctanh(corrs)
+    mean_z = np.mean(z_values)
+    sd_z = np.std(z_values)
 
     # And now a significance test!!
     # TODO: Should we compute confidence intervals from z-values then
     # convert back to r-values? I think so, but there's so little in the
     # literature about dealing with *distributions* of correlation
     # coefficients.
-    t, p = ttest_1samp(z_vals, popmean=0)
+    t, p = ttest_1samp(z_values, popmean=0, alternative="greater")
+    if p <= ALPHA:
+        print(
+            "ANALYSIS 1: Correlations between the mean cortical ribbon signal from the multi-echo "
+            "denoised data and the FIT-R2 data "
+            f"(M[Z] = {mean_z}, SD[Z] = {sd_z}) were significantly higher than zero, "
+            f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
+        )
+    else:
+        print(
+            "ANALYSIS 1: Correlations between the mean cortical ribbon signal from the multi-echo "
+            "denoised data and the FIT-R2 data "
+            f"(M[Z] = {mean_z}, SD[Z] = {sd_z}) were not significantly higher than zero, "
+            f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
+        )

@@ -23,6 +23,8 @@ def correlate_cort_with_gm(project_dir, participants_df):
     -   Distribution of Pearson correlation coefficients
     -   Page 2, right column, first paragraph
     """
+    ALPHA = 0.05
+
     corrs = []
     for i_run, participant_row in participants_df.iterrows():
         if participant_row["include"] == 0:
@@ -80,14 +82,30 @@ def correlate_cort_with_gm(project_dir, participants_df):
 
     # Convert r values to normally distributed z values with Fisher's
     # transformation (not test statistics though)
-    z_vals = np.arctanh(corrs)
+    z_values = np.arctanh(corrs)
+    mean_z = np.mean(z_values)
+    sd_z = np.std(z_values)
 
     # And now a significance test!!
     # TODO: Should we compute confidence intervals from z-values then
     # convert back to r-values? I think so, but there's so little in the
     # literature about dealing with *distributions* of correlation
     # coefficients.
-    t, p = ttest_1samp(z_vals, popmean=0)
+    t, p = ttest_1samp(z_values, popmean=0, alternative="greater")
+    if p <= ALPHA:
+        print(
+            "ANALYSIS 1: Correlations between the mean multi-echo denoised signal extracted from "
+            "the cortical ribbon and that extracted from all gray matter "
+            f"(M[Z] = {mean_z}, SD[Z] = {sd_z}) were significantly higher than zero, "
+            f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
+        )
+    else:
+        print(
+            "ANALYSIS 1: Correlations between the mean multi-echo denoised signal extracted from "
+            "the cortical ribbon and that extracted from all gray matter "
+            f"(M[Z] = {mean_z}, SD[Z] = {sd_z}) were not significantly higher than zero, "
+            f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
+        )
 
 
 def correlate_cort_with_wb(project_dir, participants_df):
@@ -96,6 +114,8 @@ def correlate_cort_with_wb(project_dir, participants_df):
     -   Distribution of Pearson correlation coefficients
     -   Page 2, right column, first paragraph
     """
+    ALPHA = 0.05
+
     corrs = []
     for i_run, participant_row in participants_df.iterrows():
         if participant_row["include"] == 0:
@@ -149,11 +169,27 @@ def correlate_cort_with_wb(project_dir, participants_df):
 
     # Convert r values to normally distributed z values with Fisher's
     # transformation (not test statistics though)
-    z_vals = np.arctanh(corrs)
+    z_values = np.arctanh(corrs)
+    mean_z = np.mean(z_values)
+    sd_z = np.std(z_values)
 
     # And now a significance test!!
     # TODO: Should we compute confidence intervals from z-values then
     # convert back to r-values? I think so, but there's so little in the
     # literature about dealing with *distributions* of correlation
     # coefficients.
-    t, p = ttest_1samp(z_vals, popmean=0)
+    t, p = ttest_1samp(z_values, popmean=0, alternative="greater")
+    if p <= ALPHA:
+        print(
+            "ANALYSIS 2: Correlations between the mean multi-echo denoised signal extracted from "
+            "the cortical ribbon and that extracted from the whole brain "
+            f"(M[Z] = {mean_z}, SD[Z] = {sd_z}) were significantly higher than zero, "
+            f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
+        )
+    else:
+        print(
+            "ANALYSIS 2: Correlations between the mean multi-echo denoised signal extracted from "
+            "the cortical ribbon and that extracted from the whole brain "
+            f"(M[Z] = {mean_z}, SD[Z] = {sd_z}) were not significantly higher than zero, "
+            f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
+        )
