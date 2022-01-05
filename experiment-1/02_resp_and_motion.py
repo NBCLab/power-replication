@@ -48,7 +48,9 @@ def correlate_rpv_with_mean_fd(participants_file, confounds_pattern):
 
     # We are performing a one-sided test to determine if the correlation is
     # statistically significant (alpha = 0.05) and positive.
-    corr, p = pearson_r(participants_df["rpv"], participants_df["mean_fd"], tail="upper")
+    corr, p = pearson_r(
+        participants_df["rpv"], participants_df["mean_fd"], alternative="greater"
+    )
     if p <= ALPHA:
         print(
             "ANALYSIS 1: RPV and mean FD were found to be positively and statistically "
@@ -83,7 +85,9 @@ def correlate_rvt_with_fd(participants_file, confounds_pattern):
         assert op.isfile(confounds_file), f"{confounds_file} DNE"
 
         confounds_df = pd.read_table(confounds_file)
-        corr = confounds_df["RVTRegression_RVT"].corr(confounds_df["FramewiseDisplacement"])
+        corr = confounds_df["RVTRegression_RVT"].corr(
+            confounds_df["FramewiseDisplacement"]
+        )
         participants_df.loc[i, "rvt_fd_corr"] = corr
 
     # Now transform correlation coefficients to Z-values
@@ -92,12 +96,18 @@ def correlate_rvt_with_fd(participants_file, confounds_pattern):
     sd_z = np.std(z_values)
 
     # Now perform one-sample t-test against zero.
-    t, p = ttest_1samp(z_values, popmean=0)
+    t, p = ttest_1samp(z_values, popmean=0, alternative="greater")
 
     if p <= ALPHA:
         print(
             "ANALYSIS 2: Correlations between RVT and FD "
             f"(M[Z] = {mean_z}, SD[Z] = {sd_z}) were significantly higher than zero, "
+            f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
+        )
+    else:
+        print(
+            "ANALYSIS 2: Correlations between RVT and FD "
+            f"(M[Z] = {mean_z}, SD[Z] = {sd_z}) were not significantly higher than zero, "
             f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
         )
 
@@ -122,7 +132,9 @@ def correlate_rv_with_fd(participants_file, confounds_pattern):
         assert op.isfile(confounds_file), f"{confounds_file} DNE"
 
         confounds_df = pd.read_table(confounds_file)
-        corr = confounds_df["RVRegression_RV"].corr(confounds_df["FramewiseDisplacement"])
+        corr = confounds_df["RVRegression_RV"].corr(
+            confounds_df["FramewiseDisplacement"]
+        )
         participants_df.loc[i, "rv_fd_corr"] = corr
 
     # Now transform correlation coefficients to Z-values
@@ -131,7 +143,7 @@ def correlate_rv_with_fd(participants_file, confounds_pattern):
     sd_z = np.std(z_values)
 
     # Now perform one-sample t-test against zero.
-    t, p = ttest_1samp(z_values, popmean=0)
+    t, p = ttest_1samp(z_values, popmean=0, alternative="greater")
 
     if p <= ALPHA:
         print(
@@ -139,3 +151,23 @@ def correlate_rv_with_fd(participants_file, confounds_pattern):
             f"(M[Z] = {mean_z}, SD[Z] = {sd_z}) were significantly higher than zero, "
             f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
         )
+    else:
+        print(
+            "ANALYSIS 3: Correlations between RV and FD "
+            f"(M[Z] = {mean_z}, SD[Z] = {sd_z}) were not significantly higher than zero, "
+            f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
+        )
+
+
+if __name__ == "__main__":
+    print("Experiment 1, Analysis Group 2")
+    in_dir = "/home/data/nbc/misc-projects/Salo_PowerReplication/dset-dupre/"
+    participants_file = op.join(in_dir, "participants.tsv")
+    confounds_pattern = op.join(
+        in_dir,
+        "derivatives/power/{participant_id}/func",
+        "{participant_id}_task-rest_run-1_desc-confounds_timeseries.tsv",
+    )
+    correlate_rpv_with_mean_fd(participants_file, confounds_pattern)
+    correlate_rvt_with_fd(participants_file, confounds_pattern)
+    correlate_rv_with_fd(participants_file, confounds_pattern)

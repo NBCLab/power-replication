@@ -52,7 +52,9 @@ def correlate_rpv_with_mean_rv(participants_file, confounds_pattern):
 
     # We are performing a one-sided test to determine if the correlation is
     # statistically significant (alpha = 0.05) and positive.
-    corr, p = pearson_r(participants_df["rpv"], participants_df["mean_rv"], tail="upper")
+    corr, p = pearson_r(
+        participants_df["rpv"], participants_df["mean_rv"], alternative="greater"
+    )
     if p <= ALPHA:
         print(
             "ANALYSIS 1: RPV and mean RV were found to be positively and statistically "
@@ -95,7 +97,9 @@ def correlate_rpv_with_mean_rvt(participants_file, confounds_pattern):
 
     # We are performing a one-sided test to determine if the correlation is
     # statistically significant (alpha = 0.05) and positive.
-    corr, p = pearson_r(participants_df["rpv"], participants_df["mean_rvt"], tail="upper")
+    corr, p = pearson_r(
+        participants_df["rpv"], participants_df["mean_rvt"], alternative="greater"
+    )
 
     if p <= ALPHA:
         print(
@@ -142,12 +146,18 @@ def compare_env_with_rv(participants_file, confounds_pattern):
     sd_z = np.std(z_values)
 
     # Now perform one-sample t-test against zero.
-    t, p = ttest_1samp(z_values, popmean=0)
+    t, p = ttest_1samp(z_values, popmean=0, alternative="greater")
 
     if p <= ALPHA:
         print(
             "ANALYSIS 3: Correlations between the upper envelope used to calculate RPV and RV "
             f"(M[Z] = {mean_z}, SD[Z] = {sd_z}) were significantly higher than zero, "
+            f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
+        )
+    else:
+        print(
+            "ANALYSIS 3: Correlations between the upper envelope used to calculate RPV and RV "
+            f"(M[Z] = {mean_z}, SD[Z] = {sd_z}) were not significantly higher than zero, "
             f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
         )
 
@@ -183,12 +193,18 @@ def compare_env_with_rvt(participants_file, confounds_pattern):
     sd_z = np.std(z_values)
 
     # Now perform one-sample t-test against zero.
-    t, p = ttest_1samp(z_values, popmean=0)
+    t, p = ttest_1samp(z_values, popmean=0, alternative="greater")
 
     if p <= ALPHA:
         print(
             "ANALYSIS 4: Correlations between the upper envelope used to calculate RPV and RVT "
             f"(M[Z] = {mean_z}, SD[Z] = {sd_z}) were significantly higher than zero, "
+            f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
+        )
+    else:
+        print(
+            "ANALYSIS 4: Correlations between the upper envelope used to calculate RPV and RVT "
+            f"(M[Z] = {mean_z}, SD[Z] = {sd_z}) were not significantly higher than zero, "
             f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
         )
 
