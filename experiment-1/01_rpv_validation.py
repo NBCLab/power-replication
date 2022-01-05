@@ -141,7 +141,7 @@ def compare_env_with_rv(participants_file, confounds_pattern):
         participants_df.loc[i, "env_rv_corr"] = corr
 
     # Now transform correlation coefficients to Z-values
-    z_values = np.atanh(participants_df["env_rv_corr"].values)
+    z_values = np.arctanh(participants_df["env_rv_corr"].values)
     mean_z = np.mean(z_values)
     sd_z = np.std(z_values)
 
@@ -188,7 +188,7 @@ def compare_env_with_rvt(participants_file, confounds_pattern):
         participants_df.loc[i, "env_rvt_corr"] = corr
 
     # Now transform correlation coefficients to Z-values
-    z_values = np.atanh(participants_df["env_rvt_corr"].values)
+    z_values = np.arctanh(participants_df["env_rvt_corr"].values)
     mean_z = np.mean(z_values)
     sd_z = np.std(z_values)
 

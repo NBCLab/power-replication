@@ -91,7 +91,7 @@ def correlate_rvt_with_fd(participants_file, confounds_pattern):
         participants_df.loc[i, "rvt_fd_corr"] = corr
 
     # Now transform correlation coefficients to Z-values
-    z_values = np.atanh(participants_df["rvt_fd_corr"].values)
+    z_values = np.arctanh(participants_df["rvt_fd_corr"].values)
     mean_z = np.mean(z_values)
     sd_z = np.std(z_values)
 
@@ -138,7 +138,7 @@ def correlate_rv_with_fd(participants_file, confounds_pattern):
         participants_df.loc[i, "rv_fd_corr"] = corr
 
     # Now transform correlation coefficients to Z-values
-    z_values = np.atanh(participants_df["rv_fd_corr"].values)
+    z_values = np.arctanh(participants_df["rv_fd_corr"].values)
     mean_z = np.mean(z_values)
     sd_z = np.std(z_values)
 
