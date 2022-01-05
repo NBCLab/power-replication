@@ -19,6 +19,34 @@ import pandas as pd
 from scipy.stats import pearsonr, ttest_1samp
 
 
+def pearson_r(arr1, arr2, tail="two"):
+    """Calculate Pearson correlation coefficient, but allow a specific tailed test.
+
+    Notes
+    -----
+    Based on
+    https://towardsdatascience.com/one-tailed-or-two-tailed-test-that-is-the-question-1283387f631c.
+    """
+    assert arr1.ndim == arr2.ndim == 1, f"{arr1.shape} != {arr2.shape}"
+    assert arr1.size == arr2.size, f"{arr1.size} != {arr2.size}"
+    assert tail in ("two", "upper", "lower")
+
+    r, p = pearsonr(arr1, arr2)
+
+    if tail == "upper":
+        if r > 0:
+            p = p / 2
+        else:
+            p = 1 - (p / 2)
+    elif tail == "lower":
+        if r < 0:
+            p = p / 2
+        else:
+            p = 1 - (p / 2)
+
+    return r, p
+
+
 def correlate_rpv_with_mean_rv(participants_file, confounds_pattern):
     """Perform analysis 1.
 
@@ -45,12 +73,9 @@ def correlate_rpv_with_mean_rv(participants_file, confounds_pattern):
         mean_rv = np.mean(rv_arr)
         participants_df.loc[i, "mean_rv"] = mean_rv
 
-    corr, raw_p = pearsonr(participants_df["rpv"], participants_df["mean_rv"])
     # We are performing a one-sided test to determine if the correlation is
     # statistically significant (alpha = 0.05) and positive.
-    if np.sign(corr) == 1:
-        p = raw_p / 2
-
+    corr, p = pearson_r(participants_df["rpv"], participants_df["mean_rv"], tail="upper")
     if p <= ALPHA:
         print(
             "ANALYSIS 1: RPV and mean RV were found to be positively and statistically "
@@ -91,11 +116,9 @@ def correlate_rpv_with_mean_rvt(participants_file, confounds_pattern):
         mean_rvt = np.mean(rv_arr)
         participants_df.loc[i, "mean_rvt"] = mean_rvt
 
-    corr, raw_p = pearsonr(participants_df["rpv"], participants_df["mean_rvt"])
     # We are performing a one-sided test to determine if the correlation is
     # statistically significant (alpha = 0.05) and positive.
-    if np.sign(corr) == 1:
-        p = raw_p / 2
+    corr, p = pearson_r(participants_df["rpv"], participants_df["mean_rvt"], tail="upper")
 
     if p <= ALPHA:
         print(
