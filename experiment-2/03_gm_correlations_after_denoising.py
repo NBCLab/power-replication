@@ -21,7 +21,7 @@ def correlate_medn_with_oc(project_dir, participants_df):
 
     corrs = []
     for i_run, participant_row in participants_df.iterrows():
-        if participant_row["include"] == 0:
+        if participant_row["exclude"] == 1:
             print(f"Skipping {participant_row['participant_id']}.")
             continue
 
@@ -104,7 +104,7 @@ def correlate_medn_with_fitr2(project_dir, participants_df):
 
     corrs = []
     for i_run, participant_row in participants_df.iterrows():
-        if participant_row["include"] == 0:
+        if participant_row["exclude"] == 1:
             print(f"Skipping {participant_row['participant_id']}.")
             continue
 

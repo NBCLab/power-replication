@@ -27,7 +27,7 @@ def correlate_cort_with_gm(project_dir, participants_df):
 
     corrs = []
     for i_run, participant_row in participants_df.iterrows():
-        if participant_row["include"] == 0:
+        if participant_row["exclude"] == 1:
             print(f"Skipping {participant_row['participant_id']}.")
             continue
 
@@ -118,7 +118,7 @@ def correlate_cort_with_wb(project_dir, participants_df):
 
     corrs = []
     for i_run, participant_row in participants_df.iterrows():
-        if participant_row["include"] == 0:
+        if participant_row["exclude"] == 1:
             print(f"Skipping {participant_row['participant_id']}.")
             continue
 
