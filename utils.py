@@ -42,3 +42,48 @@ def get_prefixes():
         "dset-dupre": "{participant_id}_task-rest_run-1",
     }
     return DATASET_PREFIXES
+
+
+def get_target_files():
+    TARGET_FILES = {
+        "TE30": "power/{participant_id}/func/{prefix}_desc-TE30_bold.nii.gz",
+        "OC": "tedana/{participant_id}/func/{prefix}_desc-optcom_bold.nii.gz",
+        "MEDN": "tedana/{participant_id}/func/{prefix}_desc-optcomDenoised_bold.nii.gz",
+        "MEDN+MIR": "tedana/{participant_id}/func/{prefix}_desc-optcomMIRDenoised_bold.nii.gz",
+        "MEDN+MIR Noise": (
+            "tedana/{participant_id}/func/{prefix}_desc-optcomMIRDenoised_errorts.nii.gz"
+        ),
+        "FIT-R2": "t2smap/{participant_id}/func/{prefix}_T2starmap.nii.gz",
+        "FIT-S0": "t2smap/{participant_id}/func/{prefix}_S0map.nii.gz",
+        "MEDN+GODEC (sparse)": (
+            "godec/{participant_id}/func/{prefix}_desc-GODEC_rank-4_bold.nii.gz"
+        ),
+        "MEDN+GODEC Noise (lowrank)": (
+            "godec/{participant_id}/func/{prefix}_desc-GODEC_rank-4_lowrankts.nii.gz"
+        ),
+        "MEDN+dGSR": "rapidtide/{participant_id}/func/{prefix}_desc-lfofilterCleaned_bold.nii.gz",
+        "MEDN+dGSR Noise": (
+            "rapidtide/{participant_id}/func/{prefix}_desc-lfofilterCleaned_errorts.nii.gz"
+        ),
+        "MEDN+aCompCor": (
+            "nuisance-regressions/{participant_id}/func/{prefix}_desc-aCompCor_bold.nii.gz"
+        ),
+        "MEDN+aCompCor Noise": (
+            "nuisance-regressions/{participant_id}/func/{prefix}_desc-aCompCor_errorts.nii.gz"
+        ),
+        "MEDN+GSR": "nuisance-regressions/{participant_id}/func/{prefix}_desc-GSR_bold.nii.gz",
+        "MEDN+GSR Noise": (
+            "nuisance-regressions/{participant_id}/func/{prefix}_desc-GSR_errorts.nii.gz"
+        ),
+        "MEDN+Nuis-Reg": (
+            "nuisance-regressions/{participant_id}/func/{prefix}_desc-NuisReg_bold.nii.gz"
+        ),
+        "MEDN Noise": "tedana/{participant_id}/func/{prefix}_desc-optcomDenoised_errorts.nii.gz",
+        "MEDN+RV-Reg": (
+            "nuisance-regressions/{participant_id}/func/{prefix}_desc-RVReg_bold.nii.gz"
+        ),
+        "MEDN+RVT-Reg": (
+            "nuisance-regressions/{participant_id}/func/{prefix}_desc-RVTReg_bold.nii.gz"
+        ),
+    }
+    return TARGET_FILES
