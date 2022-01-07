@@ -634,12 +634,18 @@ def main(project_dir):
     # just to determine if the subject is the first in the dataset
     participants_file = op.join(dset_dir, "participants.tsv")
     participants_df = pd.read_table(participants_file)
+    participants_df = participants_df.loc[participants_df["exclude"] == 0]
     subjects = participants_df["participant_id"].tolist()
 
     # Also get non-steady-state volume information
     nss_file = op.join(preproc_dir, "nss_removed.tsv")
 
     for subject in subjects:
+        print(subject, flush=True)
+        if subject == "sub-16":
+            print("Skipping sub-16", flush=True)
+            continue
+
         dset_subj_dir = op.join(dset_dir, subject)
         dset_subj_func_dir = op.join(dset_subj_dir, "func")
         preproc_subj_func_dir = op.join(preproc_dir, subject, "func")
@@ -690,6 +696,9 @@ def main(project_dir):
         )
 
         if subject == subjects[0]:
+            # Skipping because it's already done.
+            continue
+
             data_desc_file = op.join(preproc_dir, "dataset_description.json")
             with open(data_desc_file, "r") as fo:
                 dataset_description = json.load(fo)
