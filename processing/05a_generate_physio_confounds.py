@@ -643,6 +643,7 @@ def main(project_dir):
     for subject in subjects:
         print(subject, flush=True)
         if subject == "sub-16":
+            # This subject fails for some reason. Need to look into it.
             print("Skipping sub-16", flush=True)
             continue
 
@@ -696,9 +697,6 @@ def main(project_dir):
         )
 
         if subject == subjects[0]:
-            # Skipping because it's already done.
-            continue
-
             data_desc_file = op.join(preproc_dir, "dataset_description.json")
             with open(data_desc_file, "r") as fo:
                 dataset_description = json.load(fo)

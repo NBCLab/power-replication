@@ -7,8 +7,6 @@ Methods:
 -   Dynamic global signal regression with rapidtide
 -   aCompCor with custom code
 -   GODEC with the ME-ICA/godec package
--   RVT (with lags) regression
--   RV (with lags) regression
 """
 import argparse
 import json

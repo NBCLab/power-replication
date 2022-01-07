@@ -137,7 +137,7 @@ def compare_env_with_rv(participants_file, confounds_pattern):
         assert op.isfile(confounds_file), f"{confounds_file} DNE"
 
         confounds_df = pd.read_table(confounds_file)
-        corr = confounds_df["ENV"].corr(confounds_df["RVRegression_RV"])
+        corr = confounds_df["RPVRegression_Envelope"].corr(confounds_df["RVRegression_RV"])
         participants_df.loc[i, "env_rv_corr"] = corr
 
     # Now transform correlation coefficients to Z-values
@@ -184,7 +184,7 @@ def compare_env_with_rvt(participants_file, confounds_pattern):
         assert op.isfile(confounds_file), f"{confounds_file} DNE"
 
         confounds_df = pd.read_table(confounds_file)
-        corr = confounds_df["ENV"].corr(confounds_df["RVTRegression_RVT"])
+        corr = confounds_df["RPVRegression_Envelope"].corr(confounds_df["RVTRegression_RVT"])
         participants_df.loc[i, "env_rvt_corr"] = corr
 
     # Now transform correlation coefficients to Z-values
