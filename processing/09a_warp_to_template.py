@@ -3,7 +3,7 @@ import argparse
 import os.path as op
 from glob import glob
 
-from utils import run_command
+from processing_utils import run_command
 
 TARGET_FILES = [
     # TE30

@@ -20,8 +20,7 @@ import numpy as np
 import pandas as pd
 import rapidtide
 from nilearn import image
-
-from utils import _generic_regression, run_command
+from processing_utils import _generic_regression, run_command
 
 
 def run_rvtreg(medn_file, mask_file, confounds_file, out_dir):
