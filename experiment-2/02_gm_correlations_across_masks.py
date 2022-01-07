@@ -11,10 +11,15 @@ Mean cortical signal of MEDN correlated with signal of whole brain
 -   Page 2, right column, first paragraph
 """
 import os.path as op
+import sys
 
 import numpy as np
 from nilearn import image, masking
 from scipy.stats import ttest_1samp
+
+sys.path.append("..")
+
+from utils import get_prefixes  # noqa: E402
 
 
 def correlate_cort_with_gm(project_dir, participants_df):
@@ -33,6 +38,8 @@ def correlate_cort_with_gm(project_dir, participants_df):
 
         subj_id = participant_row["participant_id"]
         dset = participant_row["dataset"]
+        dset_prefix = get_prefixes()[dset]
+        subj_prefix = dset_prefix.format(participant_id=subj_id)
 
         cort_mask = op.join(
             project_dir,
@@ -63,7 +70,7 @@ def correlate_cort_with_gm(project_dir, participants_df):
             "tedana",
             subj_id,
             "func",
-            "sub-01_task-rest_run-1_desc-optcomDenoised_bold.nii.gz",
+            f"{subj_prefix}_desc-optcomDenoised_bold.nii.gz",
         )
 
         cort_data = masking.apply_mask(medn_file, cort_mask)
@@ -124,6 +131,8 @@ def correlate_cort_with_wb(project_dir, participants_df):
 
         subj_id = participant_row["participant_id"]
         dset = participant_row["dataset"]
+        dset_prefix = get_prefixes()[dset]
+        subj_prefix = dset_prefix.format(participant_id=subj_id)
 
         cort_mask = op.join(
             project_dir,
@@ -152,7 +161,7 @@ def correlate_cort_with_wb(project_dir, participants_df):
             "tedana",
             subj_id,
             "func",
-            "sub-01_task-rest_run-1_desc-optcomDenoised_bold.nii.gz",
+            f"{subj_prefix}_desc-optcomDenoised_bold.nii.gz",
         )
 
         cort_data = masking.apply_mask(medn_file, cort_mask)

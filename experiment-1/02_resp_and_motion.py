@@ -17,7 +17,7 @@ from scipy.stats import ttest_1samp
 
 sys.path.append("..")
 
-from utils import pearson_r
+from utils import pearson_r  # noqa: E402
 
 
 def correlate_rpv_with_mean_fd(participants_file, confounds_pattern):

@@ -9,10 +9,15 @@ Mean cortical signal from MEDN correlated with mean cortical signal from FIT-R2.
 - One-sample t-test on z-transformed correlation coefficients.
 """
 import os.path as op
+import sys
 
 import numpy as np
 from nilearn import masking
 from scipy.stats import ttest_1samp
+
+sys.path.append("..")
+
+from utils import get_prefixes  # noqa: E402
 
 
 def correlate_medn_with_oc(project_dir, participants_df):
@@ -27,6 +32,8 @@ def correlate_medn_with_oc(project_dir, participants_df):
 
         subj_id = participant_row["participant_id"]
         dset = participant_row["dataset"]
+        dset_prefix = get_prefixes()[dset]
+        subj_prefix = dset_prefix.format(participant_id=subj_id)
 
         cort_mask = op.join(
             project_dir,
@@ -44,7 +51,7 @@ def correlate_medn_with_oc(project_dir, participants_df):
             "tedana",
             subj_id,
             "func",
-            "sub-01_task-rest_run-1_desc-optcomDenoised_bold.nii.gz",
+            f"{subj_prefix}_desc-optcomDenoised_bold.nii.gz",
         )
         oc_file = op.join(
             project_dir,
@@ -53,7 +60,7 @@ def correlate_medn_with_oc(project_dir, participants_df):
             "tedana",
             subj_id,
             "func",
-            "sub-01_task-rest_run-1_desc-optcom_bold.nii.gz",
+            f"{subj_prefix}_desc-optcom_bold.nii.gz",
         )
 
         medn_data = masking.apply_mask(medn_file, cort_mask)
@@ -110,6 +117,8 @@ def correlate_medn_with_fitr2(project_dir, participants_df):
 
         subj_id = participant_row["participant_id"]
         dset = participant_row["dataset"]
+        dset_prefix = get_prefixes()[dset]
+        subj_prefix = dset_prefix.format(participant_id=subj_id)
 
         cort_mask = op.join(
             project_dir,
@@ -127,7 +136,7 @@ def correlate_medn_with_fitr2(project_dir, participants_df):
             "tedana",
             subj_id,
             "func",
-            f"{subj_id}_task-rest_run-1_desc-optcomDenoised_bold.nii.gz",
+            f"{subj_prefix}_bold.nii.gz",
         )
         fitr2_file = op.join(
             project_dir,
@@ -136,7 +145,7 @@ def correlate_medn_with_fitr2(project_dir, participants_df):
             "t2smap",
             subj_id,
             "func",
-            f"{subj_id}_task-rest_run-1_T2starmap.nii.gz",
+            f"{subj_prefix}_T2starmap.nii.gz",
         )
 
         medn_data = masking.apply_mask(medn_file, cort_mask)
@@ -167,14 +176,14 @@ def correlate_medn_with_fitr2(project_dir, participants_df):
     t, p = ttest_1samp(z_values, popmean=0, alternative="greater")
     if p <= ALPHA:
         print(
-            "ANALYSIS 1: Correlations between the mean cortical ribbon signal from the multi-echo "
+            "ANALYSIS 2: Correlations between the mean cortical ribbon signal from the multi-echo "
             "denoised data and the FIT-R2 data "
             f"(M[Z] = {mean_z}, SD[Z] = {sd_z}) were significantly higher than zero, "
             f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
         )
     else:
         print(
-            "ANALYSIS 1: Correlations between the mean cortical ribbon signal from the multi-echo "
+            "ANALYSIS 2: Correlations between the mean cortical ribbon signal from the multi-echo "
             "denoised data and the FIT-R2 data "
             f"(M[Z] = {mean_z}, SD[Z] = {sd_z}) were not significantly higher than zero, "
             f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."

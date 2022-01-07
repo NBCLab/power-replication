@@ -30,3 +30,15 @@ def pearson_r(arr1, arr2, alternative="two-sided"):
             p = 1 - (p / 2)
 
     return r, p
+
+
+def get_prefixes():
+    """Get the prefixes used for each dataset's functional runs."""
+    DATASET_PREFIXES = {
+        "dset-cambridge": "{participant_id}_task-rest",
+        "dset-camcan": "{participant_id}_task-movie",
+        "dset-cohen": "{participant_id}_task-bilateralfingertapping",
+        "dset-dalenberg": "{participant_id}_task-images",
+        "dset-dupre": "{participant_id}_task-rest_run-1",
+    }
+    return DATASET_PREFIXES
