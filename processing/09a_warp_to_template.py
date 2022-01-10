@@ -1,5 +1,6 @@
 """Warp the scanner-space target maps to standard space for DDMRA analyses."""
 import argparse
+import os
 import os.path as op
 from glob import glob
 
@@ -57,6 +58,7 @@ def transform_to_standard_space(
     xform_t1w_to_std,
 ):
     print(f"Transforming {native_space_target_file}", flush=True)
+    os.chdir("/home/data/nbc/misc-projects/Salo_PowerReplication/")
     str_ = (
         "singularity exec /home/data/cis/singularity-images/poldracklab-fmriprep_20.2.1.sif "
         f"antsApplyTransforms -d 4 -e 3 -i {native_space_target_file} "
