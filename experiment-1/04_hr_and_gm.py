@@ -39,7 +39,7 @@ def correlate_hrv_with_cortical_sd(
     participants_df = pd.read_table(participants_file)
     n_subs_all = participants_df.shape[0]
     # Limit to participants with RPV value
-    participants_df = participants_df.dropna(subset="rpv")
+    participants_df = participants_df.dropna(subset=["rpv"])
     print(f"{participants_df.shape[0]}/{n_subs_all} participants retained.")
     prefix = get_prefixes()["dset-dupre"]
 

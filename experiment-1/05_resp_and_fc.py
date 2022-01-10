@@ -44,7 +44,7 @@ def run_ddmra_of_rpv(participants_file, target_file_patterns):
     participants_df = pd.read_table(participants_file)
     n_subs_all = participants_df.shape[0]
     # Limit to participants with RPV value
-    participants_df = participants_df.dropna(subset="rpv")
+    participants_df = participants_df.dropna(subset=["rpv"])
     print(f"{participants_df.shape[0]}/{n_subs_all} participants retained.")
     prefix = get_prefixes_mni()["dset-dupre"]
 
@@ -74,7 +74,7 @@ def run_ddmra_of_mean_rv(participants_file, confounds_pattern, target_file_patte
     participants_df = pd.read_table(participants_file)
     n_subs_all = participants_df.shape[0]
     # Limit to participants with RPV value
-    participants_df = participants_df.dropna(subset="rpv")
+    participants_df = participants_df.dropna(subset=["rpv"])
     print(f"{participants_df.shape[0]}/{n_subs_all} participants retained.")
     prefix = get_prefixes_mni()["dset-dupre"]
 
@@ -111,7 +111,7 @@ def run_ddmra_of_mean_rvt(participants_file, confounds_pattern, target_file_patt
     participants_df = pd.read_table(participants_file)
     n_subs_all = participants_df.shape[0]
     # Limit to participants with RPV value
-    participants_df = participants_df.dropna(subset="rpv")
+    participants_df = participants_df.dropna(subset=["rpv"])
     print(f"{participants_df.shape[0]}/{n_subs_all} participants retained.")
     prefix = get_prefixes_mni()["dset-dupre"]
 

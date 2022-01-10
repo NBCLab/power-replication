@@ -33,7 +33,7 @@ def correlate_rpv_with_mean_fd(participants_file, confounds_pattern):
     participants_df = pd.read_table(participants_file)
     n_subs_all = participants_df.shape[0]
     # Limit to participants with RPV value
-    participants_df = participants_df.dropna(subset="rpv")
+    participants_df = participants_df.dropna(subset=["rpv"])
     print(f"{participants_df.shape[0]}/{n_subs_all} participants retained.")
 
     participants_df["mean_fd"] = np.nan
@@ -77,7 +77,7 @@ def correlate_rvt_with_fd(participants_file, confounds_pattern):
     participants_df = pd.read_table(participants_file)
     n_subs_all = participants_df.shape[0]
     # Limit to participants with RPV value, since those are ones with good physio data
-    participants_df = participants_df.dropna(subset="rpv")
+    participants_df = participants_df.dropna(subset=["rpv"])
     print(f"{participants_df.shape[0]}/{n_subs_all} participants retained.")
 
     participants_df["rvt_fd_corr"] = np.nan
@@ -125,7 +125,7 @@ def correlate_rv_with_fd(participants_file, confounds_pattern):
     participants_df = pd.read_table(participants_file)
     n_subs_all = participants_df.shape[0]
     # Limit to participants with RPV value, since those are ones with good physio data
-    participants_df = participants_df.dropna(subset="rpv")
+    participants_df = participants_df.dropna(subset=["rpv"])
     print(f"{participants_df.shape[0]}/{n_subs_all} participants retained.")
 
     participants_df["rv_fd_corr"] = np.nan
