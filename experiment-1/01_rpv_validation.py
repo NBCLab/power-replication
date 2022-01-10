@@ -154,13 +154,14 @@ def compare_env_with_rv(participants_file, confounds_pattern):
     if p <= ALPHA:
         print(
             "ANALYSIS 3: Correlations between the upper envelope used to calculate RPV and RV "
-            f"(M[Z] = {mean_z}, SD[Z] = {sd_z}) were significantly higher than zero, "
+            f"(M[Z] = {mean_z:.03f}, SD[Z] = {sd_z:.03f}) were significantly higher than zero, "
             f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
         )
     else:
         print(
             "ANALYSIS 3: Correlations between the upper envelope used to calculate RPV and RV "
-            f"(M[Z] = {mean_z}, SD[Z] = {sd_z}) were not significantly higher than zero, "
+            f"(M[Z] = {mean_z:.03f}, SD[Z] = {sd_z:.03f}) were not significantly higher than "
+            "zero, "
             f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
         )
 
@@ -202,13 +203,14 @@ def compare_env_with_rvt(participants_file, confounds_pattern):
     if p <= ALPHA:
         print(
             "ANALYSIS 4: Correlations between the upper envelope used to calculate RPV and RVT "
-            f"(M[Z] = {mean_z}, SD[Z] = {sd_z}) were significantly higher than zero, "
+            f"(M[Z] = {mean_z:.03f}, SD[Z] = {sd_z:.03f}) were significantly higher than zero, "
             f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
         )
     else:
         print(
             "ANALYSIS 4: Correlations between the upper envelope used to calculate RPV and RVT "
-            f"(M[Z] = {mean_z}, SD[Z] = {sd_z}) were not significantly higher than zero, "
+            f"(M[Z] = {mean_z:.03f}, SD[Z] = {sd_z:.03f}) were not significantly higher than "
+            "zero, "
             f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
         )
 

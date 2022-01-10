@@ -43,7 +43,7 @@ def correlate_rpv_with_mean_fd(participants_file, confounds_pattern):
         assert op.isfile(confounds_file), f"{confounds_file} DNE"
 
         confounds_df = pd.read_table(confounds_file)
-        fd_arr = confounds_df["FramewiseDisplacement"].values
+        fd_arr = confounds_df["framewise_displacement"].values
         mean_fd = np.mean(fd_arr)
         participants_df.loc[i, "mean_fd"] = mean_fd
 
@@ -88,7 +88,7 @@ def correlate_rvt_with_fd(participants_file, confounds_pattern):
 
         confounds_df = pd.read_table(confounds_file)
         corr = confounds_df["RVTRegression_RVT"].corr(
-            confounds_df["FramewiseDisplacement"]
+            confounds_df["framewise_displacement"]
         )
         participants_df.loc[i, "rvt_fd_corr"] = corr
 
@@ -103,13 +103,14 @@ def correlate_rvt_with_fd(participants_file, confounds_pattern):
     if p <= ALPHA:
         print(
             "ANALYSIS 2: Correlations between RVT and FD "
-            f"(M[Z] = {mean_z}, SD[Z] = {sd_z}) were significantly higher than zero, "
+            f"(M[Z] = {mean_z:.03f}, SD[Z] = {sd_z:.03f}) were significantly higher than zero, "
             f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
         )
     else:
         print(
             "ANALYSIS 2: Correlations between RVT and FD "
-            f"(M[Z] = {mean_z}, SD[Z] = {sd_z}) were not significantly higher than zero, "
+            f"(M[Z] = {mean_z:.03f}, SD[Z] = {sd_z:.03f}) were not significantly higher than "
+            "zero, "
             f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
         )
 
@@ -136,7 +137,7 @@ def correlate_rv_with_fd(participants_file, confounds_pattern):
 
         confounds_df = pd.read_table(confounds_file)
         corr = confounds_df["RVRegression_RV"].corr(
-            confounds_df["FramewiseDisplacement"]
+            confounds_df["framewise_displacement"]
         )
         participants_df.loc[i, "rv_fd_corr"] = corr
 
@@ -151,13 +152,14 @@ def correlate_rv_with_fd(participants_file, confounds_pattern):
     if p <= ALPHA:
         print(
             "ANALYSIS 3: Correlations between RV and FD "
-            f"(M[Z] = {mean_z}, SD[Z] = {sd_z}) were significantly higher than zero, "
+            f"(M[Z] = {mean_z:.03f}, SD[Z] = {sd_z:.03f}) were significantly higher than zero, "
             f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
         )
     else:
         print(
             "ANALYSIS 3: Correlations between RV and FD "
-            f"(M[Z] = {mean_z}, SD[Z] = {sd_z}) were not significantly higher than zero, "
+            f"(M[Z] = {mean_z:.03f}, SD[Z] = {sd_z:.03f}) were not significantly higher than "
+            "zero, "
             f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
         )
 

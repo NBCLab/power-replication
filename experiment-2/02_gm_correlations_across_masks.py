@@ -103,14 +103,15 @@ def correlate_cort_with_gm(project_dir, participants_df):
         print(
             "ANALYSIS 1: Correlations between the mean multi-echo denoised signal extracted from "
             "the cortical ribbon and that extracted from all gray matter "
-            f"(M[Z] = {mean_z}, SD[Z] = {sd_z}) were significantly higher than zero, "
+            f"(M[Z] = {mean_z:.03f}, SD[Z] = {sd_z:.03f}) were significantly higher than zero, "
             f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
         )
     else:
         print(
             "ANALYSIS 1: Correlations between the mean multi-echo denoised signal extracted from "
             "the cortical ribbon and that extracted from all gray matter "
-            f"(M[Z] = {mean_z}, SD[Z] = {sd_z}) were not significantly higher than zero, "
+            f"(M[Z] = {mean_z:.03f}, SD[Z] = {sd_z:.03f}) were not significantly higher than "
+            "zero, "
             f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
         )
 
@@ -192,13 +193,14 @@ def correlate_cort_with_wb(project_dir, participants_df):
         print(
             "ANALYSIS 2: Correlations between the mean multi-echo denoised signal extracted from "
             "the cortical ribbon and that extracted from the whole brain "
-            f"(M[Z] = {mean_z}, SD[Z] = {sd_z}) were significantly higher than zero, "
+            f"(M[Z] = {mean_z:.03f}, SD[Z] = {sd_z:.03f}) were significantly higher than zero, "
             f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
         )
     else:
         print(
             "ANALYSIS 2: Correlations between the mean multi-echo denoised signal extracted from "
             "the cortical ribbon and that extracted from the whole brain "
-            f"(M[Z] = {mean_z}, SD[Z] = {sd_z}) were not significantly higher than zero, "
+            f"(M[Z] = {mean_z:.03f}, SD[Z] = {sd_z:.03f}) were not significantly higher than "
+            "zero, "
             f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
         )

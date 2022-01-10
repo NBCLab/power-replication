@@ -116,7 +116,7 @@ def make_plots(dset, pathstr, method, in_dir="/scratch/tsalo006/power-replicatio
             fp_subj_dir, subj, "func", "sub-{0}_task-rest_run-01_bold_confounds.tsv"
         )
         conf_df = pd.read_csv(conf_file, sep="\t")
-        conf_df = conf_df[["X", "Y", "Z", "RotX", "RotY", "RotZ", "FramewiseDisplacement"]]
+        conf_df = conf_df[["X", "Y", "Z", "RotX", "RotY", "RotZ", "framewise_displacement"]]
         conf_df = conf_df.rename(
             columns={
                 "X": "X",
@@ -125,7 +125,7 @@ def make_plots(dset, pathstr, method, in_dir="/scratch/tsalo006/power-replicatio
                 "RotX": "P",
                 "RotY": "R",
                 "RotZ": "Ya",
-                "FramewiseDisplacement": "FD",
+                "framewise_displacement": "FD",
             }
         )
         conf_df = conf_df[["X", "P", "Y", "R", "Z", "Ya", "FD"]]
