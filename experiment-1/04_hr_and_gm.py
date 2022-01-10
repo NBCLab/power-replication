@@ -42,10 +42,10 @@ def correlate_hrv_with_cortical_sd(
     print(f"{participants_df.shape[0]}/{n_subs_all} participants retained.")
     prefix = get_prefixes()["dset-dupre"]
 
-    participants_df["TE30"] = np.nan
-    participants_df["FIT-R2"] = np.nan
-    participants_df["MEDN"] = np.nan
     participants_df["hrv"] = np.nan
+    for col in target_file_patterns.keys():
+        participants_df[col] = np.nan
+
     for i, row in participants_df.iterrows():
         participant_id = row["participant_id"]
         confounds_file = confounds_pattern.format(participant_id=participant_id)
@@ -66,7 +66,7 @@ def correlate_hrv_with_cortical_sd(
         # We are performing a one-sided test to determine if the correlation is
         # statistically significant (alpha = 0.05) and positive.
         corr, p = pearson_r(
-            participants_df["hrv"], participants_df["mean_fd"], alternative="greater"
+            participants_df["hrv"], participants_df[filetype], alternative="greater"
         )
         if p <= ALPHA:
             print(
@@ -98,9 +98,10 @@ if __name__ == "__main__":
     )
     TARGET_FILE_PATTERNS = get_target_files()
     TARGETS = ["TE30", "FIT-R2", "MEDN"]
-    target_file_patterns = {k: v for k, v in TARGET_FILE_PATTERNS.items() if k in TARGETS}
     target_file_patterns = {
-        k: op.join(in_dir, "derivatives", v) for k, v in target_file_patterns.items()
+        k: op.join(in_dir, "derivatives", v)
+        for k, v in TARGET_FILE_PATTERNS.items()
+        if k in TARGETS
     }
 
     correlate_hrv_with_cortical_sd(
