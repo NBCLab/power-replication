@@ -58,14 +58,14 @@ def transform_to_standard_space(
 ):
     print(f"Transforming {native_space_target_file}", flush=True)
     str_ = (
-        f"antsApplyTransforms -i {native_space_target_file} "
+        f"antsApplyTransforms -e 3 -d 4 -i {native_space_target_file} "
         f"-r {template} -o {out_file} "
         f"-n LanczosWindowedSinc -t {xform_native_to_t1w} {xform_t1w_to_std}"
     )
     try:
         run_command(str_)
-    except:
-        print("Failed.", flush=True)
+    except Exception as exc:
+        print(exc, flush=True)
 
 
 def main(project_dir, dset, subject):
