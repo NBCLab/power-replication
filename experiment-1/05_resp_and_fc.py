@@ -47,6 +47,7 @@ def run_ddmra_of_rpv(participants_file, target_file_patterns):
     participants_df = participants_df.dropna(subset=["rpv"])
     print(f"{participants_df.shape[0]}/{n_subs_all} participants retained.")
     prefix = get_prefixes_mni()["dset-dupre"]
+    subj_prefix = prefix.format(participant_id=participant_id)
 
     rpv_confounds = participants_df["rpv"].values
 
@@ -57,7 +58,7 @@ def run_ddmra_of_rpv(participants_file, target_file_patterns):
         target_files = []
         for i, row in participants_df.iterrows():
             participant_id = row["participant_id"]
-            filename = pattern.format(participant_id=participant_id, prefix=prefix)
+            filename = pattern.format(participant_id=participant_id, prefix=subj_prefix)
             target_files.append(filename)
 
         run_reduced_analyses(target_files, rpv_confounds, out_dir=filetype_out_dir)
@@ -81,6 +82,8 @@ def run_ddmra_of_mean_rv(participants_file, confounds_pattern, target_file_patte
     rv_confounds = []
     for i, row in participants_df.iterrows():
         participant_id = row["participant_id"]
+        subj_prefix = prefix.format(participant_id=participant_id)
+
         confounds_file = confounds_pattern.format(participant_id=participant_id)
         confounds_df = pd.read_table(confounds_file)
 
@@ -94,7 +97,7 @@ def run_ddmra_of_mean_rv(participants_file, confounds_pattern, target_file_patte
         target_files = []
         for i, row in participants_df.iterrows():
             participant_id = row["participant_id"]
-            filename = pattern.format(participant_id=participant_id, prefix=prefix)
+            filename = pattern.format(participant_id=participant_id, prefix=subj_prefix)
             target_files.append(filename)
 
         run_reduced_analyses(target_files, rv_confounds, out_dir=filetype_out_dir)
@@ -118,6 +121,8 @@ def run_ddmra_of_mean_rvt(participants_file, confounds_pattern, target_file_patt
     rvt_confounds = []
     for i, row in participants_df.iterrows():
         participant_id = row["participant_id"]
+        subj_prefix = prefix.format(participant_id=participant_id)
+
         confounds_file = confounds_pattern.format(participant_id=participant_id)
         confounds_df = pd.read_table(confounds_file)
 
@@ -131,7 +136,7 @@ def run_ddmra_of_mean_rvt(participants_file, confounds_pattern, target_file_patt
         target_files = []
         for i, row in participants_df.iterrows():
             participant_id = row["participant_id"]
-            filename = pattern.format(participant_id=participant_id, prefix=prefix)
+            filename = pattern.format(participant_id=participant_id, prefix=subj_prefix)
             target_files.append(filename)
 
         run_reduced_analyses(target_files, rvt_confounds, out_dir=filetype_out_dir)

@@ -49,6 +49,8 @@ def correlate_hrv_with_cortical_sd(
 
     for i, row in participants_df.iterrows():
         participant_id = row["participant_id"]
+        subj_prefix = prefix.format(participant_id=participant_id)
+
         confounds_file = confounds_pattern.format(participant_id=participant_id)
         assert op.isfile(confounds_file), f"{confounds_file} DNE"
 
@@ -58,7 +60,7 @@ def correlate_hrv_with_cortical_sd(
         mask = mask_pattern.format(participant_id=participant_id)
 
         for filetype, pattern in target_file_patterns.items():
-            filename = pattern.format(participant_id=participant_id, prefix=prefix)
+            filename = pattern.format(participant_id=participant_id, prefix=subj_prefix)
             cortical_signal = masking.apply_mask(filename, mask)
             mean_cortical_signal = np.mean(cortical_signal, axis=0)
             participants_df.loc[i, filetype] = np.std(mean_cortical_signal)
