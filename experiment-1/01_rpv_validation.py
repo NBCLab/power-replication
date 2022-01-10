@@ -12,11 +12,14 @@ via t-test.
 RPV upper envelope (ENV) correlated with RVT, then z-transformed and assessed across participants
 via t-test.
 """
+import os
 import os.path as op
 import sys
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import seaborn as sns
 from scipy.stats import ttest_1samp
 
 sys.path.append("..")
@@ -24,7 +27,7 @@ sys.path.append("..")
 from utils import pearson_r  # noqa: E402
 
 
-def correlate_rpv_with_mean_rv(participants_file, confounds_pattern):
+def correlate_rpv_with_mean_rv(project_dir, participants_file, confounds_pattern):
     """Perform analysis 1.
 
     Correlate RPV with mean RV, across participants.
@@ -32,6 +35,9 @@ def correlate_rpv_with_mean_rv(participants_file, confounds_pattern):
     significantly, positively correlated with mean RV.
     """
     print("Experiment 1, Analysis Group 1, Analysis 1", flush=True)
+    out_dir = op.join(project_dir, "analyses", "experiment01_group01")
+    os.makedirs(out_dir, exist_ok=True)
+
     ALPHA = 0.05
 
     participants_df = pd.read_table(participants_file)
@@ -69,8 +75,12 @@ def correlate_rpv_with_mean_rv(participants_file, confounds_pattern):
             f"r({participants_df.shape[0] - 2}) = {corr:.02f}, p = {p:.03f}"
         )
 
+    g = sns.JointGrid(data=participants_df, x="rpv", y="mean_rv")
+    g.plot(sns.scatterplot, sns.histplot)
+    g.savefig(op.join(out_dir, "analysis_01.png"), dpi=400)
 
-def correlate_rpv_with_mean_rvt(participants_file, confounds_pattern):
+
+def correlate_rpv_with_mean_rvt(project_dir, participants_file, confounds_pattern):
     """Perform analysis 2.
 
     Correlate RPV with mean RVT, across participants.
@@ -78,6 +88,9 @@ def correlate_rpv_with_mean_rvt(participants_file, confounds_pattern):
     significantly, positively correlated with mean RVT.
     """
     print("Experiment 1, Analysis Group 1, Analysis 2", flush=True)
+    out_dir = op.join(project_dir, "analyses", "experiment01_group01")
+    os.makedirs(out_dir, exist_ok=True)
+
     ALPHA = 0.05
 
     participants_df = pd.read_table(participants_file)
@@ -116,8 +129,12 @@ def correlate_rpv_with_mean_rvt(participants_file, confounds_pattern):
             f"r({participants_df.shape[0] - 2}) = {corr:.02f}, p = {p:.03f}"
         )
 
+    g = sns.JointGrid(data=participants_df, x="rpv", y="mean_rvt")
+    g.plot(sns.scatterplot, sns.histplot)
+    g.savefig(op.join(out_dir, "analysis_02.png"), dpi=400)
 
-def compare_env_with_rv(participants_file, confounds_pattern):
+
+def compare_env_with_rv(project_dir, participants_file, confounds_pattern):
     """Perform analysis 3.
 
     Correlate ENV (upper envelope used to calculate RPV) with RV for each participant,
@@ -125,6 +142,9 @@ def compare_env_with_rv(participants_file, confounds_pattern):
     with the z-values.
     """
     print("Experiment 1, Analysis Group 1, Analysis 3", flush=True)
+    out_dir = op.join(project_dir, "analyses", "experiment01_group01")
+    os.makedirs(out_dir, exist_ok=True)
+
     ALPHA = 0.05
 
     participants_df = pd.read_table(participants_file)
@@ -140,7 +160,9 @@ def compare_env_with_rv(participants_file, confounds_pattern):
         assert op.isfile(confounds_file), f"{confounds_file} DNE"
 
         confounds_df = pd.read_table(confounds_file)
-        corr = confounds_df["RPVRegression_Envelope"].corr(confounds_df["RVRegression_RV"])
+        corr = confounds_df["RPVRegression_Envelope"].corr(
+            confounds_df["RVRegression_RV"]
+        )
         participants_df.loc[i, "env_rv_corr"] = corr
 
     # Now transform correlation coefficients to Z-values
@@ -165,8 +187,13 @@ def compare_env_with_rv(participants_file, confounds_pattern):
             f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
         )
 
+    fig, ax = plt.subplots(figsize=(8, 8))
+    sns.histplot(data=z_values, x="Z-transformed correlation coefficient", ax=ax)
+    fig.suptitle("Distribution of correlations between RPV upper envelope and RV")
+    fig.savefig(op.join(out_dir, "analysis_03.png", dpi=400))
 
-def compare_env_with_rvt(participants_file, confounds_pattern):
+
+def compare_env_with_rvt(project_dir, participants_file, confounds_pattern):
     """Perform analysis 4.
 
     Correlate ENV (upper envelope used to calculate RPV) with RVT for each participant,
@@ -174,6 +201,9 @@ def compare_env_with_rvt(participants_file, confounds_pattern):
     with the z-values.
     """
     print("Experiment 1, Analysis Group 1, Analysis 4", flush=True)
+    out_dir = op.join(project_dir, "analyses", "experiment01_group01")
+    os.makedirs(out_dir, exist_ok=True)
+
     ALPHA = 0.05
 
     participants_df = pd.read_table(participants_file)
@@ -189,7 +219,9 @@ def compare_env_with_rvt(participants_file, confounds_pattern):
         assert op.isfile(confounds_file), f"{confounds_file} DNE"
 
         confounds_df = pd.read_table(confounds_file)
-        corr = confounds_df["RPVRegression_Envelope"].corr(confounds_df["RVTRegression_RVT"])
+        corr = confounds_df["RPVRegression_Envelope"].corr(
+            confounds_df["RVTRegression_RVT"]
+        )
         participants_df.loc[i, "env_rvt_corr"] = corr
 
     # Now transform correlation coefficients to Z-values
@@ -214,17 +246,23 @@ def compare_env_with_rvt(participants_file, confounds_pattern):
             f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
         )
 
+    fig, ax = plt.subplots(figsize=(8, 8))
+    sns.histplot(data=z_values, x="Z-transformed correlation coefficient", ax=ax)
+    fig.suptitle("Distribution of correlations between RPV upper envelope and RVT")
+    fig.savefig(op.join(out_dir, "analysis_04.png", dpi=400))
+
 
 if __name__ == "__main__":
     print("Experiment 1, Analysis Group 1")
-    in_dir = "/home/data/nbc/misc-projects/Salo_PowerReplication/dset-dupre/"
+    project_dir = "/home/data/nbc/misc-projects/Salo_PowerReplication/"
+    in_dir = op.join(project_dir, "dset-dupre/")
     participants_file = op.join(in_dir, "participants.tsv")
     confounds_pattern = op.join(
         in_dir,
         "derivatives/power/{participant_id}/func",
         "{participant_id}_task-rest_run-1_desc-confounds_timeseries.tsv",
     )
-    correlate_rpv_with_mean_rv(participants_file, confounds_pattern)
-    correlate_rpv_with_mean_rvt(participants_file, confounds_pattern)
-    compare_env_with_rv(participants_file, confounds_pattern)
-    compare_env_with_rvt(participants_file, confounds_pattern)
+    correlate_rpv_with_mean_rv(project_dir, participants_file, confounds_pattern)
+    correlate_rpv_with_mean_rvt(project_dir, participants_file, confounds_pattern)
+    compare_env_with_rv(project_dir, participants_file, confounds_pattern)
+    compare_env_with_rvt(project_dir, participants_file, confounds_pattern)

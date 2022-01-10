@@ -62,7 +62,9 @@ def run_ddmra_of_rpv(participants_file, target_file_patterns):
             filename = pattern.format(participant_id=participant_id, prefix=subj_prefix)
             target_files.append(filename)
 
-        run_reduced_analyses(target_files, rpv_confounds, out_dir=filetype_out_dir)
+        run_reduced_analyses(
+            target_files, rpv_confounds, out_dir=filetype_out_dir, n_jobs=4
+        )
 
 
 def run_ddmra_of_mean_rv(participants_file, confounds_pattern, target_file_patterns):
@@ -101,7 +103,9 @@ def run_ddmra_of_mean_rv(participants_file, confounds_pattern, target_file_patte
             filename = pattern.format(participant_id=participant_id, prefix=subj_prefix)
             target_files.append(filename)
 
-        run_reduced_analyses(target_files, rv_confounds, out_dir=filetype_out_dir)
+        run_reduced_analyses(
+            target_files, rv_confounds, out_dir=filetype_out_dir, n_jobs=4
+        )
 
 
 def run_ddmra_of_mean_rvt(participants_file, confounds_pattern, target_file_patterns):
@@ -140,7 +144,9 @@ def run_ddmra_of_mean_rvt(participants_file, confounds_pattern, target_file_patt
             filename = pattern.format(participant_id=participant_id, prefix=subj_prefix)
             target_files.append(filename)
 
-        run_reduced_analyses(target_files, rvt_confounds, out_dir=filetype_out_dir)
+        run_reduced_analyses(
+            target_files, rvt_confounds, out_dir=filetype_out_dir, n_jobs=4
+        )
 
 
 if __name__ == "__main__":

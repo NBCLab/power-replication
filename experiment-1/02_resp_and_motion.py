@@ -8,11 +8,14 @@ RVT correlated with framewise displacement.
 
 RV correlated with framewise displacement.
 """
+import os
 import os.path as op
 import sys
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import seaborn as sns
 from scipy.stats import ttest_1samp
 
 sys.path.append("..")
@@ -20,7 +23,7 @@ sys.path.append("..")
 from utils import pearson_r  # noqa: E402
 
 
-def correlate_rpv_with_mean_fd(participants_file, confounds_pattern):
+def correlate_rpv_with_mean_fd(project_dir, participants_file, confounds_pattern):
     """Perform analysis 1.
 
     Correlate RPV with mean FD across participants.
@@ -28,6 +31,9 @@ def correlate_rpv_with_mean_fd(participants_file, confounds_pattern):
     significantly, positively correlated with mean FD.
     """
     print("Experiment 1, Analysis Group 2, Analysis 1", flush=True)
+    out_dir = op.join(project_dir, "analyses", "experiment01_group02")
+    os.makedirs(out_dir, exist_ok=True)
+
     ALPHA = 0.05
 
     participants_df = pd.read_table(participants_file)
@@ -65,14 +71,21 @@ def correlate_rpv_with_mean_fd(participants_file, confounds_pattern):
             f"r({participants_df.shape[0] - 2}) = {corr:.02f}, p = {p:.03f}"
         )
 
+    g = sns.JointGrid(data=participants_df, x="rpv", y="mean_fd")
+    g.plot(sns.scatterplot, sns.histplot)
+    g.savefig(op.join(out_dir, "analysis_01.png"), dpi=400)
 
-def correlate_rvt_with_fd(participants_file, confounds_pattern):
+
+def correlate_rvt_with_fd(project_dir, participants_file, confounds_pattern):
     """Perform analysis 2.
 
     Correlate RVT with FD for each participant, then z-transform the correlation coefficients
     and perform a one-sample t-test against zero with the z-values.
     """
     print("Experiment 1, Analysis Group 2, Analysis 2", flush=True)
+    out_dir = op.join(project_dir, "analyses", "experiment01_group02")
+    os.makedirs(out_dir, exist_ok=True)
+
     ALPHA = 0.05
     participants_df = pd.read_table(participants_file)
     n_subs_all = participants_df.shape[0]
@@ -114,14 +127,22 @@ def correlate_rvt_with_fd(participants_file, confounds_pattern):
             f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
         )
 
+    fig, ax = plt.subplots(figsize=(8, 8))
+    sns.histplot(data=z_values, x="Z-transformed correlation coefficient", ax=ax)
+    fig.suptitle("Distribution of correlations between RPV upper envelope and RV")
+    fig.savefig(op.join(out_dir, "analysis_02.png", dpi=400))
 
-def correlate_rv_with_fd(participants_file, confounds_pattern):
+
+def correlate_rv_with_fd(project_dir, participants_file, confounds_pattern):
     """Perform analysis 3.
 
     Correlate RV with FD for each participant, then z-transform the correlation coefficients
     and perform a one-sample t-test against zero with the z-values.
     """
     print("Experiment 1, Analysis Group 2, Analysis 3", flush=True)
+    out_dir = op.join(project_dir, "analyses", "experiment01_group02")
+    os.makedirs(out_dir, exist_ok=True)
+
     ALPHA = 0.05
     participants_df = pd.read_table(participants_file)
     n_subs_all = participants_df.shape[0]
@@ -163,16 +184,22 @@ def correlate_rv_with_fd(participants_file, confounds_pattern):
             f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
         )
 
+    fig, ax = plt.subplots(figsize=(8, 8))
+    sns.histplot(data=z_values, x="Z-transformed correlation coefficient", ax=ax)
+    fig.suptitle("Distribution of correlations between RPV upper envelope and RV")
+    fig.savefig(op.join(out_dir, "analysis_03.png", dpi=400))
+
 
 if __name__ == "__main__":
     print("Experiment 1, Analysis Group 2")
-    in_dir = "/home/data/nbc/misc-projects/Salo_PowerReplication/dset-dupre/"
+    project_dir = "/home/data/nbc/misc-projects/Salo_PowerReplication/"
+    in_dir = op.join(project_dir, "dset-dupre/")
     participants_file = op.join(in_dir, "participants.tsv")
     confounds_pattern = op.join(
         in_dir,
         "derivatives/power/{participant_id}/func",
         "{participant_id}_task-rest_run-1_desc-confounds_timeseries.tsv",
     )
-    correlate_rpv_with_mean_fd(participants_file, confounds_pattern)
-    correlate_rvt_with_fd(participants_file, confounds_pattern)
-    correlate_rv_with_fd(participants_file, confounds_pattern)
+    correlate_rpv_with_mean_fd(project_dir, participants_file, confounds_pattern)
+    correlate_rvt_with_fd(project_dir, participants_file, confounds_pattern)
+    correlate_rv_with_fd(project_dir, participants_file, confounds_pattern)

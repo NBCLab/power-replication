@@ -14,7 +14,7 @@
 # USAGE information:
 # Use the -array= option.
 # Start with 0.
-# sbatch 09_run_subject_warp.sbatch --array=0-778%10
+# sbatch --array=0-778%10 09_run_subject_warp.sbatch
 pwd; hostname; date
 set -e
 

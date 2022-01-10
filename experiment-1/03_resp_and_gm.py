@@ -30,11 +30,13 @@ Plot respiration time series for deep breaths against mean signal from:
 - MEDN+MIR
 - MEDN+GSR
 """
+import os
 import os.path as op
 import sys
 
 import numpy as np
 import pandas as pd
+import seaborn as sns
 from nilearn import masking
 
 sys.path.append("..")
@@ -43,7 +45,10 @@ from utils import get_prefixes, get_target_files, pearson_r  # noqa: E402
 
 
 def correlate_rpv_with_cortical_sd(
-    participants_file, target_file_patterns, mask_pattern
+    project_dir,
+    participants_file,
+    target_file_patterns,
+    mask_pattern,
 ):
     """Perform analysis 1.
 
@@ -54,6 +59,9 @@ def correlate_rpv_with_cortical_sd(
     approach.
     """
     print("Experiment 1, Analysis Group 3, Analysis 1", flush=True)
+    out_dir = op.join(project_dir, "analyses", "experiment01_group03")
+    os.makedirs(out_dir, exist_ok=True)
+
     ALPHA = 0.05
 
     participants_df = pd.read_table(participants_file)
@@ -99,6 +107,10 @@ def correlate_rpv_with_cortical_sd(
                 f"r({participants_df.shape[0] - 2}) = {corr:.02f}, p = {p:.03f}"
             )
 
+        g = sns.JointGrid(data=participants_df, x="rpv", y=filetype)
+        g.plot(sns.scatterplot, sns.histplot)
+        g.savefig(op.join(out_dir, f"analysis_01_{filetype}.png"), dpi=400)
+
 
 def plot_deep_breath_cortical_signal(
     participants_file,
@@ -117,7 +129,8 @@ def plot_deep_breath_cortical_signal(
 
 if __name__ == "__main__":
     print("Experiment 1, Analysis Group 3")
-    in_dir = "/home/data/nbc/misc-projects/Salo_PowerReplication/dset-dupre/"
+    project_dir = "/home/data/nbc/misc-projects/Salo_PowerReplication/"
+    in_dir = op.join(project_dir, "dset-dupre/")
     participants_file = op.join(in_dir, "participants.tsv")
     confounds_pattern = op.join(
         in_dir,
@@ -150,6 +163,7 @@ if __name__ == "__main__":
     }
 
     correlate_rpv_with_cortical_sd(
+        project_dir,
         participants_file,
         target_file_patterns,
         mask_pattern,

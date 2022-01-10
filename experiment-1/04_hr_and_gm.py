@@ -8,11 +8,13 @@ HRV correlated with SD of mean cortical signal from:
 - FIT-R2
 - MEDN
 """
+import os
 import os.path as op
 import sys
 
 import numpy as np
 import pandas as pd
+import seaborn as sns
 from nilearn import masking
 
 sys.path.append("..")
@@ -21,6 +23,7 @@ from utils import get_prefixes, get_target_files, pearson_r  # noqa: E402
 
 
 def correlate_hrv_with_cortical_sd(
+    project_dir,
     participants_file,
     target_file_patterns,
     mask_pattern,
@@ -34,6 +37,9 @@ def correlate_hrv_with_cortical_sd(
     significantly correlated with SD of mean cortical signal after each denoising approach.
     """
     print("Experiment 1, Analysis Group 4, Analysis 1", flush=True)
+    out_dir = op.join(project_dir, "analyses", "experiment01_group04")
+    os.makedirs(out_dir, exist_ok=True)
+
     ALPHA = 0.05
 
     participants_df = pd.read_table(participants_file)
@@ -55,7 +61,9 @@ def correlate_hrv_with_cortical_sd(
         assert op.isfile(confounds_file), f"{confounds_file} DNE"
 
         confounds_df = pd.read_table(confounds_file)
-        participants_df.loc[i, "hrv"] = np.std(confounds_df["IHRRegression_IHR_Interpolated"])
+        participants_df.loc[i, "hrv"] = np.std(
+            confounds_df["IHRRegression_IHR_Interpolated"]
+        )
 
         mask = mask_pattern.format(participant_id=participant_id)
 
@@ -84,10 +92,15 @@ def correlate_hrv_with_cortical_sd(
                 f"r({participants_df.shape[0] - 2}) = {corr:.02f}, p = {p:.03f}"
             )
 
+        g = sns.JointGrid(data=participants_df, x="hrv", y=filetype)
+        g.plot(sns.scatterplot, sns.histplot)
+        g.savefig(op.join(out_dir, f"analysis_01_{filetype}.png"), dpi=400)
+
 
 if __name__ == "__main__":
     print("Experiment 1, Analysis Group 4")
-    in_dir = "/home/data/nbc/misc-projects/Salo_PowerReplication/dset-dupre/"
+    project_dir = "/home/data/nbc/misc-projects/Salo_PowerReplication/"
+    in_dir = op.join(project_dir, "dset-dupre/")
     participants_file = op.join(in_dir, "participants.tsv")
     confounds_pattern = op.join(
         in_dir,
@@ -108,6 +121,7 @@ if __name__ == "__main__":
     }
 
     correlate_hrv_with_cortical_sd(
+        project_dir,
         participants_file,
         target_file_patterns,
         mask_pattern,
