@@ -61,7 +61,7 @@ def transform_to_standard_space(
     os.chdir("/home/data/nbc/misc-projects/Salo_PowerReplication/")
     str_ = (
         "singularity exec /home/data/cis/singularity-images/poldracklab-fmriprep_20.2.1.sif "
-        f"antsApplyTransforms -d 4 -e 3 -i {native_space_target_file} "
+        f"antsApplyTransforms -e 3 -i {native_space_target_file} "
         f"-r {template} -o {out_file} "
         f"-n LanczosWindowedSinc -t {xform_native_to_t1w} {xform_t1w_to_std}"
     )
