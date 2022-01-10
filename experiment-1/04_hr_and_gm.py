@@ -73,13 +73,13 @@ def correlate_hrv_with_cortical_sd(
         )
         if p <= ALPHA:
             print(
-                "ANALYSIS 1: HRV and standard deviation of mean cortical signal "
+                "\tHRV and standard deviation of mean cortical signal "
                 "were found to be positively and statistically significantly correlated, "
                 f"r({participants_df.shape[0] - 2}) = {corr:.02f}, p = {p:.03f}"
             )
         else:
             print(
-                "ANALYSIS 1: HRV and standard deviation of mean cortical signal "
+                "\tHRV and standard deviation of mean cortical signal "
                 "were not found to be statistically significantly correlated, "
                 f"r({participants_df.shape[0] - 2}) = {corr:.02f}, p = {p:.03f}"
             )

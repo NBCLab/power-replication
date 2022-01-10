@@ -54,13 +54,13 @@ def correlate_rpv_with_mean_fd(participants_file, confounds_pattern):
     )
     if p <= ALPHA:
         print(
-            "ANALYSIS 1: RPV and mean FD were found to be positively and statistically "
+            "\tRPV and mean FD were found to be positively and statistically "
             "significantly correlated, "
             f"r({participants_df.shape[0] - 2}) = {corr:.02f}, p = {p:.03f}"
         )
     else:
         print(
-            "ANALYSIS 1: RPV and mean FD were not found to be statistically significantly "
+            "\tRPV and mean FD were not found to be statistically significantly "
             "correlated, "
             f"r({participants_df.shape[0] - 2}) = {corr:.02f}, p = {p:.03f}"
         )
@@ -102,13 +102,13 @@ def correlate_rvt_with_fd(participants_file, confounds_pattern):
 
     if p <= ALPHA:
         print(
-            "ANALYSIS 2: Correlations between RVT and FD "
+            "\tCorrelations between RVT and FD "
             f"(M[Z] = {mean_z:.03f}, SD[Z] = {sd_z:.03f}) were significantly higher than zero, "
             f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
         )
     else:
         print(
-            "ANALYSIS 2: Correlations between RVT and FD "
+            "\tCorrelations between RVT and FD "
             f"(M[Z] = {mean_z:.03f}, SD[Z] = {sd_z:.03f}) were not significantly higher than "
             "zero, "
             f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
@@ -151,13 +151,13 @@ def correlate_rv_with_fd(participants_file, confounds_pattern):
 
     if p <= ALPHA:
         print(
-            "ANALYSIS 3: Correlations between RV and FD "
+            "\tCorrelations between RV and FD "
             f"(M[Z] = {mean_z:.03f}, SD[Z] = {sd_z:.03f}) were significantly higher than zero, "
             f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
         )
     else:
         print(
-            "ANALYSIS 3: Correlations between RV and FD "
+            "\tCorrelations between RV and FD "
             f"(M[Z] = {mean_z:.03f}, SD[Z] = {sd_z:.03f}) were not significantly higher than "
             "zero, "
             f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."

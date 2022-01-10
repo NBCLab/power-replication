@@ -58,13 +58,13 @@ def correlate_rpv_with_mean_rv(participants_file, confounds_pattern):
     )
     if p <= ALPHA:
         print(
-            "ANALYSIS 1: RPV and mean RV were found to be positively and statistically "
+            "\tRPV and mean RV were found to be positively and statistically "
             "significantly correlated, "
             f"r({participants_df.shape[0] - 2}) = {corr:.02f}, p = {p:.03f}"
         )
     else:
         print(
-            "ANALYSIS 1: RPV and mean RV were not found to be statistically significantly "
+            "\tRPV and mean RV were not found to be statistically significantly "
             "correlated, "
             f"r({participants_df.shape[0] - 2}) = {corr:.02f}, p = {p:.03f}"
         )
@@ -93,7 +93,7 @@ def correlate_rpv_with_mean_rvt(participants_file, confounds_pattern):
         assert op.isfile(confounds_file), f"{confounds_file} DNE"
 
         confounds_df = pd.read_table(confounds_file)
-        rv_arr = confounds_df["RVRegression_RV"].values
+        rv_arr = confounds_df["RVTRegression_RVT"].values
         mean_rvt = np.mean(rv_arr)
         participants_df.loc[i, "mean_rvt"] = mean_rvt
 
@@ -105,13 +105,13 @@ def correlate_rpv_with_mean_rvt(participants_file, confounds_pattern):
 
     if p <= ALPHA:
         print(
-            "ANALYSIS 2: RPV and mean RV were found to be positively and statistically "
+            "\tRPV and mean RVT were found to be positively and statistically "
             "significantly correlated, "
             f"r({participants_df.shape[0] - 2}) = {corr:.02f}, p = {p:.03f}"
         )
     else:
         print(
-            "ANALYSIS 2: RPV and mean RV were not found to be statistically significantly "
+            "\tRPV and mean RVT were not found to be statistically significantly "
             "correlated, "
             f"r({participants_df.shape[0] - 2}) = {corr:.02f}, p = {p:.03f}"
         )
@@ -153,13 +153,13 @@ def compare_env_with_rv(participants_file, confounds_pattern):
 
     if p <= ALPHA:
         print(
-            "ANALYSIS 3: Correlations between the upper envelope used to calculate RPV and RV "
+            "\tCorrelations between the upper envelope used to calculate RPV and RV "
             f"(M[Z] = {mean_z:.03f}, SD[Z] = {sd_z:.03f}) were significantly higher than zero, "
             f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
         )
     else:
         print(
-            "ANALYSIS 3: Correlations between the upper envelope used to calculate RPV and RV "
+            "\tCorrelations between the upper envelope used to calculate RPV and RV "
             f"(M[Z] = {mean_z:.03f}, SD[Z] = {sd_z:.03f}) were not significantly higher than "
             "zero, "
             f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
@@ -202,13 +202,13 @@ def compare_env_with_rvt(participants_file, confounds_pattern):
 
     if p <= ALPHA:
         print(
-            "ANALYSIS 4: Correlations between the upper envelope used to calculate RPV and RVT "
+            "\tCorrelations between the upper envelope used to calculate RPV and RVT "
             f"(M[Z] = {mean_z:.03f}, SD[Z] = {sd_z:.03f}) were significantly higher than zero, "
             f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
         )
     else:
         print(
-            "ANALYSIS 4: Correlations between the upper envelope used to calculate RPV and RVT "
+            "\tCorrelations between the upper envelope used to calculate RPV and RVT "
             f"(M[Z] = {mean_z:.03f}, SD[Z] = {sd_z:.03f}) were not significantly higher than "
             "zero, "
             f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
