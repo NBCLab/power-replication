@@ -20,10 +20,11 @@ set -e
 
 #==============Shell script==============#
 # Load the software needed
-module load ants-2.3.5
+module load singularity-3.5.3
 
 PROJECT="Salo_PowerReplication"
 DATA_DIR="/home/data/nbc/misc-projects"
+IMG="/home/data/cis/singularity-images/poldracklab-fmriprep_20.2.1.sif"
 
 CODE_DIR=${DATA_DIR}/${PROJECT}/code
 
