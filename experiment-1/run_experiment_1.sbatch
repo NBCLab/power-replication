@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=power-replication
+#SBATCH --job-name=power-exp-1
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=2
@@ -8,8 +8,8 @@
 #SBATCH --partition=investor
 
 # Outputs ----------------------------------
-#SBATCH --output=/home/data/nbc/misc-projects/Salo_PowerReplication/code/jobs/python_stdout
-#SBATCH --error=/home/data/nbc/misc-projects/Salo_PowerReplication/code/jobs/python_stderr
+#SBATCH --output=/home/data/nbc/misc-projects/Salo_PowerReplication/code/jobs/experiment_1.out
+#SBATCH --error=/home/data/nbc/misc-projects/Salo_PowerReplication/code/jobs/experiment_1.err
 ########################################################
 # A generic Python job for the SLURM scheduler
 export NPROCS=`echo $LSB_HOSTS | wc -w`
