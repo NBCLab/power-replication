@@ -33,6 +33,7 @@ def correlate_hrv_with_cortical_sd(
     Perform one-sided test of significance on correlation coefficient to determine if HRV is
     significantly correlated with SD of mean cortical signal after each denoising approach.
     """
+    print("Experiment 1, Analysis Group 4, Analysis 1", flush=True)
     ALPHA = 0.05
 
     participants_df = pd.read_table(participants_file)

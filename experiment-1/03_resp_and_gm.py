@@ -53,6 +53,7 @@ def correlate_rpv_with_cortical_sd(
     significantly, positively correlated with SD of mean cortical signal after each denoising
     approach.
     """
+    print("Experiment 1, Analysis Group 3, Analysis 1", flush=True)
     ALPHA = 0.05
 
     participants_df = pd.read_table(participants_file)

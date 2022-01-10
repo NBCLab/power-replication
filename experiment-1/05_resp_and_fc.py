@@ -35,6 +35,7 @@ from utils import get_prefixes_mni, get_target_files, run_reduced_analyses  # no
 
 def run_ddmra_of_rpv(participants_file, target_file_patterns):
     """Run QC:RSFC and high-low analyses on derivatives against RPV."""
+    print("Experiment 1, Analysis Group 5, Analysis 1", flush=True)
     OUT_DIR = (
         "/home/data/nbc/misc-projects/Salo_PowerReplication/analyses/"
         "experiment01_group05_analysis01"
@@ -50,6 +51,7 @@ def run_ddmra_of_rpv(participants_file, target_file_patterns):
     rpv_confounds = participants_df["rpv"].values
 
     for filetype, pattern in target_file_patterns.items():
+        print(f"\t{filetype}", flush=True)
         filetype_out_dir = op.join(OUT_DIR, filetype.replace(" ", "_"))
         os.makedirs(filetype_out_dir, exist_ok=True)
         target_files = []
@@ -63,6 +65,7 @@ def run_ddmra_of_rpv(participants_file, target_file_patterns):
 
 def run_ddmra_of_mean_rv(participants_file, confounds_pattern, target_file_patterns):
     """Run QC:RSFC and high-low analyses on derivatives against mean RV."""
+    print("Experiment 1, Analysis Group 5, Analysis 2", flush=True)
     OUT_DIR = (
         "/home/data/nbc/misc-projects/Salo_PowerReplication/analyses/"
         "experiment01_group05_analysis02"
@@ -85,6 +88,7 @@ def run_ddmra_of_mean_rv(participants_file, confounds_pattern, target_file_patte
         rv_confounds.append(mean_rv)
 
     for filetype, pattern in target_file_patterns.items():
+        print(f"\t{filetype}", flush=True)
         filetype_out_dir = op.join(OUT_DIR, filetype.replace(" ", "_"))
         os.makedirs(filetype_out_dir, exist_ok=True)
         target_files = []
@@ -98,6 +102,7 @@ def run_ddmra_of_mean_rv(participants_file, confounds_pattern, target_file_patte
 
 def run_ddmra_of_mean_rvt(participants_file, confounds_pattern, target_file_patterns):
     """Run QC:RSFC and high-low analyses on derivatives against mean RVT."""
+    print("Experiment 1, Analysis Group 5, Analysis 3", flush=True)
     OUT_DIR = (
         "/home/data/nbc/misc-projects/Salo_PowerReplication/analyses/"
         "experiment01_group05_analysis03"
@@ -120,6 +125,7 @@ def run_ddmra_of_mean_rvt(participants_file, confounds_pattern, target_file_patt
         rvt_confounds.append(mean_rvt)
 
     for filetype, pattern in target_file_patterns.items():
+        print(f"\t{filetype}", flush=True)
         filetype_out_dir = op.join(OUT_DIR, filetype.replace(" ", "_"))
         os.makedirs(filetype_out_dir, exist_ok=True)
         target_files = []

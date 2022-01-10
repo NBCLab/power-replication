@@ -20,6 +20,7 @@ participant, and distribution of coefficients is compared to zero with one-sampl
 
 def plot_components_and_physio():
     """Generate plots for analysis 1."""
+    print("Experiment 1, Analysis Group 6, Analysis 1", flush=True)
     ...
 
 
@@ -38,6 +39,7 @@ def correlate_ica_with_cortical_signal(
     Also record the mean correlation coefficient (after z-transform) for each type.
     Compare the z-transformed coefficients to zero with t-tests.
     """
+    print("Experiment 1, Analysis Group 6, Analysis 2", flush=True)
     ...
 
 
@@ -47,4 +49,5 @@ def correlate_medn_with_oc(participants_file, medn_pattern, oc_pattern, mask_pat
     Correlate mean cortical signal from MEDN with OC equivalent for each participant,
     convert coefficients to z-values, and perform a t-test against zero on the distribution.
     """
+    print("Experiment 1, Analysis Group 6, Analysis 3", flush=True)
     ...

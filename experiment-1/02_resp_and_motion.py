@@ -27,6 +27,7 @@ def correlate_rpv_with_mean_fd(participants_file, confounds_pattern):
     Perform one-sided test of significance on correlation coefficient to determine if RPV is
     significantly, positively correlated with mean FD.
     """
+    print("Experiment 1, Analysis Group 2, Analysis 1", flush=True)
     ALPHA = 0.05
 
     participants_df = pd.read_table(participants_file)
@@ -71,6 +72,7 @@ def correlate_rvt_with_fd(participants_file, confounds_pattern):
     Correlate RVT with FD for each participant, then z-transform the correlation coefficients
     and perform a one-sample t-test against zero with the z-values.
     """
+    print("Experiment 1, Analysis Group 2, Analysis 2", flush=True)
     ALPHA = 0.05
     participants_df = pd.read_table(participants_file)
     n_subs_all = participants_df.shape[0]
@@ -118,6 +120,7 @@ def correlate_rv_with_fd(participants_file, confounds_pattern):
     Correlate RV with FD for each participant, then z-transform the correlation coefficients
     and perform a one-sample t-test against zero with the z-values.
     """
+    print("Experiment 1, Analysis Group 2, Analysis 3", flush=True)
     ALPHA = 0.05
     participants_df = pd.read_table(participants_file)
     n_subs_all = participants_df.shape[0]

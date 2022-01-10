@@ -31,6 +31,7 @@ def correlate_rpv_with_mean_rv(participants_file, confounds_pattern):
     Perform one-sided test of significance on correlation coefficient to determine if RPV is
     significantly, positively correlated with mean RV.
     """
+    print("Experiment 1, Analysis Group 1, Analysis 1", flush=True)
     ALPHA = 0.05
 
     participants_df = pd.read_table(participants_file)
@@ -76,6 +77,7 @@ def correlate_rpv_with_mean_rvt(participants_file, confounds_pattern):
     Perform one-sided test of significance on correlation coefficient to determine if RPV is
     significantly, positively correlated with mean RVT.
     """
+    print("Experiment 1, Analysis Group 1, Analysis 2", flush=True)
     ALPHA = 0.05
 
     participants_df = pd.read_table(participants_file)
@@ -122,6 +124,7 @@ def compare_env_with_rv(participants_file, confounds_pattern):
     then z-transform the correlation coefficients and perform a one-sample t-test against zero
     with the z-values.
     """
+    print("Experiment 1, Analysis Group 1, Analysis 3", flush=True)
     ALPHA = 0.05
 
     participants_df = pd.read_table(participants_file)
@@ -169,6 +172,7 @@ def compare_env_with_rvt(participants_file, confounds_pattern):
     then z-transform the correlation coefficients and perform a one-sample t-test against zero
     with the z-values.
     """
+    print("Experiment 1, Analysis Group 1, Analysis 4", flush=True)
     ALPHA = 0.05
 
     participants_df = pd.read_table(participants_file)
