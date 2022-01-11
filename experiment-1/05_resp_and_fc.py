@@ -33,13 +33,10 @@ sys.path.append("..")
 from utils import get_prefixes_mni, get_target_files, run_reduced_analyses  # noqa: E402
 
 
-def run_ddmra_of_rpv(participants_file, target_file_patterns):
+def run_ddmra_of_rpv(project_dir, participants_file, target_file_patterns):
     """Run QC:RSFC and high-low analyses on derivatives against RPV."""
     print("Experiment 1, Analysis Group 5, Analysis 1", flush=True)
-    OUT_DIR = (
-        "/home/data/nbc/misc-projects/Salo_PowerReplication/analyses/"
-        "experiment01_group05_analysis01"
-    )
+    out_dir = op.join(project_dir, "analyses/experiment01_group05_analysis01")
 
     participants_df = pd.read_table(participants_file)
     n_subs_all = participants_df.shape[0]
@@ -52,7 +49,7 @@ def run_ddmra_of_rpv(participants_file, target_file_patterns):
 
     for filetype, pattern in target_file_patterns.items():
         print(f"\t{filetype}", flush=True)
-        filetype_out_dir = op.join(OUT_DIR, filetype.replace(" ", "_"))
+        filetype_out_dir = op.join(out_dir, filetype.replace(" ", "_"))
         os.makedirs(filetype_out_dir, exist_ok=True)
         target_files = []
         for i, row in participants_df.iterrows():
@@ -67,13 +64,12 @@ def run_ddmra_of_rpv(participants_file, target_file_patterns):
         )
 
 
-def run_ddmra_of_mean_rv(participants_file, confounds_pattern, target_file_patterns):
+def run_ddmra_of_mean_rv(
+    project_dir, participants_file, confounds_pattern, target_file_patterns
+):
     """Run QC:RSFC and high-low analyses on derivatives against mean RV."""
     print("Experiment 1, Analysis Group 5, Analysis 2", flush=True)
-    OUT_DIR = (
-        "/home/data/nbc/misc-projects/Salo_PowerReplication/analyses/"
-        "experiment01_group05_analysis02"
-    )
+    out_dir = op.join(project_dir, "analyses/experiment01_group05_analysis02")
 
     participants_df = pd.read_table(participants_file)
     n_subs_all = participants_df.shape[0]
@@ -95,7 +91,7 @@ def run_ddmra_of_mean_rv(participants_file, confounds_pattern, target_file_patte
 
     for filetype, pattern in target_file_patterns.items():
         print(f"\t{filetype}", flush=True)
-        filetype_out_dir = op.join(OUT_DIR, filetype.replace(" ", "_"))
+        filetype_out_dir = op.join(out_dir, filetype.replace(" ", "_"))
         os.makedirs(filetype_out_dir, exist_ok=True)
         target_files = []
         for i, row in participants_df.iterrows():
@@ -108,13 +104,12 @@ def run_ddmra_of_mean_rv(participants_file, confounds_pattern, target_file_patte
         )
 
 
-def run_ddmra_of_mean_rvt(participants_file, confounds_pattern, target_file_patterns):
+def run_ddmra_of_mean_rvt(
+    project_dir, participants_file, confounds_pattern, target_file_patterns
+):
     """Run QC:RSFC and high-low analyses on derivatives against mean RVT."""
     print("Experiment 1, Analysis Group 5, Analysis 3", flush=True)
-    OUT_DIR = (
-        "/home/data/nbc/misc-projects/Salo_PowerReplication/analyses/"
-        "experiment01_group05_analysis03"
-    )
+    out_dir = op.join(project_dir, "analyses/experiment01_group05_analysis03")
 
     participants_df = pd.read_table(participants_file)
     n_subs_all = participants_df.shape[0]
@@ -136,7 +131,7 @@ def run_ddmra_of_mean_rvt(participants_file, confounds_pattern, target_file_patt
 
     for filetype, pattern in target_file_patterns.items():
         print(f"\t{filetype}", flush=True)
-        filetype_out_dir = op.join(OUT_DIR, filetype.replace(" ", "_"))
+        filetype_out_dir = op.join(out_dir, filetype.replace(" ", "_"))
         os.makedirs(filetype_out_dir, exist_ok=True)
         target_files = []
         for i, row in participants_df.iterrows():
@@ -151,7 +146,8 @@ def run_ddmra_of_mean_rvt(participants_file, confounds_pattern, target_file_patt
 
 if __name__ == "__main__":
     print("Experiment 1, Analysis Group 5")
-    in_dir = "/home/data/nbc/misc-projects/Salo_PowerReplication/dset-dupre/"
+    project_dir = "/home/data/nbc/misc-projects/Salo_PowerReplication/"
+    in_dir = op.join(project_dir, "dset-dupre/")
     participants_file = op.join(in_dir, "participants.tsv")
     confounds_pattern = op.join(
         in_dir,
@@ -178,6 +174,16 @@ if __name__ == "__main__":
         if k in TARGETS
     }
 
-    run_ddmra_of_rpv(participants_file, target_file_patterns)
-    run_ddmra_of_mean_rv(participants_file, confounds_pattern, target_file_patterns)
-    run_ddmra_of_mean_rvt(participants_file, confounds_pattern, target_file_patterns)
+    run_ddmra_of_rpv(project_dir, participants_file, target_file_patterns)
+    run_ddmra_of_mean_rv(
+        project_dir,
+        participants_file,
+        confounds_pattern,
+        target_file_patterns,
+    )
+    run_ddmra_of_mean_rvt(
+        project_dir,
+        participants_file,
+        confounds_pattern,
+        target_file_patterns,
+    )
