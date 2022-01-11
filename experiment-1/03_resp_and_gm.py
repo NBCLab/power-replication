@@ -111,6 +111,10 @@ def correlate_rpv_with_cortical_sd(
         g.plot(sns.scatterplot, sns.histplot)
         g.savefig(op.join(out_dir, f"analysis_01_{filetype}.png"), dpi=400)
 
+    participants_df.to_csv(
+        op.join(out_dir, "analysis_01_results.tsv"), sep="\t", index=False
+    )
+
 
 def plot_deep_breath_cortical_signal(
     participants_file,

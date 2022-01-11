@@ -96,6 +96,10 @@ def correlate_hrv_with_cortical_sd(
         g.plot(sns.scatterplot, sns.histplot)
         g.savefig(op.join(out_dir, f"analysis_01_{filetype}.png"), dpi=400)
 
+    participants_df.to_csv(
+        op.join(out_dir, "analysis_01_results.tsv"), sep="\t", index=False
+    )
+
 
 if __name__ == "__main__":
     print("Experiment 1, Analysis Group 4")

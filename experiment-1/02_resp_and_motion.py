@@ -75,6 +75,10 @@ def correlate_rpv_with_mean_fd(project_dir, participants_file, confounds_pattern
     g.plot(sns.scatterplot, sns.histplot)
     g.savefig(op.join(out_dir, "analysis_01.png"), dpi=400)
 
+    participants_df.to_csv(
+        op.join(out_dir, "analysis_01_results.tsv"), sep="\t", index=False
+    )
+
 
 def correlate_rvt_with_fd(project_dir, participants_file, confounds_pattern):
     """Perform analysis 2.
@@ -132,6 +136,10 @@ def correlate_rvt_with_fd(project_dir, participants_file, confounds_pattern):
     fig.suptitle("Distribution of correlations between RPV upper envelope and RV")
     fig.savefig(op.join(out_dir, "analysis_02.png", dpi=400))
 
+    participants_df.to_csv(
+        op.join(out_dir, "analysis_02_results.tsv"), sep="\t", index=False
+    )
+
 
 def correlate_rv_with_fd(project_dir, participants_file, confounds_pattern):
     """Perform analysis 3.
@@ -188,6 +196,10 @@ def correlate_rv_with_fd(project_dir, participants_file, confounds_pattern):
     sns.histplot(data=z_values, x="Z-transformed correlation coefficient", ax=ax)
     fig.suptitle("Distribution of correlations between RPV upper envelope and RV")
     fig.savefig(op.join(out_dir, "analysis_03.png", dpi=400))
+
+    participants_df.to_csv(
+        op.join(out_dir, "analysis_03_results.tsv"), sep="\t", index=False
+    )
 
 
 if __name__ == "__main__":

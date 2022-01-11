@@ -163,6 +163,12 @@ def correlate_ica_with_cortical_signal(
         )
         fig.savefig(op.join(out_dir, f"analysis_02_{clf}.png", dpi=400))
 
+    out_df.to_csv(
+        op.join(out_dir, "analysis_02_results.tsv"),
+        sep="\t",
+        index_label="participant_id",
+    )
+
 
 def correlate_medn_with_oc(
     project_dir,
@@ -187,7 +193,10 @@ def correlate_medn_with_oc(
     print(f"{participants_df.shape[0]}/{n_subs_all} participants retained.")
 
     ALPHA = 0.05
-    corrs = []
+    out_df = pd.DataFrame(
+        index=participants_df["participant_id"], columns=["correlation"]
+    )
+
     for i_run, participant_row in participants_df.iterrows():
         subj_id = participant_row["participant_id"]
 
@@ -205,11 +214,11 @@ def correlate_medn_with_oc(
         assert corr.shape == (2, 2), corr.shape
         corr = corr[1, 0]
 
-        corrs.append(corr)
+        out_df.loc[subj_id, "correlation"] = corr
 
     # Convert r values to normally distributed z values with Fisher's
     # transformation (not test statistics though)
-    z_values = np.arctanh(corrs)
+    z_values = np.arctanh(out_df["correlation"].values)
     mean_z = np.mean(z_values)
     sd_z = np.std(z_values)
 
@@ -233,8 +242,16 @@ def correlate_medn_with_oc(
 
     fig, ax = plt.subplots(figsize=(8, 8))
     sns.histplot(data=z_values, x="Z-transformed correlation coefficient", ax=ax)
-    fig.suptitle("Distribution of correlations between mean cortical signal from MEDN and OC data")
+    fig.suptitle(
+        "Distribution of correlations between mean cortical signal from MEDN and OC data"
+    )
     fig.savefig(op.join(out_dir, "analysis_03.png", dpi=400))
+
+    out_df.to_csv(
+        op.join(out_dir, "analysis_03_results.tsv"),
+        sep="\t",
+        index_label="participant_id",
+    )
 
 
 if __name__ == "__main__":
