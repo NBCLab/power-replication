@@ -157,7 +157,8 @@ def correlate_ica_with_cortical_signal(
             )
 
         fig, ax = plt.subplots(figsize=(8, 8))
-        sns.histplot(data=z_values, x="Z-transformed correlation coefficient", ax=ax)
+        sns.histplot(data=z_values, ax=ax)
+        ax.set_xlabel("Z-transformed correlation coefficient")
         fig.suptitle(
             f"Distribution of correlations between mean cortical OC data and {clf} ICA components"
         )
@@ -241,7 +242,8 @@ def correlate_medn_with_oc(
         )
 
     fig, ax = plt.subplots(figsize=(8, 8))
-    sns.histplot(data=z_values, x="Z-transformed correlation coefficient", ax=ax)
+    sns.histplot(data=z_values, ax=ax)
+    ax.set_xlabel("Z-transformed correlation coefficient")
     fig.suptitle(
         "Distribution of correlations between mean cortical signal from MEDN and OC data"
     )

@@ -132,7 +132,8 @@ def correlate_rvt_with_fd(project_dir, participants_file, confounds_pattern):
         )
 
     fig, ax = plt.subplots(figsize=(8, 8))
-    sns.histplot(data=z_values, x="Z-transformed correlation coefficient", ax=ax)
+    sns.histplot(data=z_values, ax=ax)
+    ax.set_xlabel("Z-transformed correlation coefficient")
     fig.suptitle("Distribution of correlations between RPV upper envelope and RV")
     fig.savefig(op.join(out_dir, "analysis_02.png", dpi=400))
 
@@ -193,7 +194,8 @@ def correlate_rv_with_fd(project_dir, participants_file, confounds_pattern):
         )
 
     fig, ax = plt.subplots(figsize=(8, 8))
-    sns.histplot(data=z_values, x="Z-transformed correlation coefficient", ax=ax)
+    sns.histplot(data=z_values, ax=ax)
+    ax.set_xlabel("Z-transformed correlation coefficient")
     fig.suptitle("Distribution of correlations between RPV upper envelope and RV")
     fig.savefig(op.join(out_dir, "analysis_03.png", dpi=400))
 

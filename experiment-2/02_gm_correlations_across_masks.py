@@ -102,7 +102,8 @@ def correlate_cort_with_gm(
         )
 
     fig, ax = plt.subplots(figsize=(8, 8))
-    sns.histplot(data=z_values, x="Z-transformed correlation coefficient", ax=ax)
+    sns.histplot(data=z_values, ax=ax)
+    ax.set_xlabel("Z-transformed correlation coefficient")
     fig.suptitle(
         "Distribution of correlations between mean cortical and mean gray matter signal from MEDN "
         "data"
@@ -188,7 +189,8 @@ def correlate_cort_with_wb(
         )
 
     fig, ax = plt.subplots(figsize=(8, 8))
-    sns.histplot(data=z_values, x="Z-transformed correlation coefficient", ax=ax)
+    sns.histplot(data=z_values, ax=ax)
+    ax.set_xlabel("Z-transformed correlation coefficient")
     fig.suptitle(
         "Distribution of correlations between mean cortical and mean whole brain signal from MEDN "
         "data"
