@@ -30,9 +30,6 @@ if __name__ == "__main__":
 
         medn_mni_file = op.join(
             deriv_dir,
-            "tedana",
-            sub,
-            "func",
             target_files["MEDN"].format(
                 prefix=dset_mni_subj_prefix,
                 participant_id=sub,
@@ -40,6 +37,7 @@ if __name__ == "__main__":
         )
         if not op.isfile(medn_mni_file):
             print(f"Dataset {dataset} subject {sub} missing MEDN file.")
+            print(medn_mni_file)
             bad_subs.append((dataset, sub))
             continue
 
