@@ -76,7 +76,7 @@ def correlate_rpv_with_mean_rv(project_dir, participants_file, confounds_pattern
         )
 
     g = sns.JointGrid(data=participants_df, x="rpv", y="mean_rv")
-    g.plot(sns.scatterplot, sns.histplot)
+    g.plot(sns.regplot, sns.histplot)
     g.savefig(op.join(out_dir, "analysis_01.png"), dpi=400)
 
     participants_df.to_csv(
@@ -134,7 +134,7 @@ def correlate_rpv_with_mean_rvt(project_dir, participants_file, confounds_patter
         )
 
     g = sns.JointGrid(data=participants_df, x="rpv", y="mean_rvt")
-    g.plot(sns.scatterplot, sns.histplot)
+    g.plot(sns.regplot, sns.histplot)
     g.savefig(op.join(out_dir, "analysis_02.png"), dpi=400)
 
     participants_df.to_csv(

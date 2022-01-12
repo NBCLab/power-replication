@@ -93,7 +93,7 @@ def correlate_hrv_with_cortical_sd(
             )
 
         g = sns.JointGrid(data=participants_df, x="hrv", y=filetype)
-        g.plot(sns.scatterplot, sns.histplot)
+        g.plot(sns.regplot, sns.histplot)
         g.savefig(op.join(out_dir, f"analysis_01_{filetype}.png"), dpi=400)
 
     participants_df.to_csv(

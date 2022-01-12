@@ -156,7 +156,7 @@ def correlate_variance_removed(
     g = sns.JointGrid(
         data=participants_df, x="godec variance removed", y="gsr variance removed"
     )
-    g.plot(sns.scatterplot, sns.histplot)
+    g.plot(sns.regplot, sns.histplot)
     g.savefig(op.join(out_dir, "analysis_02.png"), dpi=400)
 
     participants_df.to_csv(
