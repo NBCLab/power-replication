@@ -162,7 +162,7 @@ def correlate_ica_with_cortical_signal(
         fig.suptitle(
             f"Distribution of correlations between mean cortical OC data and {clf} ICA components"
         )
-        fig.savefig(op.join(out_dir, f"analysis_02_{clf}.png", dpi=400))
+        fig.savefig(op.join(out_dir, f"analysis_02_{clf}.png"), dpi=400)
 
     out_df.to_csv(
         op.join(out_dir, "analysis_02_results.tsv"),
@@ -247,7 +247,7 @@ def correlate_medn_with_oc(
     fig.suptitle(
         "Distribution of correlations between mean cortical signal from MEDN and OC data"
     )
-    fig.savefig(op.join(out_dir, "analysis_03.png", dpi=400))
+    fig.savefig(op.join(out_dir, "analysis_03.png"), dpi=400)
 
     out_df.to_csv(
         op.join(out_dir, "analysis_03_results.tsv"),

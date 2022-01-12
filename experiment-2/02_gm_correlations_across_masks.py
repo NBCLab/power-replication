@@ -108,7 +108,7 @@ def correlate_cort_with_gm(
         "Distribution of correlations between mean cortical and mean gray matter signal from MEDN "
         "data"
     )
-    fig.savefig(op.join(out_dir, "analysis_01.png", dpi=400))
+    fig.savefig(op.join(out_dir, "analysis_01.png"), dpi=400)
 
     participants_df.to_csv(
         op.join(out_dir, "analysis_01_results.tsv"), sep="\t", index=False
@@ -195,7 +195,7 @@ def correlate_cort_with_wb(
         "Distribution of correlations between mean cortical and mean whole brain signal from MEDN "
         "data"
     )
-    fig.savefig(op.join(out_dir, "analysis_02.png", dpi=400))
+    fig.savefig(op.join(out_dir, "analysis_02.png"), dpi=400)
 
     participants_df.to_csv(
         op.join(out_dir, "analysis_02_results.tsv"), sep="\t", index=False

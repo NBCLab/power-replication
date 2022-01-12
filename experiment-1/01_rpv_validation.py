@@ -199,7 +199,7 @@ def compare_env_with_rv(project_dir, participants_file, confounds_pattern):
     sns.histplot(data=z_values, ax=ax)
     ax.set_xlabel("Z-transformed correlation coefficient")
     fig.suptitle("Distribution of correlations between RPV upper envelope and RV")
-    fig.savefig(op.join(out_dir, "analysis_03.png", dpi=400))
+    fig.savefig(op.join(out_dir, "analysis_03.png"), dpi=400)
 
     participants_df.to_csv(
         op.join(out_dir, "analysis_03_results.tsv"), sep="\t", index=False
@@ -263,7 +263,7 @@ def compare_env_with_rvt(project_dir, participants_file, confounds_pattern):
     sns.histplot(data=z_values, ax=ax)
     ax.set_xlabel("Z-transformed correlation coefficient")
     fig.suptitle("Distribution of correlations between RPV upper envelope and RVT")
-    fig.savefig(op.join(out_dir, "analysis_04.png", dpi=400))
+    fig.savefig(op.join(out_dir, "analysis_04.png"), dpi=400)
 
     participants_df.to_csv(
         op.join(out_dir, "analysis_04_results.tsv"), sep="\t", index=False

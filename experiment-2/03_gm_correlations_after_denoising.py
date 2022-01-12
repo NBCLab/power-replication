@@ -99,7 +99,7 @@ def correlate_medn_with_oc(
         "Distribution of correlations between mean cortical signal from MEDN and OC "
         "data"
     )
-    fig.savefig(op.join(out_dir, "analysis_01.png", dpi=400))
+    fig.savefig(op.join(out_dir, "analysis_01.png"), dpi=400)
 
     participants_df.to_csv(
         op.join(out_dir, "analysis_01_results.tsv"), sep="\t", index=False
@@ -181,7 +181,7 @@ def correlate_medn_with_fitr2(
         "Distribution of correlations between mean cortical signal from MEDN and FIT-R2 "
         "data"
     )
-    fig.savefig(op.join(out_dir, "analysis_02.png", dpi=400))
+    fig.savefig(op.join(out_dir, "analysis_02.png"), dpi=400)
 
     participants_df.to_csv(
         op.join(out_dir, "analysis_02_results.tsv"), sep="\t", index=False
