@@ -25,7 +25,7 @@ from processing_utils import _generic_regression, run_command
 
 sys.path.append("..")
 
-from utils import get_prefixes
+from utils import get_prefixes  # noqa: E402
 
 
 def run_rvtreg(medn_file, mask_file, confounds_file, out_dir):
