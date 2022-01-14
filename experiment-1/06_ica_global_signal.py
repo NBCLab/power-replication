@@ -127,16 +127,15 @@ def correlate_ica_with_cortical_signal(
         )
 
         # Mean z-transformed correlations
+        print(acc_corrs)
+        print(rej_corrs)
         out_df.loc[subj_id, "accepted mean z"] = np.mean(np.arctanh(acc_corrs))
         out_df.loc[subj_id, "rejected mean z"] = np.mean(np.arctanh(rej_corrs))
 
     for clf in ("accepted", "rejected"):
         # Convert r values to normally distributed z values with Fisher's
         # transformation (not test statistics though)
-        col = f"{clf} mean z"
-        arr = out_df[col].values
-        print(arr)
-        z_values = np.arctanh(out_df[col].values)
+        z_values = out_df[f"{clf} mean z"].values
         mean_z = np.mean(z_values)
         sd_z = np.std(z_values)
 
