@@ -44,6 +44,8 @@ def correlate_hrv_with_cortical_sd(
 
     participants_df = pd.read_table(participants_file)
     n_subs_all = participants_df.shape[0]
+    # Drop excluded subjects
+    participants_df = participants_df.loc[participants_df["exclude"] != 1]
     prefix = get_prefixes()["dset-dupre"]
 
     participants_df["hrv"] = np.nan
