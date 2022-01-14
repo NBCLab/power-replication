@@ -21,4 +21,4 @@ source /home/data/nbc/misc-projects/Salo_PowerReplication/code/activate_environm
 # python /home/data/nbc/misc-projects/Salo_PowerReplication/code/processing/04_run_multi-echo_denoising.py
 # python /home/data/nbc/misc-projects/Salo_PowerReplication/code/processing/05_generate_single-echo_confounds.py
 python /home/data/nbc/misc-projects/Salo_PowerReplication/code/processing/05a_generate_physio_confounds.py
-python /home/data/nbc/misc-projects/Salo_PowerReplication/code/processing/06_run_single-echo_denoising.py
+# python /home/data/nbc/misc-projects/Salo_PowerReplication/code/processing/06_run_single-echo_denoising.py
