@@ -3,6 +3,7 @@ import logging
 import os.path as op
 from os import makedirs
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from ddmra import analysis, plotting, utils
@@ -302,6 +303,51 @@ def run_reduced_analyses(
 
     del qcrsfc_null_smoothing_curves, hl_null_smoothing_curves
 
-    plotting.plot_results(out_dir)
+    plot_ddmra_results(out_dir)
 
     LGR.info("Workflow completed")
+
+
+def plot_ddmra_results(in_dir):
+    """Plot the results for all three analyses from a workflow run and save to a file.
+
+    This function leverages the output file structure of :func:`workflows.run_analyses`.
+    It writes out an image (analysis_results.png) to the output directory.
+
+    Parameters
+    ----------
+    in_dir : str
+        Path to the output directory of a ``run_analyses`` run.
+    """
+    METRIC_LABELS = {
+        "qcrsfc": r"QC:RSFC $z_{r}$" + "\n(QC = mean FD)",
+        "highlow": "High-low motion\n" + r"${\Delta}z_{r}$",
+    }
+    YLIMS = {
+        "qcrsfc": (-1.0, 1.0),
+        "highlow": (-1.0, 1.0),
+    }
+    analysis_values = pd.read_table(op.join(in_dir, "analysis_values.tsv.gz"))
+    smoothing_curves = pd.read_table(op.join(in_dir, "smoothing_curves.tsv.gz"))
+    null_curves = np.load(op.join(in_dir, "null_smoothing_curves.npz"))
+
+    fig, axes = plt.subplots(figsize=(8, 24), nrows=len(METRIC_LABELS))
+
+    for i_analysis, (analysis_type, label) in enumerate(METRIC_LABELS.items()):
+        values = analysis_values[analysis_type].values
+        smoothing_curve = smoothing_curves[analysis_type].values
+
+        fig, axes[i_analysis] = plotting.plot_analysis(
+            values,
+            analysis_values["distance"],
+            smoothing_curve,
+            smoothing_curves["distance"],
+            null_curves[analysis_type],
+            n_lines=50,
+            ylim=YLIMS[analysis_type],
+            metric_name=label,
+            fig=fig,
+            ax=axes[i_analysis],
+        )
+
+    fig.savefig(op.join(in_dir, "analysis_results.png"), dpi=100)

@@ -44,9 +44,6 @@ def correlate_hrv_with_cortical_sd(
 
     participants_df = pd.read_table(participants_file)
     n_subs_all = participants_df.shape[0]
-    # Limit to participants with RPV value
-    participants_df = participants_df.dropna(subset=["rpv"])
-    print(f"{participants_df.shape[0]}/{n_subs_all} participants retained.")
     prefix = get_prefixes()["dset-dupre"]
 
     participants_df["hrv"] = np.nan
@@ -61,6 +58,10 @@ def correlate_hrv_with_cortical_sd(
         assert op.isfile(confounds_file), f"{confounds_file} DNE"
 
         confounds_df = pd.read_table(confounds_file)
+        if "IHRRegression_IHR_Interpolated" not in confounds_df.columns:
+            print(f"{participant_id} has bad cardiac data. Skipping.")
+            continue
+
         participants_df.loc[i, "hrv"] = np.std(
             confounds_df["IHRRegression_IHR_Interpolated"]
         )
@@ -72,6 +73,9 @@ def correlate_hrv_with_cortical_sd(
             cortical_signal = masking.apply_mask(filename, mask)
             mean_cortical_signal = np.mean(cortical_signal, axis=0)
             participants_df.loc[i, filetype] = np.std(mean_cortical_signal)
+
+    participants_df = participants_df.dropna(subset=["hrv"])
+    print(f"{participants_df.shape[0]}/{n_subs_all} participants retained.")
 
     for filetype in target_file_patterns.keys():
         # We are performing a one-sided test to determine if the correlation is
