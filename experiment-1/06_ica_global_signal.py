@@ -225,7 +225,7 @@ def correlate_medn_with_oc(
 
     # Convert r values to normally distributed z values with Fisher's
     # transformation (not test statistics though)
-    r_values = out_df["correlation"].values
+    r_values = out_df["correlation"].values.astype(float)
     print(r_values)
     z_values = np.arctanh(r_values)
     mean_z = np.mean(z_values)
