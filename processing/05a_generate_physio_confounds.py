@@ -139,9 +139,9 @@ def run_peakdet(physio_file, physio_metadata, manual_peak_info, out_dir):
             "were added, at a resolution of ~0.1 seconds. "
             "Troughs were not manually inspected."
         )
-        resp_metadata["PeakDetPeaks"] = list(resp_physio.peaks)
-        resp_metadata["Peaks"] = list(resp_corrected_peaks)
-        resp_metadata["PeakDetTroughs"] = list(resp_physio.troughs)
+        resp_metadata["PeakDetPeaks"] = list(resp_physio.peaks.astype(np.int32))
+        resp_metadata["Peaks"] = list(resp_corrected_peaks.astype(np.int32))
+        resp_metadata["PeakDetTroughs"] = list(resp_physio.troughs.astype(np.int32))
         resp_metadata["PeakDetHistory"] = resp_physio.history
 
         # Save output files
@@ -216,9 +216,9 @@ def run_peakdet(physio_file, physio_metadata, manual_peak_info, out_dir):
             "were added, at a resolution of ~0.05 seconds. "
             "Troughs were not manually inspected."
         )
-        card_metadata["PeakDetPeaks"] = list(card_physio.peaks)
-        card_metadata["Peaks"] = list(card_corrected_peaks)
-        card_metadata["PeakDetTroughs"] = list(card_physio.troughs)
+        card_metadata["PeakDetPeaks"] = list(card_physio.peaks.astype(np.int32))
+        card_metadata["Peaks"] = list(card_corrected_peaks.astype(np.int32))
+        card_metadata["PeakDetTroughs"] = list(card_physio.troughs.astype(np.int32))
         card_metadata["PeakDetHistory"] = card_physio.history
 
         # Save output files
