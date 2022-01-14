@@ -106,7 +106,7 @@ def correlate_ica_with_cortical_signal(
             classification = row["classification"]
             if classification == "rejected":
                 rej_corrs.append(corr)
-            elif classification == "accepted":
+            elif classification != "rejected":
                 acc_corrs.append(corr)
 
         acc_corrs = np.array(acc_corrs)
@@ -223,11 +223,11 @@ def correlate_medn_with_oc(
 
         out_df.loc[subj_id, "correlation"] = corr
 
-    print(out_df)
-
     # Convert r values to normally distributed z values with Fisher's
     # transformation (not test statistics though)
-    z_values = np.arctanh(out_df["correlation"].values)
+    r_values = out_df["correlation"].values
+    print(r_values)
+    z_values = np.arctanh(r_values)
     mean_z = np.mean(z_values)
     sd_z = np.std(z_values)
 
