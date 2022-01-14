@@ -20,6 +20,7 @@ import numpy as np
 import pandas as pd
 import rapidtide
 from nilearn import image
+
 from processing_utils import _generic_regression, run_command
 
 
@@ -706,7 +707,7 @@ def main(project_dir, dset, subject):
     with open(op.join(preproc_dir, "dataset_description.json"), "r") as fo:
         preproc_dset_desc = json.load(fo)
 
-    nuis_dset_desc = preproc_dset_desc.copy()
+    """nuis_dset_desc = preproc_dset_desc.copy()
     dgsr_dset_desc = preproc_dset_desc.copy()
     nuis_dset_desc["Name"] = "Nuisance Regressions"
     dgsr_dset_desc["Name"] = "Dynamic Global Signal Regression"
@@ -728,7 +729,7 @@ def main(project_dir, dset, subject):
 
     os.makedirs(dgsr_dir, exist_ok=True)
     with open(op.join(dgsr_dir, "dataset_description.json"), "w") as fo:
-        json.dump(dgsr_dset_desc, fo, sort_keys=True, indent=4)
+        json.dump(dgsr_dset_desc, fo, sort_keys=True, indent=4)"""
 
     preproc_subj_func_dir = op.join(preproc_dir, subject, "func")
     tedana_subj_dir = op.join(tedana_dir, subject, "func")
@@ -751,7 +752,7 @@ def main(project_dir, dset, subject):
     nuis_subj_dir = op.join(nuis_dir, subject, "func")
     os.makedirs(nuis_subj_dir, exist_ok=True)
 
-    # ###################
+    """# ###################
     # Nuisance Regression
     # ###################
     run_nuisance(medn_file, mask_file, confounds_file, nuis_subj_dir)
@@ -790,7 +791,7 @@ def main(project_dir, dset, subject):
         with open(op.join(godec_dir, "dataset_description.json"), "w") as fo:
             json.dump(godec_dset_desc, fo, sort_keys=True, indent=4)
 
-    os.remove(op.join(godec_subj_dir, "dataset_description.json"))
+    os.remove(op.join(godec_subj_dir, "dataset_description.json"))"""
 
     # ################
     # Physio Denoising
