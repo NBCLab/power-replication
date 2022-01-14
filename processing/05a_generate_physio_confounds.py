@@ -122,7 +122,7 @@ def run_peakdet(physio_file, physio_metadata, manual_peak_info, out_dir):
             np.array(manual_peak_info["resp_missed_peaks"]) * resp_physio.fs
         ).astype(int)
         resp_corrected_peaks = sorted(
-            np.concatenate((resp_corrected_peaks, resp_missed_peaks)).astype(np.int32)
+            np.concatenate((resp_corrected_peaks, resp_missed_peaks)).tolist()
         )
         print(f"\t\t{resp_missed_peaks.size} peaks added.")
 
@@ -139,9 +139,9 @@ def run_peakdet(physio_file, physio_metadata, manual_peak_info, out_dir):
             "were added, at a resolution of ~0.1 seconds. "
             "Troughs were not manually inspected."
         )
-        resp_metadata["PeakDetPeaks"] = list(resp_physio.peaks.astype(np.int32))
+        resp_metadata["PeakDetPeaks"] = resp_physio.peaks.tolist()
         resp_metadata["Peaks"] = resp_corrected_peaks
-        resp_metadata["PeakDetTroughs"] = list(resp_physio.troughs.astype(np.int32))
+        resp_metadata["PeakDetTroughs"] = resp_physio.troughs.tolist()
         resp_metadata["PeakDetHistory"] = resp_physio.history
 
         # Save output files
@@ -198,7 +198,7 @@ def run_peakdet(physio_file, physio_metadata, manual_peak_info, out_dir):
             np.array(manual_peak_info["card_missed_peaks"]) * card_physio.fs
         ).astype(int)
         card_corrected_peaks = sorted(
-            np.concatenate((card_corrected_peaks, card_missed_peaks)).astype(np.int32)
+            np.concatenate((card_corrected_peaks, card_missed_peaks)).tolist()
         )
         print(f"\t\t{card_missed_peaks.size} peaks added.")
 
@@ -216,9 +216,9 @@ def run_peakdet(physio_file, physio_metadata, manual_peak_info, out_dir):
             "were added, at a resolution of ~0.05 seconds. "
             "Troughs were not manually inspected."
         )
-        card_metadata["PeakDetPeaks"] = list(card_physio.peaks.astype(np.int32))
+        card_metadata["PeakDetPeaks"] = card_physio.peaks.tolist()
         card_metadata["Peaks"] = card_corrected_peaks
-        card_metadata["PeakDetTroughs"] = list(card_physio.troughs.astype(np.int32))
+        card_metadata["PeakDetTroughs"] = card_physio.troughs.tolist()
         card_metadata["PeakDetHistory"] = card_physio.history
 
         # Save output files
