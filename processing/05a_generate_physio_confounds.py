@@ -113,7 +113,7 @@ def run_peakdet(physio_file, physio_metadata, manual_peak_info, out_dir):
             resp_false_peaks = (
                 np.array(manual_peak_info["resp_false_peaks"]) * resp_physio.fs
             ).astype(int)
-            resp_corrected_peaks = np.setdiff1d(resp_false_peaks)
+            resp_corrected_peaks = np.setdiff1d(resp_corrected_peaks, resp_false_peaks)
             print(
                 f"\t\t{n_orig_peaks - resp_corrected_peaks.size}/{n_orig_peaks} peaks removed."
             )
@@ -189,7 +189,7 @@ def run_peakdet(physio_file, physio_metadata, manual_peak_info, out_dir):
             card_false_peaks = (
                 np.array(manual_peak_info["card_false_peaks"]) * card_physio.fs
             ).astype(int)
-            card_corrected_peaks = np.setdiff1d(card_false_peaks)
+            card_corrected_peaks = np.setdiff1d(card_corrected_peaks, card_false_peaks)
             print(
                 f"\t\t{n_orig_peaks - card_corrected_peaks.size}/{n_orig_peaks} peaks removed."
             )
