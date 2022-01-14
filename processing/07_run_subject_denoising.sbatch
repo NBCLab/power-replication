@@ -40,11 +40,11 @@ dset_name="$(python ${CODE_DIR}/processing/get_tsv_cell.py --column dset --row $
 subject="$(python ${CODE_DIR}/processing/get_tsv_cell.py --column participant_id --row ${SLURM_ARRAY_TASK_ID} ${tsv_file})"
 
 # Run python script inside fmriprep environment
-cmd="python ${CODE_DIR}/processing/04_run_multi-echo_denoising.py \
-      --dset ${dset_name} --subject $subject"
+#cmd="python ${CODE_DIR}/processing/04_run_multi-echo_denoising.py \
+#      --dset ${dset_name} --subject $subject"
 # Setup done, run the command
-echo Commandline: $cmd
-eval $cmd
+#echo Commandline: $cmd
+#eval $cmd
 
 # Run python script inside fmriprep environment
 # Already been run, don't need to re-run.
