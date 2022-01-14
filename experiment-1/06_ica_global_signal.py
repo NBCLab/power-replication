@@ -134,6 +134,8 @@ def correlate_ica_with_cortical_signal(
         # Convert r values to normally distributed z values with Fisher's
         # transformation (not test statistics though)
         col = f"{clf} mean z"
+        arr = out_df[col].values
+        print(arr)
         z_values = np.arctanh(out_df[col].values)
         mean_z = np.mean(z_values)
         sd_z = np.std(z_values)
