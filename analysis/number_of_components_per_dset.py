@@ -1,11 +1,10 @@
-""""""
+"""Create a figure showing the number of components per dataset."""
 import os.path as op
 from glob import glob
 
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import pandas as pd
-
-#import seaborn as sns
+import seaborn as sns
 
 path = (
     "/home/data/nbc/misc-projects/Salo_PowerReplication/dset-*/derivatives/tedana/sub-*/"
@@ -32,3 +31,14 @@ for f in files:
     out_df.loc[out_df.shape[0]] = [dset, subject, "ignored", n_ignored]
 
 out_df.to_csv("component_counts.tsv", sep="\t", index=False)
+
+# Create the figure
+fig, ax = plt.subplots(figsize=(16, 10))
+sns.boxplot(data=df, y="count", x="dataset", hue="classification", ax=ax)
+ax.axhline(0, color="black", alpha=0.5)
+fig.savefig("components_per_dataset_boxplot.png")
+
+fig, ax = plt.subplots(figsize=(16, 10))
+sns.swarmplot(data=df, y="count", x="dataset", hue="classification", dodge=True, ax=ax)
+ax.axhline(0, color="black", alpha=0.5)
+fig.savefig("components_per_dataset_swarmplot.png")
