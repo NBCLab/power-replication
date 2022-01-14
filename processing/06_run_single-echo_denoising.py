@@ -14,7 +14,7 @@ import argparse
 import json
 import os
 import os.path as op
-from glob import glob
+import sys
 
 import numpy as np
 import pandas as pd
@@ -22,6 +22,10 @@ import rapidtide
 from nilearn import image
 
 from processing_utils import _generic_regression, run_command
+
+sys.path.append("..")
+
+from utils import get_prefixes
 
 
 def run_rvtreg(medn_file, mask_file, confounds_file, out_dir):
@@ -687,6 +691,10 @@ def run_nuisance(medn_file, mask_file, confounds_file, out_dir):
 
 def main(project_dir, dset, subject):
     """Run single-echo denoising workflows on a given dataset."""
+    prefixes = get_prefixes()
+    dset_prefix = prefixes[dset]
+    dset_prefix = dset_prefix.format(participant_id=subject)
+
     dset_dir = op.join(project_dir, dset)
     deriv_dir = op.join(dset_dir, "derivatives")
     tedana_dir = op.join(deriv_dir, "tedana")
@@ -735,19 +743,14 @@ def main(project_dir, dset, subject):
     tedana_subj_dir = op.join(tedana_dir, subject, "func")
 
     # Collect important files
-    confounds_files = glob(
-        op.join(preproc_subj_func_dir, "*_desc-confounds_timeseries.tsv")
-    )
-    assert len(confounds_files) == 1
-    confounds_file = confounds_files[0]
+    confounds_file = op.join(preproc_subj_func_dir, f"{dset_prefix}_desc-confounds_timeseries.tsv")
+    assert op.isfile(confounds_file), confounds_file
 
-    medn_files = glob(op.join(tedana_subj_dir, "*_desc-optcomDenoised_bold.nii.gz"))
-    assert len(medn_files) == 1
-    medn_file = medn_files[0]
+    medn_file = op.join(tedana_subj_dir, f"{dset_prefix}_desc-optcomDenoised_bold.nii.gz")
+    assert op.isfile(medn_file), medn_file
 
-    mask_files = glob(op.join(tedana_subj_dir, "*_desc-goodSignal_mask.nii.gz"))
-    assert len(mask_files) == 1
-    mask_file = mask_files[0]
+    mask_file = op.join(tedana_subj_dir, f"{dset_prefix}_desc-goodSignal_mask.nii.gz")
+    assert op.isfile(mask_file), mask_file
 
     nuis_subj_dir = op.join(nuis_dir, subject, "func")
     os.makedirs(nuis_subj_dir, exist_ok=True)
