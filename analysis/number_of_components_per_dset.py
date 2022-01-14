@@ -34,11 +34,11 @@ out_df.to_csv("component_counts.tsv", sep="\t", index=False)
 
 # Create the figure
 fig, ax = plt.subplots(figsize=(16, 10))
-sns.boxplot(data=df, y="count", x="dataset", hue="classification", ax=ax)
+sns.boxplot(data=out_df, y="count", x="dataset", hue="classification", ax=ax)
 ax.axhline(0, color="black", alpha=0.5)
 fig.savefig("components_per_dataset_boxplot.png")
 
 fig, ax = plt.subplots(figsize=(16, 10))
-sns.swarmplot(data=df, y="count", x="dataset", hue="classification", dodge=True, ax=ax)
+sns.swarmplot(data=out_df, y="count", x="dataset", hue="classification", dodge=True, ax=ax)
 ax.axhline(0, color="black", alpha=0.5)
 fig.savefig("components_per_dataset_swarmplot.png")
