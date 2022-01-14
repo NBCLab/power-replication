@@ -62,6 +62,8 @@ def correlate_ica_with_cortical_signal(
     out_df = pd.DataFrame(
         index=participants_df["participant_id"],
         columns=[
+            "total accepted",
+            "total rejected",
             "accepted count, r > 0.3",
             "accepted proportion, r > 0.3",
             "rejected count, r > 0.3",
@@ -88,6 +90,10 @@ def correlate_ica_with_cortical_signal(
         oc_data = np.mean(oc_data, axis=1)
 
         comptable = pd.read_table(ctab_file, index_col="Component")
+
+        out_df.loc[subj_id, "total accepted"] = (comptable["classification"] != "rejected").sum()
+        out_df.loc[subj_id, "total rejected"] = (comptable["classification"] == "rejected").sum()
+
         ica_df = pd.read_table(ica_file)
         ica_df["OC"] = oc_data
 
@@ -130,10 +136,10 @@ def correlate_ica_with_cortical_signal(
         out_df.loc[subj_id, "accepted mean z"] = np.nanmean(np.arctanh(acc_corrs))
         out_df.loc[subj_id, "rejected mean z"] = np.nanmean(np.arctanh(rej_corrs))
 
-    print(out_df)
-
     for clf in ("accepted", "rejected"):
-        z_values = out_df[f"{clf} mean z"].values
+        col = f"{clf} mean z"
+        temp_out_df = out_df.dropna(subset=[col])
+        z_values = temp_out_df[col].values
         mean_z = np.mean(z_values)
         sd_z = np.std(z_values)
 
@@ -145,7 +151,7 @@ def correlate_ica_with_cortical_signal(
                 f"{clf} ICA component time series "
                 f"(M[Z] = {mean_z:.03f}, SD[Z] = {sd_z:.03f}) were significantly higher than "
                 "zero, "
-                f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
+                f"t({temp_out_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
             )
         else:
             print(
@@ -153,7 +159,7 @@ def correlate_ica_with_cortical_signal(
                 f"{clf} ICA component time series "
                 f"(M[Z] = {mean_z:.03f}, SD[Z] = {sd_z:.03f}) were not significantly higher than "
                 "zero, "
-                f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
+                f"t({temp_out_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
             )
 
         fig, ax = plt.subplots(figsize=(8, 8))
@@ -216,6 +222,8 @@ def correlate_medn_with_oc(
         corr = corr[1, 0]
 
         out_df.loc[subj_id, "correlation"] = corr
+
+    print(out_df)
 
     # Convert r values to normally distributed z values with Fisher's
     # transformation (not test statistics though)
