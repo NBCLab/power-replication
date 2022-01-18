@@ -465,6 +465,13 @@ def compile_physio_regressors(
         rvt_regressors_all = rvt_regressors_all[resp_data_start:resp_data_end, :]
 
         # Resample to TR
+        rvt_regressors_all = np.apply_along_axis(
+            np.interp(
+                x=np.arange(0, (n_vols * t_r) + 0.1, t_r),
+                xp=np.linspace(0, rvt_regressors_all.shape[0], rvt_regressors_all.shape[0] * resp_samplerate),
+                fp=rvt_regressors_all,
+            ),
+        )
         rvt_regressors_all = signal.resample(rvt_regressors_all, num=n_vols, axis=0)
 
         # Add regressors to confounds and update metadata
