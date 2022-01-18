@@ -288,8 +288,8 @@ def compile_physio_regressors(
             resp_metadata = json.load(fo)
 
         resp_samplerate = resp_metadata["SamplingFrequency"]
-        resp_peaks = np.array(resp_metadata["Peaks"])
-        resp_troughs = np.array(resp_metadata["PeakDetTroughs"])
+        resp_peaks = np.array(resp_metadata["Peaks"]).astype(int)
+        resp_troughs = np.array(resp_metadata["PeakDetTroughs"]).astype(int)
 
         # Normally we'd offset the data by the start time, but in this dataset that's 0
         assert resp_metadata["StartTime"] == 0
@@ -299,23 +299,13 @@ def compile_physio_regressors(
         resp_data_end = int((n_vols + nss_count) * t_r * resp_samplerate)
         assert resp_data.shape[0] >= resp_data_end
 
-        # Adjust the peaks based on NSS volumes as well
-        resp_peaks = resp_peaks[resp_peaks < resp_data_end]
-        resp_peaks -= resp_data_start
-        resp_peaks = resp_peaks[resp_peaks > 0]
-        resp_peaks = resp_peaks.astype(int)
-        resp_troughs = resp_troughs[resp_troughs < resp_data_end]
-        resp_troughs -= resp_data_start
-        resp_troughs = resp_troughs[resp_troughs > 0]
-        resp_troughs = resp_troughs.astype(int)
-
     if not skip_card:
         card_data = np.loadtxt(physio_files["cardiac-data"])
         with open(physio_files["cardiac-metadata"], "r") as fo:
             card_metadata = json.load(fo)
 
         card_samplerate = card_metadata["SamplingFrequency"]
-        card_peaks = np.array(card_metadata["Peaks"])
+        card_peaks = np.array(card_metadata["Peaks"]).astype(int)
 
         # Normally we'd offset the data by the start time, but in this dataset that's 0
         assert card_metadata["StartTime"] == 0
@@ -324,12 +314,6 @@ def compile_physio_regressors(
         card_data_start = int(sec_to_drop * card_samplerate)
         card_data_end = int((n_vols + nss_count) * t_r * card_samplerate)
         assert card_data.shape[0] >= card_data_end
-
-        # Adjust the peaks based on NSS volumes as well
-        card_peaks = card_peaks[card_peaks < card_data_end]
-        card_peaks -= card_data_start
-        card_peaks = card_peaks[card_peaks > 0]
-        card_peaks = card_peaks.astype(int)
 
     # ####################
     # Respiratory Variance
@@ -625,9 +609,9 @@ def compile_physio_regressors(
             k: v for k, v in confounds_metadata.items() if k not in drop_items
         }
 
-    # ################################
+    # ###############################
     # Respiratory Pattern Variability
-    # ################################
+    # ###############################
     # Calculate RPV values and add to participants tsv
     print("\tRPV", flush=True)
     if not skip_resp:
