@@ -73,7 +73,7 @@ def correlate_hrv_with_cortical_sd(
         for filetype, pattern in target_file_patterns.items():
             filename = pattern.format(participant_id=participant_id, prefix=subj_prefix)
             cortical_signal = masking.apply_mask(filename, mask)
-            mean_cortical_signal = np.mean(cortical_signal, axis=0)
+            mean_cortical_signal = np.mean(cortical_signal, axis=1)
             participants_df.loc[i, filetype] = np.std(mean_cortical_signal)
 
     participants_df = participants_df.dropna(subset=["hrv"])
