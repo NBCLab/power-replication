@@ -743,10 +743,14 @@ def main(project_dir, dset, subject):
     tedana_subj_dir = op.join(tedana_dir, subject, "func")
 
     # Collect important files
-    confounds_file = op.join(preproc_subj_func_dir, f"{dset_prefix}_desc-confounds_timeseries.tsv")
+    confounds_file = op.join(
+        preproc_subj_func_dir, f"{dset_prefix}_desc-confounds_timeseries.tsv"
+    )
     assert op.isfile(confounds_file), confounds_file
 
-    medn_file = op.join(tedana_subj_dir, f"{dset_prefix}_desc-optcomDenoised_bold.nii.gz")
+    medn_file = op.join(
+        tedana_subj_dir, f"{dset_prefix}_desc-optcomDenoised_bold.nii.gz"
+    )
     assert op.isfile(medn_file), medn_file
 
     mask_file = op.join(tedana_subj_dir, f"{dset_prefix}_desc-goodSignal_mask.nii.gz")

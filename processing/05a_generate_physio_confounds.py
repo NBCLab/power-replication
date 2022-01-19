@@ -18,6 +18,8 @@ from scipy import signal
 from scipy.interpolate import interp1d
 from scipy.stats import zscore
 
+from processing_utils import filloutliers, smoothdata
+
 
 def calculate_envelope(resp, window):
     """Derive the upper envelope used for calculating RPV.
@@ -616,7 +618,9 @@ def compile_physio_regressors(
     print("\tRPV", flush=True)
     if not skip_resp:
         window = resp_samplerate * 10  # window should be 10s
-        resp_data_from_scan = resp_data[resp_data_start:resp_data_end]
+        resp_data_filtered = filloutliers(resp_data, int(resp_samplerate))
+        resp_data_filtered = smoothdata(resp_data_filtered, int(resp_samplerate))
+        resp_data_from_scan = resp_data_filtered[resp_data_start:resp_data_end]
         rpv = chest_belt.rpv(resp_data_from_scan, window=window)
         participants_df.loc[participants_df["participant_id"] == subject, "rpv"] = rpv
     else:

@@ -437,9 +437,13 @@ def plot_many_carpets(out_file, seg_file, config):
     assert isinstance(targets, list)
     assert isinstance(targets[0], list)
 
-    fig, axes = plt.subplots(figsize=(16, 16), nrows=len(targets[0]), ncols=len(targets))
+    fig, axes = plt.subplots(
+        figsize=(16, 16), nrows=len(targets[0]), ncols=len(targets)
+    )
     for i_col, group in enumerate(targets):
-        target_files = [TARGET_FILES[f["ref"]].format(sub=sub, prefix=prefix) for f in group]
+        target_files = [
+            TARGET_FILES[f["ref"]].format(sub=sub, prefix=prefix) for f in group
+        ]
         titles = [f["title"] for f in group]
         for j_row, target_file in enumerate(target_files):
             _plot_carpet(seg_file, target_file, titles[j_row], fig, axes[j_row, i_col])
