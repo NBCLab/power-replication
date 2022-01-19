@@ -1,3 +1,4 @@
+external/
 queue_count_*
 conda_env/
 jobs/

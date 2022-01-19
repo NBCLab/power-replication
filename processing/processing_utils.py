@@ -8,6 +8,7 @@ from nilearn import image, input_data
 from phys2denoise.metrics.utils import mirrorpad_1d
 from scipy.signal import savgol_filter
 from scipy.special import erfcinv
+from scipy.stats import zscore
 
 
 def run_command(command, env=None):
@@ -100,13 +101,14 @@ def nan_helper(y):
 def median_linear_fill(data):
     """Replicate MATLAB's filloutliers' movmedian+linear combination."""
     data = np.array(data)
-    med = np.median(data)
+    temp_data = zscore(data)
+    med = np.median(temp_data)
     c = -1 / (np.sqrt(2) * erfcinv(3 / 2))
-    mad = c * np.median(np.abs(data - med))
+    mad = c * np.median(np.abs(temp_data - med))
     # Outliers are defined as elements more than three scaled MAD from the median.
     # The scaled MAD is defined as c*median(abs(A-median(A))), where c=-1/(sqrt(2)*erfcinv(3/2)).
     outlier_thresh = mad * 3
-    data[np.abs(data) > outlier_thresh] = np.nan
+    data[np.abs(temp_data - med) > outlier_thresh] = np.nan
     nans, x = nan_helper(data)
     data[nans] = np.interp(x(nans), x(~nans), data[~nans])
     # Return the center data point of the window
