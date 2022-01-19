@@ -15,6 +15,7 @@ import json
 import os
 import os.path as op
 import sys
+from shutil import rmtree
 
 import numpy as np
 import pandas as pd
@@ -778,6 +779,10 @@ def main(project_dir, dset, subject):
     # dGSR
     # ####
     dgsr_subj_dir = op.join(dgsr_dir, subject, "func")
+    # rapidtide will break if the files already exist
+    if os.path.isdir(dgsr_subj_dir):
+        rmtree(dgsr_subj_dir)
+
     os.makedirs(dgsr_subj_dir, exist_ok=True)
     run_dgsr(medn_file, mask_file, confounds_file, dgsr_subj_dir)
 
