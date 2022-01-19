@@ -100,7 +100,7 @@ def compare_cnr(
 
             model = FirstLevelModel(
                 t_r=metadata["RepetitionTime"],
-                slice_time_ref=metadata["SliceTiming"],  # TODO: Fix this
+                slice_time_ref=metadata["SliceTiming"],  # TODO: Set the real reference slice time
                 hrf_model="spm",
                 drift_model="cosine",
                 high_pass=0.01,
