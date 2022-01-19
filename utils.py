@@ -14,6 +14,19 @@ from scipy.stats import pearsonr
 LGR = logging.getLogger("utils")
 
 
+def calculate_variance_explained(full_data, reduced_data):
+    """Calculate variance explained by denoising method.
+
+    Use in Experiment 2, Analysis Group 4.
+    """
+    full_dm = full_data - np.mean(full_data, axis=0, keepdims=True)
+    red_dm = reduced_data - np.mean(reduced_data, axis=0, keepdims=True)
+
+    # get variance explained by the reduced data
+    varexpl = 1 - ((full_dm - red_dm) ** 2.0).sum() / (full_dm ** 2.0).sum()
+    return varexpl
+
+
 def pearson_r(arr1, arr2, alternative="two-sided"):
     """Calculate Pearson correlation coefficient, but allow a specific tailed test.
 

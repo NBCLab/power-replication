@@ -16,13 +16,13 @@ import os.path as op
 import sys
 
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 import seaborn as sns
 from nilearn import masking, plotting
 
 sys.path.append("..")
 
+from utils import calculate_variance_explained  # noqa: E402
 from utils import get_prefixes  # noqa: E402
 from utils import get_target_files  # noqa: E402
 from utils import pearson_r  # noqa: E402
@@ -73,16 +73,6 @@ def plot_denoised_with_motion(
             )
 
 
-def calculate_varex(full_data, reduced_data):
-    """Calculate variance explained by denoising method."""
-    full_dm = full_data - np.mean(full_data, axis=0, keepdims=True)
-    red_dm = reduced_data - np.mean(reduced_data, axis=0, keepdims=True)
-
-    # get variance explained by the reduced data
-    varexpl = 1 - ((full_dm - red_dm) ** 2.0).sum() / (full_dm ** 2.0).sum()
-    return varexpl
-
-
 def correlate_variance_removed(
     project_dir,
     participants_file,
@@ -125,8 +115,8 @@ def correlate_variance_removed(
         godec_data = masking.apply_mask(godec_file, mask_file)
         gsr_data = masking.apply_mask(gsr_file, mask_file)
 
-        godec_varex = calculate_varex(medn_data, godec_data)
-        gsr_varex = calculate_varex(medn_data, gsr_data)
+        godec_varex = calculate_variance_explained(medn_data, godec_data)
+        gsr_varex = calculate_variance_explained(medn_data, gsr_data)
         godec_varrem = 1 - godec_varex
         gsr_varrem = 1 - gsr_varex
         participants_df.loc[i_run, "godec variance removed"] = godec_varrem
