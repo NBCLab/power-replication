@@ -62,7 +62,8 @@ def correlate_rpv_with_cortical_sd(
     out_dir = op.join(project_dir, "analyses", "experiment01_group03")
     os.makedirs(out_dir, exist_ok=True)
 
-    ALPHA = 0.05
+    N_ANALYSES_IN_FAMILY = len(target_file_patterns.keys())
+    ALPHA = 0.05 / N_ANALYSES_IN_FAMILY
 
     participants_df = pd.read_table(participants_file)
     n_subs_all = participants_df.shape[0]

@@ -38,7 +38,8 @@ def correlate_rpv_with_mean_rv(project_dir, participants_file, confounds_pattern
     out_dir = op.join(project_dir, "analyses", "experiment01_group01")
     os.makedirs(out_dir, exist_ok=True)
 
-    ALPHA = 0.05
+    N_ANALYSES_IN_FAMILY = 2
+    ALPHA = 0.05 / N_ANALYSES_IN_FAMILY
 
     participants_df = pd.read_table(participants_file)
     n_subs_all = participants_df.shape[0]
@@ -95,7 +96,8 @@ def correlate_rpv_with_mean_rvt(project_dir, participants_file, confounds_patter
     out_dir = op.join(project_dir, "analyses", "experiment01_group01")
     os.makedirs(out_dir, exist_ok=True)
 
-    ALPHA = 0.05
+    N_ANALYSES_IN_FAMILY = 2
+    ALPHA = 0.05 / N_ANALYSES_IN_FAMILY
 
     participants_df = pd.read_table(participants_file)
     n_subs_all = participants_df.shape[0]
@@ -153,7 +155,8 @@ def compare_env_with_rv(project_dir, participants_file, confounds_pattern):
     out_dir = op.join(project_dir, "analyses", "experiment01_group01")
     os.makedirs(out_dir, exist_ok=True)
 
-    ALPHA = 0.05
+    N_ANALYSES_IN_FAMILY = 2
+    ALPHA = 0.05 / N_ANALYSES_IN_FAMILY
 
     participants_df = pd.read_table(participants_file)
     n_subs_all = participants_df.shape[0]
@@ -217,7 +220,8 @@ def compare_env_with_rvt(project_dir, participants_file, confounds_pattern):
     out_dir = op.join(project_dir, "analyses", "experiment01_group01")
     os.makedirs(out_dir, exist_ok=True)
 
-    ALPHA = 0.05
+    N_ANALYSES_IN_FAMILY = 2
+    ALPHA = 0.05 / N_ANALYSES_IN_FAMILY
 
     participants_df = pd.read_table(participants_file)
     n_subs_all = participants_df.shape[0]

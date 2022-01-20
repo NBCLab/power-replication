@@ -34,7 +34,8 @@ def correlate_rpv_with_mean_fd(project_dir, participants_file, confounds_pattern
     out_dir = op.join(project_dir, "analyses", "experiment01_group02")
     os.makedirs(out_dir, exist_ok=True)
 
-    ALPHA = 0.05
+    N_ANALYSES_IN_FAMILY = 3
+    ALPHA = 0.05 / N_ANALYSES_IN_FAMILY
 
     participants_df = pd.read_table(participants_file)
     n_subs_all = participants_df.shape[0]
@@ -90,7 +91,9 @@ def correlate_rvt_with_fd(project_dir, participants_file, confounds_pattern):
     out_dir = op.join(project_dir, "analyses", "experiment01_group02")
     os.makedirs(out_dir, exist_ok=True)
 
-    ALPHA = 0.05
+    N_ANALYSES_IN_FAMILY = 3
+    ALPHA = 0.05 / N_ANALYSES_IN_FAMILY
+
     participants_df = pd.read_table(participants_file)
     n_subs_all = participants_df.shape[0]
     # Limit to participants with RPV value, since those are ones with good physio data
@@ -152,7 +155,9 @@ def correlate_rv_with_fd(project_dir, participants_file, confounds_pattern):
     out_dir = op.join(project_dir, "analyses", "experiment01_group02")
     os.makedirs(out_dir, exist_ok=True)
 
-    ALPHA = 0.05
+    N_ANALYSES_IN_FAMILY = 3
+    ALPHA = 0.05 / N_ANALYSES_IN_FAMILY
+
     participants_df = pd.read_table(participants_file)
     n_subs_all = participants_df.shape[0]
     # Limit to participants with RPV value, since those are ones with good physio data

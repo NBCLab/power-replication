@@ -42,10 +42,6 @@ def run_ddmra_analyses(
     out_dir = op.join(project_dir, "analyses/experiment02_group05_analysis01")
 
     participants_df = pd.read_table(participants_file)
-    n_subs_all = participants_df.shape[0]
-    # Limit to participants that aren't excluded
-    participants_df = participants_df.loc[participants_df["exclude"] != 1]
-    print(f"{participants_df.shape[0]}/{n_subs_all} participants retained.")
 
     for filetype, pattern in target_file_patterns.items():
         print(f"\t{filetype}", flush=True)
@@ -58,7 +54,11 @@ def run_ddmra_analyses(
             subj_prefix = dset_prefix.format(participant_id=participant_id)
 
             # Select the target file
-            filename = pattern.format(participant_id=participant_id, prefix=subj_prefix)
+            filename = pattern.format(
+                dset=row["dset"],
+                participant_id=participant_id,
+                prefix=subj_prefix,
+            )
             target_files.append(filename)
 
             # Select and load the appropriate confound (FD)
@@ -81,8 +81,8 @@ def run_ddmra_analyses(
 if __name__ == "__main__":
     print("Experiment 2, Analysis Group 5")
     project_dir = "/home/data/nbc/misc-projects/Salo_PowerReplication/"
-    in_dir = op.join(project_dir, "dset-dupre/")
-    participants_file = op.join(in_dir, "participants.tsv")
+    in_dir = op.join(project_dir, "{dset}")
+    participants_file = op.join(project_dir, "participants.tsv")
     confounds_pattern = op.join(
         in_dir,
         "derivatives/power/{participant_id}/func",
