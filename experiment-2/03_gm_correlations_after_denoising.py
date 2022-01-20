@@ -39,10 +39,6 @@ def correlate_medn_with_oc(
     ALPHA = 0.05
 
     participants_df = pd.read_table(participants_file)
-    n_subs_all = participants_df.shape[0]
-    # Limit to participants with RPV value
-    participants_df = participants_df.loc[participants_df["exclude"] != 1]
-    print(f"{participants_df.shape[0]}/{n_subs_all} participants retained.")
 
     for i_run, participant_row in participants_df.iterrows():
         subj_id = participant_row["participant_id"]
@@ -121,10 +117,6 @@ def correlate_medn_with_fitr2(
     ALPHA = 0.05
 
     participants_df = pd.read_table(participants_file)
-    n_subs_all = participants_df.shape[0]
-    # Limit to participants with RPV value
-    participants_df = participants_df.loc[participants_df["exclude"] != 1]
-    print(f"{participants_df.shape[0]}/{n_subs_all} participants retained.")
 
     for i_run, participant_row in participants_df.iterrows():
         subj_id = participant_row["participant_id"]

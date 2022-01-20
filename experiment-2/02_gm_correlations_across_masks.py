@@ -48,7 +48,7 @@ def correlate_cort_with_gm(
 
     for i_run, participant_row in participants_df.iterrows():
         subj_id = participant_row["participant_id"]
-        dset = participant_row["dataset"]
+        dset = participant_row["dset"]
         dset_prefix = get_prefixes()[dset]
         subj_prefix = dset_prefix.format(participant_id=subj_id)
 

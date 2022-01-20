@@ -52,6 +52,10 @@ def run_ddmra_analyses(
             dset_prefix = get_prefixes_mni()[row["dset"]]
             participant_id = row["participant_id"]
             subj_prefix = dset_prefix.format(participant_id=participant_id)
+            print(row["dset"])
+            print(participant_id)
+            print(dset_prefix)
+            print(subj_prefix)
 
             # Select the target file
             filename = pattern.format(

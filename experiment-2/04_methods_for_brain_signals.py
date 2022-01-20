@@ -26,7 +26,8 @@ from utils import calculate_variance_explained  # noqa: E402
 from utils import get_prefixes  # noqa: E402
 from utils import get_target_files  # noqa: E402
 from utils import pearson_r  # noqa: E402
-from utils import plot_confounds  # noqa: E402
+
+# from utils import plot_confounds  # noqa: E402
 
 
 def plot_denoised_with_motion(
@@ -66,7 +67,7 @@ def plot_denoised_with_motion(
             )
 
             fig, axes = plt.subplots(figsize=(12, 18), nrows=2)
-            plot_confounds(confounds_file, figure=fig, axes=axes[0])
+            # plot_confounds(confounds_file, figure=fig, axes=axes[0])
             plotting.plot_carpet(filename, dseg_file, figure=fig, axes=axes[1])
             fig.savefig(
                 op.join(filetype_dir, "{dset}_{subj_id}_{filetype}.png"), dpi=400
@@ -193,13 +194,13 @@ if __name__ == "__main__":
     godec_pattern = op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS["MEDN+GODEC"])
     gsr_pattern = op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS["MEDN+GSR"])
 
-    plot_denoised_with_motion(
+    """plot_denoised_with_motion(
         project_dir,
         participants_file,
         target_file_patterns,
         confounds_pattern,
         dseg_pattern,
-    )
+    )"""
     correlate_variance_removed(
         project_dir,
         participants_file,
