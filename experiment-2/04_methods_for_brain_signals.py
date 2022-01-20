@@ -188,7 +188,7 @@ if __name__ == "__main__":
 
     TARGET_FILE_PATTERNS = get_target_files()
     TARGETS = [
-        "MEDN+GODEC sparse",
+        "MEDN+GODEC (sparse)",
         "MEDN+GSR",
         "MEDN+dGSR",
         "MEDN+MIR",
@@ -200,7 +200,7 @@ if __name__ == "__main__":
         if k in TARGETS
     }
     medn_pattern = op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS["MEDN"])
-    godec_pattern = op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS["MEDN+GODEC sparse"])
+    godec_pattern = op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS["MEDN+GODEC (sparse)"])
     gsr_pattern = op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS["MEDN+GSR"])
 
     """plot_denoised_with_motion(

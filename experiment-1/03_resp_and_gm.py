@@ -153,7 +153,7 @@ if __name__ == "__main__":
         "TE30",
         "FIT-R2",
         "MEDN",
-        "MEDN+GODEC sparse",
+        "MEDN+GODEC (sparse)",
         "MEDN+Nuis-Reg",
         "MEDN+RVT-Reg",
         "MEDN+RV-Reg",

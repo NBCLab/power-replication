@@ -164,6 +164,10 @@ def correlate_medn_with_fitr2(
     # Convert r values to normally distributed z values with Fisher's
     # transformation (not test statistics though)
     z_values = np.arctanh(participants_df["correlation"])
+    # In case of perfect correlations, which is possible when no components are rejected,
+    # replace with high correlation.
+    z_values[np.isinf(z_values)] = np.arctanh(0.999) * np.sign(z_values[np.isinf(z_values)])
+
     mean_z = np.mean(z_values)
     sd_z = np.std(z_values)
 

@@ -78,7 +78,7 @@ def run_ddmra_analyses(
                 dset=row["dset"], participant_id=participant_id, prefix=subj_prefix
             )
             confounds_df = pd.read_table(confounds_file)
-            fd_all.append(confounds_df["FramewiseDisplacement"].values)
+            fd_all.append(confounds_df["framewise_displacement"].values)
 
         run_analyses(
             target_files,
@@ -105,7 +105,7 @@ if __name__ == "__main__":
         "OC",
         "MEDN",
         "MEDN Noise",
-        "MEDN+GODEC sparse",
+        "MEDN+GODEC (sparse)",
         "MEDN+GODEC Noise (lowrank)",
         "MEDN+GSR",
         "MEDN+GSR Noise",
