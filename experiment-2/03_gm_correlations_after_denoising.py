@@ -36,13 +36,14 @@ def correlate_medn_with_oc(
     out_dir = op.join(project_dir, "analyses", "experiment02_group03")
     os.makedirs(out_dir, exist_ok=True)
 
-    ALPHA = 0.05
+    N_ANALYSES_IN_FAMILY = 2
+    ALPHA = 0.05 / N_ANALYSES_IN_FAMILY
 
     participants_df = pd.read_table(participants_file)
 
     for i_run, participant_row in participants_df.iterrows():
         subj_id = participant_row["participant_id"]
-        dset = participant_row["dataset"]
+        dset = participant_row["dset"]
         dset_prefix = get_prefixes()[dset]
         subj_prefix = dset_prefix.format(participant_id=subj_id)
 
@@ -114,13 +115,14 @@ def correlate_medn_with_fitr2(
     out_dir = op.join(project_dir, "analyses", "experiment02_group03")
     os.makedirs(out_dir, exist_ok=True)
 
-    ALPHA = 0.05
+    N_ANALYSES_IN_FAMILY = 2
+    ALPHA = 0.05 / N_ANALYSES_IN_FAMILY
 
     participants_df = pd.read_table(participants_file)
 
     for i_run, participant_row in participants_df.iterrows():
         subj_id = participant_row["participant_id"]
-        dset = participant_row["dataset"]
+        dset = participant_row["dset"]
         dset_prefix = get_prefixes()[dset]
         subj_prefix = dset_prefix.format(participant_id=subj_id)
 

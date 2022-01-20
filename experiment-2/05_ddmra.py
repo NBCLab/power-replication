@@ -27,6 +27,7 @@ from ddmra import run_analyses
 
 sys.path.append("..")
 
+from utils import get_prefixes  # noqa: E402
 from utils import get_prefixes_mni  # noqa: E402
 from utils import get_target_files  # noqa: E402
 
@@ -49,19 +50,17 @@ def run_ddmra_analyses(
         os.makedirs(filetype_out_dir, exist_ok=True)
         target_files, fd_all = [], []
         for i, row in participants_df.iterrows():
-            dset_prefix = get_prefixes_mni()[row["dset"]]
+            dset_prefix_mni = get_prefixes_mni()[row["dset"]]
+            dset_prefix = get_prefixes()[row["dset"]]
             participant_id = row["participant_id"]
+            subj_prefix_mni = dset_prefix_mni.format(participant_id=participant_id)
             subj_prefix = dset_prefix.format(participant_id=participant_id)
-            print(row["dset"])
-            print(participant_id)
-            print(dset_prefix)
-            print(subj_prefix)
 
             # Select the target file
             filename = pattern.format(
                 dset=row["dset"],
                 participant_id=participant_id,
-                prefix=subj_prefix,
+                prefix=subj_prefix_mni,
             )
             target_files.append(filename)
 
