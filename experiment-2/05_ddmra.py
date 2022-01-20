@@ -27,6 +27,7 @@ from ddmra import run_analyses
 
 sys.path.append("..")
 
+from utils import get_bad_subjects_nonphysio  # noqa: E402
 from utils import get_prefixes  # noqa: E402
 from utils import get_prefixes_mni  # noqa: E402
 from utils import get_target_files  # noqa: E402
@@ -43,6 +44,14 @@ def run_ddmra_analyses(
     out_dir = op.join(project_dir, "analyses/experiment02_group05_analysis01")
 
     participants_df = pd.read_table(participants_file)
+    subjects_to_drop = get_bad_subjects_nonphysio()
+    for sub_to_drop in subjects_to_drop:
+        participants_df = participants_df.loc[
+            ~(
+                participants_df["dset"] == sub_to_drop[0] &
+                participants_df["participant_id"] == sub_to_drop[1]
+            )
+        ]
 
     for filetype, pattern in target_file_patterns.items():
         print(f"\t{filetype}", flush=True)

@@ -364,3 +364,14 @@ def plot_ddmra_results(in_dir):
         )
 
     fig.savefig(op.join(in_dir, "analysis_results.png"), dpi=100)
+
+
+def get_bad_subjects_nonphysio():
+    BAD_SUBJECTS = (
+        ("dset-camcan", "sub-CC110187"),  # SVD failure in tedana
+        ("dset-camcan", "sub-CC110411"),  # SVD failure in tedana
+        ("dset-camcan", "sub-CC310142"),  # SVD failure in tedana
+        ("dset-camcan", "sub-CC420587"),  # SVD failure in tedana
+        ("dset-camcan", "sub-CC620026"),  # SVD failure in tedana
+    )
+    return BAD_SUBJECTS

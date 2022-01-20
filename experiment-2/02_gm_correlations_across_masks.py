@@ -23,6 +23,7 @@ from scipy.stats import ttest_1samp
 
 sys.path.append("..")
 
+from utils import get_bad_subjects_nonphysio  # noqa: E402
 from utils import get_prefixes  # noqa: E402
 
 
@@ -46,6 +47,14 @@ def correlate_cort_with_gm(
     ALPHA = 0.05 / N_ANALYSES_IN_FAMILY
 
     participants_df = pd.read_table(participants_file)
+    subjects_to_drop = get_bad_subjects_nonphysio()
+    for sub_to_drop in subjects_to_drop:
+        participants_df = participants_df.loc[
+            ~(
+                participants_df["dset"] == sub_to_drop[0] &
+                participants_df["participant_id"] == sub_to_drop[1]
+            )
+        ]
 
     for i_run, participant_row in participants_df.iterrows():
         subj_id = participant_row["participant_id"]
@@ -132,10 +141,14 @@ def correlate_cort_with_wb(
     ALPHA = 0.05 / N_ANALYSES_IN_FAMILY
 
     participants_df = pd.read_table(participants_file)
-    n_subs_all = participants_df.shape[0]
-    # Limit to participants with RPV value
-    participants_df = participants_df.loc[participants_df["exclude"] != 1]
-    print(f"{participants_df.shape[0]}/{n_subs_all} participants retained.")
+    subjects_to_drop = get_bad_subjects_nonphysio()
+    for sub_to_drop in subjects_to_drop:
+        participants_df = participants_df.loc[
+            ~(
+                participants_df["dset"] == sub_to_drop[0] &
+                participants_df["participant_id"] == sub_to_drop[1]
+            )
+        ]
 
     for i_run, participant_row in participants_df.iterrows():
         subj_id = participant_row["participant_id"]
