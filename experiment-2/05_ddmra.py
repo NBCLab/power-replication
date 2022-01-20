@@ -48,8 +48,8 @@ def run_ddmra_analyses(
     for sub_to_drop in subjects_to_drop:
         participants_df = participants_df.loc[
             ~(
-                participants_df["dset"] == sub_to_drop[0] &
-                participants_df["participant_id"] == sub_to_drop[1]
+                (participants_df["dset"] == sub_to_drop[0]) &
+                (participants_df["participant_id"] == sub_to_drop[1])
             )
         ]
 

@@ -45,8 +45,8 @@ def correlate_medn_with_oc(
     for sub_to_drop in subjects_to_drop:
         participants_df = participants_df.loc[
             ~(
-                participants_df["dset"] == sub_to_drop[0] &
-                participants_df["participant_id"] == sub_to_drop[1]
+                (participants_df["dset"] == sub_to_drop[0]) &
+                (participants_df["participant_id"] == sub_to_drop[1])
             )
         ]
 
@@ -132,8 +132,8 @@ def correlate_medn_with_fitr2(
     for sub_to_drop in subjects_to_drop:
         participants_df = participants_df.loc[
             ~(
-                participants_df["dset"] == sub_to_drop[0] &
-                participants_df["participant_id"] == sub_to_drop[1]
+                (participants_df["dset"] == sub_to_drop[0]) &
+                (participants_df["participant_id"] == sub_to_drop[1])
             )
         ]
 

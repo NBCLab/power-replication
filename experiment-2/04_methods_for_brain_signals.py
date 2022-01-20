@@ -48,8 +48,8 @@ def plot_denoised_with_motion(
     for sub_to_drop in subjects_to_drop:
         participants_df = participants_df.loc[
             ~(
-                participants_df["dset"] == sub_to_drop[0] &
-                participants_df["participant_id"] == sub_to_drop[1]
+                (participants_df["dset"] == sub_to_drop[0]) &
+                (participants_df["participant_id"] == sub_to_drop[1])
             )
         ]
 
@@ -99,8 +99,8 @@ def correlate_variance_removed(
     for sub_to_drop in subjects_to_drop:
         participants_df = participants_df.loc[
             ~(
-                participants_df["dset"] == sub_to_drop[0] &
-                participants_df["participant_id"] == sub_to_drop[1]
+                (participants_df["dset"] == sub_to_drop[0]) &
+                (participants_df["participant_id"] == sub_to_drop[1])
             )
         ]
 
