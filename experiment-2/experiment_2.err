@@ -7,20 +7,22 @@ Traceback (most recent call last):
   File "pandas/_libs/index.pyx", line 108, in pandas._libs.index.IndexEngine.get_loc
   File "pandas/_libs/hashtable_class_helper.pxi", line 5198, in pandas._libs.hashtable.PyObjectHashTable.get_item
   File "pandas/_libs/hashtable_class_helper.pxi", line 5206, in pandas._libs.hashtable.PyObjectHashTable.get_item
-KeyError: 'exclude'
+KeyError: 'dataset'
 
 The above exception was the direct cause of the following exception:
 
 Traceback (most recent call last):
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/02_gm_correlations_across_masks.py", line 239, in <module>
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/02_gm_correlations_across_masks.py", line 235, in <module>
     dseg_pattern,
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/02_gm_correlations_across_masks.py", line 50, in correlate_cort_with_gm
-    participants_df = participants_df.loc[participants_df["exclude"] != 1]
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/pandas/core/frame.py", line 3455, in __getitem__
-    indexer = self.columns.get_loc(key)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/02_gm_correlations_across_masks.py", line 51, in correlate_cort_with_gm
+    dset = participant_row["dataset"]
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/pandas/core/series.py", line 942, in __getitem__
+    return self._get_value(key)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/pandas/core/series.py", line 1051, in _get_value
+    loc = self.index.get_loc(label)
   File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/pandas/core/indexes/base.py", line 3363, in get_loc
     raise KeyError(key) from err
-KeyError: 'exclude'
+KeyError: 'dataset'
 /home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/datasets/__init__.py:96: FutureWarning: Fetchers from the nilearn.datasets module will be updated in version 0.9 to return python strings instead of bytes and Pandas dataframes instead of Numpy arrays.
   "Numpy arrays.", FutureWarning)
 Traceback (most recent call last):
@@ -53,25 +55,24 @@ ImportError: cannot import name 'plot_confounds' from 'utils' (../utils.py)
 /home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/datasets/__init__.py:96: FutureWarning: Fetchers from the nilearn.datasets module will be updated in version 0.9 to return python strings instead of bytes and Pandas dataframes instead of Numpy arrays.
   "Numpy arrays.", FutureWarning)
 Traceback (most recent call last):
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/pandas/core/indexes/base.py", line 3361, in get_loc
-    return self._engine.get_loc(casted_key)
-  File "pandas/_libs/index.pyx", line 76, in pandas._libs.index.IndexEngine.get_loc
-  File "pandas/_libs/index.pyx", line 108, in pandas._libs.index.IndexEngine.get_loc
-  File "pandas/_libs/hashtable_class_helper.pxi", line 5198, in pandas._libs.hashtable.PyObjectHashTable.get_item
-  File "pandas/_libs/hashtable_class_helper.pxi", line 5206, in pandas._libs.hashtable.PyObjectHashTable.get_item
-KeyError: 'dset'
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
   File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/05_ddmra.py", line 113, in <module>
     run_ddmra_analyses(project_dir, participants_file, target_file_patterns, confounds_pattern)
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/05_ddmra.py", line 56, in run_ddmra_analyses
-    dset_prefix = get_prefixes_mni()[row["dset"]]
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/pandas/core/series.py", line 942, in __getitem__
-    return self._get_value(key)
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/pandas/core/series.py", line 1051, in _get_value
-    loc = self.index.get_loc(label)
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/pandas/core/indexes/base.py", line 3363, in get_loc
-    raise KeyError(key) from err
-KeyError: 'dset'
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/05_ddmra.py", line 68, in run_ddmra_analyses
+    confounds_df = pd.read_table(confounds_file)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/pandas/util/_decorators.py", line 311, in wrapper
+    return func(*args, **kwargs)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/pandas/io/parsers/readers.py", line 683, in read_table
+    return _read(filepath_or_buffer, kwds)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/pandas/io/parsers/readers.py", line 482, in _read
+    parser = TextFileReader(filepath_or_buffer, **kwds)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/pandas/io/parsers/readers.py", line 811, in __init__
+    self._engine = self._make_engine(self.engine)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/pandas/io/parsers/readers.py", line 1040, in _make_engine
+    return mapping[engine](self.f, **self.options)  # type: ignore[call-arg]
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/pandas/io/parsers/c_parser_wrapper.py", line 51, in __init__
+    self._open_handles(src, kwds)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/pandas/io/parsers/base_parser.py", line 229, in _open_handles
+    errors=kwds.get("encoding_errors", "strict"),
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/pandas/io/common.py", line 706, in get_handle
+    newline="",
+FileNotFoundError: [Errno 2] No such file or directory: '/home/data/nbc/misc-projects/Salo_PowerReplication/dset-cambridge/derivatives/power/sub-04570/func/sub-04570_task-rest_run-1_desc-confounds_timeseries.tsv'
