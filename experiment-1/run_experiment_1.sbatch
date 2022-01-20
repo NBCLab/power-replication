@@ -8,8 +8,8 @@
 #SBATCH --partition=investor
 
 # Outputs ----------------------------------
-#SBATCH --output=/home/data/nbc/misc-projects/Salo_PowerReplication/code/jobs/experiment_1.out
-#SBATCH --error=/home/data/nbc/misc-projects/Salo_PowerReplication/code/jobs/experiment_1.err
+#SBATCH --output=/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-1/experiment_1.out
+#SBATCH --error=/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-1/experiment_1.err
 ########################################################
 # A generic Python job for the SLURM scheduler
 export NPROCS=`echo $LSB_HOSTS | wc -w`
