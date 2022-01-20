@@ -1,6 +1,20 @@
 /home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/datasets/__init__.py:96: FutureWarning: Fetchers from the nilearn.datasets module will be updated in version 0.9 to return python strings instead of bytes and Pandas dataframes instead of Numpy arrays.
   "Numpy arrays.", FutureWarning)
 Traceback (most recent call last):
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/02_gm_correlations_across_masks.py", line 235, in <module>
+    dseg_pattern,
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/02_gm_correlations_across_masks.py", line 66, in correlate_cort_with_gm
+    cort_data = masking.apply_mask(medn_file, mask_file)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/masking.py", line 754, in apply_mask
+    ensure_finite=ensure_finite)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/masking.py", line 774, in _apply_mask_fmri
+    imgs_img = _utils.check_niimg(imgs)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/_utils/niimg_conversions.py", line 271, in check_niimg
+    raise ValueError("File not found: '%s'" % niimg)
+ValueError: File not found: '/home/data/nbc/misc-projects/Salo_PowerReplication/dset-camcan/derivatives/tedana/sub-CC110187/func/sub-CC110187_task-movie_desc-optcomDenoised_bold.nii.gz'
+/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/datasets/__init__.py:96: FutureWarning: Fetchers from the nilearn.datasets module will be updated in version 0.9 to return python strings instead of bytes and Pandas dataframes instead of Numpy arrays.
+  "Numpy arrays.", FutureWarning)
+Traceback (most recent call last):
   File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/pandas/core/indexes/base.py", line 3361, in get_loc
     return self._engine.get_loc(casted_key)
   File "pandas/_libs/index.pyx", line 76, in pandas._libs.index.IndexEngine.get_loc
@@ -12,9 +26,9 @@ KeyError: 'dataset'
 The above exception was the direct cause of the following exception:
 
 Traceback (most recent call last):
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/02_gm_correlations_across_masks.py", line 235, in <module>
-    dseg_pattern,
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/02_gm_correlations_across_masks.py", line 51, in correlate_cort_with_gm
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/03_gm_correlations_after_denoising.py", line 225, in <module>
+    mask_pattern,
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/03_gm_correlations_after_denoising.py", line 45, in correlate_medn_with_oc
     dset = participant_row["dataset"]
   File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/pandas/core/series.py", line 942, in __getitem__
     return self._get_value(key)
@@ -26,38 +40,15 @@ KeyError: 'dataset'
 /home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/datasets/__init__.py:96: FutureWarning: Fetchers from the nilearn.datasets module will be updated in version 0.9 to return python strings instead of bytes and Pandas dataframes instead of Numpy arrays.
   "Numpy arrays.", FutureWarning)
 Traceback (most recent call last):
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/pandas/core/indexes/base.py", line 3361, in get_loc
-    return self._engine.get_loc(casted_key)
-  File "pandas/_libs/index.pyx", line 76, in pandas._libs.index.IndexEngine.get_loc
-  File "pandas/_libs/index.pyx", line 108, in pandas._libs.index.IndexEngine.get_loc
-  File "pandas/_libs/hashtable_class_helper.pxi", line 5198, in pandas._libs.hashtable.PyObjectHashTable.get_item
-  File "pandas/_libs/hashtable_class_helper.pxi", line 5206, in pandas._libs.hashtable.PyObjectHashTable.get_item
-KeyError: 'exclude'
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/03_gm_correlations_after_denoising.py", line 233, in <module>
-    mask_pattern,
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/03_gm_correlations_after_denoising.py", line 44, in correlate_medn_with_oc
-    participants_df = participants_df.loc[participants_df["exclude"] != 1]
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/pandas/core/frame.py", line 3455, in __getitem__
-    indexer = self.columns.get_loc(key)
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/pandas/core/indexes/base.py", line 3363, in get_loc
-    raise KeyError(key) from err
-KeyError: 'exclude'
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/04_methods_for_brain_signals.py", line 194, in <module>
+    godec_pattern = op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS["MEDN+GODEC"])
+KeyError: 'MEDN+GODEC'
 /home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/datasets/__init__.py:96: FutureWarning: Fetchers from the nilearn.datasets module will be updated in version 0.9 to return python strings instead of bytes and Pandas dataframes instead of Numpy arrays.
   "Numpy arrays.", FutureWarning)
 Traceback (most recent call last):
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/04_methods_for_brain_signals.py", line 29, in <module>
-    from utils import plot_confounds  # noqa: E402
-ImportError: cannot import name 'plot_confounds' from 'utils' (../utils.py)
-/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/datasets/__init__.py:96: FutureWarning: Fetchers from the nilearn.datasets module will be updated in version 0.9 to return python strings instead of bytes and Pandas dataframes instead of Numpy arrays.
-  "Numpy arrays.", FutureWarning)
-Traceback (most recent call last):
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/05_ddmra.py", line 113, in <module>
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/05_ddmra.py", line 117, in <module>
     run_ddmra_analyses(project_dir, participants_file, target_file_patterns, confounds_pattern)
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/05_ddmra.py", line 68, in run_ddmra_analyses
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/05_ddmra.py", line 72, in run_ddmra_analyses
     confounds_df = pd.read_table(confounds_file)
   File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/pandas/util/_decorators.py", line 311, in wrapper
     return func(*args, **kwargs)
