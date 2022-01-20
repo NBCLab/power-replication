@@ -159,7 +159,7 @@ if __name__ == "__main__":
         "OC",
         "MEDN",
         "MEDN Noise",
-        "MEDN+GODEC",
+        "MEDN+GODEC sparse",
         "MEDN+Nuis-Reg",
         "MEDN+RVT-Reg",
         "MEDN+RV-Reg",

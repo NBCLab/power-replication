@@ -50,7 +50,7 @@ def plot_denoised_with_motion(
 
     for i_run, participant_row in participants_df.iterrows():
         subj_id = participant_row["participant_id"]
-        dset = participant_row["dataset"]
+        dset = participant_row["dset"]
         dset_prefix = get_prefixes()[dset]
         subj_prefix = dset_prefix.format(participant_id=subj_id)
 
@@ -97,7 +97,7 @@ def correlate_variance_removed(
 
     for i_run, participant_row in participants_df.iterrows():
         subj_id = participant_row["participant_id"]
-        dset = participant_row["dataset"]
+        dset = participant_row["dset"]
         dset_prefix = get_prefixes()[dset]
         subj_prefix = dset_prefix.format(participant_id=subj_id)
 
@@ -179,7 +179,7 @@ if __name__ == "__main__":
 
     TARGET_FILE_PATTERNS = get_target_files()
     TARGETS = [
-        "MEDN+GODEC",
+        "MEDN+GODEC sparse",
         "MEDN+GSR",
         "MEDN+dGSR",
         "MEDN+MIR",
@@ -191,7 +191,7 @@ if __name__ == "__main__":
         if k in TARGETS
     }
     medn_pattern = op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS["MEDN"])
-    godec_pattern = op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS["MEDN+GODEC"])
+    godec_pattern = op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS["MEDN+GODEC sparse"])
     gsr_pattern = op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS["MEDN+GSR"])
 
     """plot_denoised_with_motion(

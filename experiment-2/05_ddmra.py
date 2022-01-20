@@ -90,15 +90,15 @@ if __name__ == "__main__":
     confounds_pattern = op.join(
         in_dir,
         "derivatives/power/{participant_id}/func",
-        "{participant_id}_task-rest_run-1_desc-confounds_timeseries.tsv",
+        "{prefix}_desc-confounds_timeseries.tsv",
     )
     TARGET_FILE_PATTERNS = get_target_files()
     TARGETS = [
         "OC",
         "MEDN",
         "MEDN Noise",
-        "MEDN+GODEC",
-        "MEDN+GODEC Noise",
+        "MEDN+GODEC sparse",
+        "MEDN+GODEC Noise (lowrank)",
         "MEDN+GSR",
         "MEDN+GSR Noise",
         "MEDN+dGSR",
