@@ -21,3 +21,42 @@ Experiment 1, Analysis Group 2, Analysis 2
 Experiment 1, Analysis Group 2, Analysis 3
 29/31 participants retained.
 	Correlations between RV and FD (M[Z] = 0.172, SD[Z] = 0.243) were significantly higher than zero, t(28) = 3.745, p = 0.000.
+Experiment 1, Analysis Group 3
+Experiment 1, Analysis Group 3, Analysis 1
+29/31 participants retained.
+	RPV and standard deviation of mean cortical signal of TE30 data were found to be positively and statistically significantly correlated, r(27) = 0.53, p = 0.001
+	RPV and standard deviation of mean cortical signal of MEDN data were not found to be statistically significantly correlated, r(27) = 0.36, p = 0.028
+	RPV and standard deviation of mean cortical signal of MEDN+MIR data were not found to be statistically significantly correlated, r(27) = 0.09, p = 0.328
+	RPV and standard deviation of mean cortical signal of FIT-R2 data were not found to be statistically significantly correlated, r(27) = 0.29, p = 0.061
+	RPV and standard deviation of mean cortical signal of MEDN+GODEC (sparse) data were not found to be statistically significantly correlated, r(27) = 0.02, p = 0.457
+	RPV and standard deviation of mean cortical signal of MEDN+dGSR data were not found to be statistically significantly correlated, r(27) = 0.37, p = 0.025
+	RPV and standard deviation of mean cortical signal of MEDN+aCompCor data were not found to be statistically significantly correlated, r(27) = -0.27, p = 0.925
+	RPV and standard deviation of mean cortical signal of MEDN+GSR data were not found to be statistically significantly correlated, r(27) = 0.14, p = 0.233
+	RPV and standard deviation of mean cortical signal of MEDN+Nuis-Reg data were not found to be statistically significantly correlated, r(27) = 0.39, p = 0.019
+	RPV and standard deviation of mean cortical signal of MEDN+RV-Reg data were not found to be statistically significantly correlated, r(27) = 0.37, p = 0.023
+	RPV and standard deviation of mean cortical signal of MEDN+RVT-Reg data were not found to be statistically significantly correlated, r(27) = 0.39, p = 0.019
+Experiment 1, Analysis Group 4
+Experiment 1, Analysis Group 4, Analysis 1
+sub-11 has bad cardiac data. Skipping.
+sub-16 has bad cardiac data. Skipping.
+sub-26 has bad cardiac data. Skipping.
+27/31 participants retained.
+	HRV and standard deviation of mean cortical TE30 signal were not found to be statistically significantly correlated, r(25) = 0.38, p = 0.025
+	HRV and standard deviation of mean cortical MEDN signal were not found to be statistically significantly correlated, r(25) = 0.24, p = 0.117
+	HRV and standard deviation of mean cortical FIT-R2 signal were not found to be statistically significantly correlated, r(25) = 0.19, p = 0.169
+Experiment 1, Analysis Group 5
+Experiment 1, Analysis Group 5, Analysis 1
+29/31 participants retained.
+	OC
+	MEDN
+	MEDN+MIR
+	MEDN+GODEC (sparse)
+	MEDN+dGSR
+Experiment 1, Analysis Group 6
+Experiment 1, Analysis Group 6, Analysis 2
+30/31 participants retained.
+	Correlations between the mean cortical signal from optimally combined data and accepted ICA component time series (M[Z] = 0.014, SD[Z] = 0.124) were not significantly higher than zero, t(28) = 0.584, p = 0.282.
+	Correlations between the mean cortical signal from optimally combined data and rejected ICA component time series (M[Z] = -0.022, SD[Z] = 0.148) were not significantly higher than zero, t(28) = -0.769, p = 0.776.
+Experiment 1, Analysis Group 6, Analysis 3
+30/31 participants retained.
+	Correlations between the mean cortical signal from multi-echo denoised signal and that of optimally combined data (M[Z] = 1.371, SD[Z] = 3.193) were significantly higher than zero, t(29) = 2.312, p = 0.014.
