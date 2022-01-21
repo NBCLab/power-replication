@@ -4,54 +4,13 @@
   "Numpy arrays.", FutureWarning)
 /home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/pandas/core/arraylike.py:364: RuntimeWarning: divide by zero encountered in arctanh
   result = getattr(ufunc, method)(*inputs, **kwargs)
-/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/numpy/core/_methods.py:229: RuntimeWarning: invalid value encountered in subtract
-  x = asanyarray(arr - arrmean)
-Traceback (most recent call last):
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/03_gm_correlations_after_denoising.py", line 248, in <module>
-    mask_pattern,
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/03_gm_correlations_after_denoising.py", line 102, in correlate_medn_with_oc
-    sns.histplot(data=z_values, ax=ax)
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/seaborn/distributions.py", line 1436, in histplot
-    **kwargs,
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/seaborn/distributions.py", line 437, in plot_univariate_histogram
-    heights, edges = estimator(observations, weights=weights)
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/seaborn/_statistics.py", line 371, in __call__
-    return self._eval_univariate(x1, weights)
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/seaborn/_statistics.py", line 348, in _eval_univariate
-    bin_edges = self.define_bin_edges(x, weights=weights, cache=False)
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/seaborn/_statistics.py", line 266, in define_bin_edges
-    x1, weights, self.bins, self.binwidth, self.binrange, self.discrete,
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/seaborn/_statistics.py", line 257, in _define_bin_edges
-    x, bins, binrange, weights,
-  File "<__array_function__ internals>", line 6, in histogram_bin_edges
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/numpy/lib/histograms.py", line 668, in histogram_bin_edges
-    bin_edges, _ = _get_bin_edges(a, bins, range, weights)
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/numpy/lib/histograms.py", line 396, in _get_bin_edges
-    first_edge, last_edge = _get_outer_edges(a, range)
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/numpy/lib/histograms.py", line 324, in _get_outer_edges
-    "autodetected range of [{}, {}] is not finite".format(first_edge, last_edge))
-ValueError: autodetected range of [18.021826694558577, inf] is not finite
+/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/pandas/core/arraylike.py:364: RuntimeWarning: divide by zero encountered in arctanh
+  result = getattr(ufunc, method)(*inputs, **kwargs)
 /home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/datasets/__init__.py:96: FutureWarning: Fetchers from the nilearn.datasets module will be updated in version 0.9 to return python strings instead of bytes and Pandas dataframes instead of Numpy arrays.
   "Numpy arrays.", FutureWarning)
 Traceback (most recent call last):
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/04_methods_for_brain_signals.py", line 219, in <module>
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/04_methods_for_brain_signals.py", line 222, in <module>
     brain_mask_pattern,
   File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/04_methods_for_brain_signals.py", line 128, in correlate_variance_removed
-    godec_varex = calculate_variance_explained(medn_data, godec_data)
-  File "../utils.py", line 26, in calculate_variance_explained
-    varexpl = 1 - ((full_dm - red_dm) ** 2.0).sum() / (full_dm ** 2.0).sum()
-ValueError: operands could not be broadcast together with shapes (239,9262) (240,9262) 
-/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/datasets/__init__.py:96: FutureWarning: Fetchers from the nilearn.datasets module will be updated in version 0.9 to return python strings instead of bytes and Pandas dataframes instead of Numpy arrays.
-  "Numpy arrays.", FutureWarning)
-Traceback (most recent call last):
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/05_ddmra.py", line 125, in <module>
-    run_ddmra_analyses(project_dir, participants_file, target_file_patterns, confounds_pattern)
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/05_ddmra.py", line 89, in run_ddmra_analyses
-    qc_thresh=0.2,
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/ddmra/workflows.py", line 159, in run_analyses
-    qcrsfc_values = analysis.qcrsfc_analysis(mean_qc, z_corr_mats)
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/ddmra/analysis.py", line 157, in qcrsfc_analysis
-    qcrsfc_rs = fast_pearson(corr_mats.T, mean_qcs)
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/ddmra/utils.py", line 152, in fast_pearson
-    assert y.shape[0] == X.shape[1]
-AssertionError
+    f"{medn_data.shape}, {godec_data.shape}, {gsr_data.shape}"
+AssertionError: (239, 9262), (240, 9262), (239, 9262)

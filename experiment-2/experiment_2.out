@@ -5,7 +5,9 @@ Experiment 2, Analysis Group 2, Analysis 1
 	Correlations between the mean multi-echo denoised signal extracted from the cortical ribbon and that extracted from the whole brain (M[Z] = 2.568, SD[Z] = 0.432) were significantly higher than zero, t(773) = 165.220, p = 0.000.
 Experiment 2, Analysis Group 3
 Experiment 2, Analysis Group 3, Analysis 1
-	Correlations between the mean cortical ribbon signal from the multi-echo denoised data and the optimally combined data (M[Z] = inf, SD[Z] = nan) were not significantly higher than zero, t(773) = nan, p = nan.
+	Correlations between the mean cortical ribbon signal from the multi-echo denoised data and the optimally combined data (M[Z] = 7.158, SD[Z] = 6.190) were significantly higher than zero, t(773) = 32.150, p = 0.000.
+Experiment 2, Analysis Group 3, Analysis 2
+	Correlations between the mean cortical ribbon signal from the multi-echo denoised data and the FIT-R2 data (M[Z] = 7.158, SD[Z] = 6.190) were significantly higher than zero, t(773) = 32.150, p = 0.000.
 Experiment 2, Analysis Group 4
 Experiment 2, Analysis Group 4, Analysis 2
 Experiment 2, Analysis Group 5
