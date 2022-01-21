@@ -70,3 +70,39 @@
   "Numpy arrays.", FutureWarning)
 /home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/datasets/__init__.py:96: FutureWarning: Fetchers from the nilearn.datasets module will be updated in version 0.9 to return python strings instead of bytes and Pandas dataframes instead of Numpy arrays.
   "Numpy arrays.", FutureWarning)
+/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/datasets/__init__.py:96: FutureWarning: Fetchers from the nilearn.datasets module will be updated in version 0.9 to return python strings instead of bytes and Pandas dataframes instead of Numpy arrays.
+  "Numpy arrays.", FutureWarning)
+/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/datasets/__init__.py:96: FutureWarning: Fetchers from the nilearn.datasets module will be updated in version 0.9 to return python strings instead of bytes and Pandas dataframes instead of Numpy arrays.
+  "Numpy arrays.", FutureWarning)
+/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/datasets/__init__.py:96: FutureWarning: Fetchers from the nilearn.datasets module will be updated in version 0.9 to return python strings instead of bytes and Pandas dataframes instead of Numpy arrays.
+  "Numpy arrays.", FutureWarning)
+/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/datasets/__init__.py:96: FutureWarning: Fetchers from the nilearn.datasets module will be updated in version 0.9 to return python strings instead of bytes and Pandas dataframes instead of Numpy arrays.
+  "Numpy arrays.", FutureWarning)
+/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/datasets/__init__.py:96: FutureWarning: Fetchers from the nilearn.datasets module will be updated in version 0.9 to return python strings instead of bytes and Pandas dataframes instead of Numpy arrays.
+  "Numpy arrays.", FutureWarning)
+/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/datasets/__init__.py:96: FutureWarning: Fetchers from the nilearn.datasets module will be updated in version 0.9 to return python strings instead of bytes and Pandas dataframes instead of Numpy arrays.
+  "Numpy arrays.", FutureWarning)
+/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/datasets/__init__.py:96: FutureWarning: Fetchers from the nilearn.datasets module will be updated in version 0.9 to return python strings instead of bytes and Pandas dataframes instead of Numpy arrays.
+  "Numpy arrays.", FutureWarning)
+/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/datasets/__init__.py:96: FutureWarning: Fetchers from the nilearn.datasets module will be updated in version 0.9 to return python strings instead of bytes and Pandas dataframes instead of Numpy arrays.
+  "Numpy arrays.", FutureWarning)
+Traceback (most recent call last):
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-1/05_resp_and_fc.py", line 182, in <module>
+    target_file_patterns,
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-1/05_resp_and_fc.py", line 103, in run_ddmra_of_mean_rv
+    target_files, rv_confounds, out_dir=filetype_out_dir, n_jobs=4
+  File "../utils.py", line 231, in run_reduced_analyses
+    raw_ts = spheres_masker.fit_transform(files[i_subj]).T
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/input_data/nifti_spheres_masker.py", line 358, in fit_transform
+    sample_mask=sample_mask)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/input_data/base_masker.py", line 202, in transform
+    sample_mask=sample_mask)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/input_data/nifti_spheres_masker.py", line 415, in transform_single_imgs
+    verbose=self.verbose)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/joblib/memory.py", line 352, in __call__
+    return self.func(*args, **kwargs)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/input_data/base_masker.py", line 70, in filter_and_extract
+    dtype=dtype)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/_utils/niimg_conversions.py", line 271, in check_niimg
+    raise ValueError("File not found: '%s'" % niimg)
+ValueError: File not found: '/home/data/nbc/misc-projects/Salo_PowerReplication/dset-dupre/derivatives/tedana/sub-01/func/sub-31_task-rest_run-1_space-MNI152NLin6Asym_desc-optcom_bold.nii.gz'
