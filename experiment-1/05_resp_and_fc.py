@@ -59,6 +59,7 @@ def run_ddmra_of_rpv(project_dir, participants_file, target_file_patterns):
             filename = pattern.format(participant_id=participant_id, prefix=subj_prefix)
             target_files.append(filename)
 
+        raise Exception("\n".join(target_files))
         run_reduced_analyses(
             target_files, rpv_confounds, out_dir=filetype_out_dir, n_jobs=4
         )
