@@ -124,6 +124,9 @@ def correlate_variance_removed(
         medn_data = masking.apply_mask(medn_file, mask_file)
         godec_data = masking.apply_mask(godec_file, mask_file)
         gsr_data = masking.apply_mask(gsr_file, mask_file)
+        assert medn_data.shape == godec_data.shape == gsr_data.shape, (
+            f"{medn_data.shape}, {godec_data.shape}, {gsr_data.shape}"
+        )
 
         godec_varex = calculate_variance_explained(medn_data, godec_data)
         gsr_varex = calculate_variance_explained(medn_data, gsr_data)
