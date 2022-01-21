@@ -43,7 +43,10 @@ for dset_dir in dset_dirs:
         assert len(godec_files) >= 1, op.join(subject_dir, "func", "*.nii.gz")
         for godec_file in godec_files:
             godec_img = nib.load(godec_file)
-        godec_data = godec_img.get_fdata()
-        godec_data = godec_data[:, :, :, :n_vols]
-        godec_img = nib.Nifti1Image(godec_data, godec_img.affine, godec_img.header)
-        godec_img.to_filename(godec_file)
+            godec_data = godec_img.get_fdata()
+
+            if n_vols != godec_data.shape[3]:
+                print(f"\t\t{op.basename(godec_file)}", flush=True)
+                godec_data = godec_data[:, :, :, :n_vols]
+                godec_img = nib.Nifti1Image(godec_data, godec_img.affine, godec_img.header)
+                godec_img.to_filename(godec_file)
