@@ -25,7 +25,7 @@ citeproc-py               0.6.0                    pypi_0    pypi
 cycler                    0.10.0                   py37_0  
 cython                    0.29.24          py37h295c915_0  
 dbus                      1.13.18              hb2f20db_0  
-ddmra                     0+untagged.43.ge8e5596          pypi_0    pypi
+ddmra                     0+untagged.44.g9cf323a          pypi_0    pypi
 debugpy                   1.4.1                    pypi_0    pypi
 decorator                 5.0.9                    pypi_0    pypi
 defusedxml                0.7.1                    pypi_0    pypi
