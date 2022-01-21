@@ -59,7 +59,6 @@ def run_ddmra_of_rpv(project_dir, participants_file, target_file_patterns):
             filename = pattern.format(participant_id=participant_id, prefix=subj_prefix)
             target_files.append(filename)
 
-        raise Exception("\n".join(target_files))
         run_reduced_analyses(
             target_files, rpv_confounds, out_dir=filetype_out_dir, n_jobs=4
         )
@@ -97,6 +96,7 @@ def run_ddmra_of_mean_rv(
         target_files = []
         for i, row in participants_df.iterrows():
             participant_id = row["participant_id"]
+            subj_prefix = prefix.format(participant_id=participant_id)
             filename = pattern.format(participant_id=participant_id, prefix=subj_prefix)
             target_files.append(filename)
 
@@ -137,6 +137,7 @@ def run_ddmra_of_mean_rvt(
         target_files = []
         for i, row in participants_df.iterrows():
             participant_id = row["participant_id"]
+            subj_prefix = prefix.format(participant_id=participant_id)
             filename = pattern.format(participant_id=participant_id, prefix=subj_prefix)
             target_files.append(filename)
 
