@@ -198,9 +198,8 @@ if __name__ == "__main__":
         "MEDN+aCompCor",
     ]
     target_file_patterns = {
-        k: op.join(in_dir, "derivatives", v)
-        for k, v in TARGET_FILE_PATTERNS.items()
-        if k in TARGETS
+        t: op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS[t])
+        for t in TARGETS
     }
     medn_pattern = op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS["MEDN"])
     godec_pattern = op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS["MEDN+GODEC (sparse)"])

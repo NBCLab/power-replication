@@ -126,9 +126,8 @@ if __name__ == "__main__":
     TARGET_FILE_PATTERNS = get_target_files()
     TARGETS = ["TE30", "FIT-R2", "MEDN"]
     target_file_patterns = {
-        k: op.join(in_dir, "derivatives", v)
-        for k, v in TARGET_FILE_PATTERNS.items()
-        if k in TARGETS
+        t: op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS[t])
+        for t in TARGETS
     }
 
     correlate_hrv_with_cortical_sd(

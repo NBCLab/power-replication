@@ -169,9 +169,8 @@ if __name__ == "__main__":
         "MEDN+GSR",
     ]
     target_file_patterns = {
-        k: op.join(in_dir, "derivatives", v)
-        for k, v in TARGET_FILE_PATTERNS.items()
-        if k in TARGETS
+        t: op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS[t])
+        for t in TARGETS
     }
 
     run_ddmra_of_rpv(project_dir, participants_file, target_file_patterns)
