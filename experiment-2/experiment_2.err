@@ -1,15 +1,5 @@
 /home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/datasets/__init__.py:96: FutureWarning: Fetchers from the nilearn.datasets module will be updated in version 0.9 to return python strings instead of bytes and Pandas dataframes instead of Numpy arrays.
   "Numpy arrays.", FutureWarning)
-/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/datasets/__init__.py:96: FutureWarning: Fetchers from the nilearn.datasets module will be updated in version 0.9 to return python strings instead of bytes and Pandas dataframes instead of Numpy arrays.
-  "Numpy arrays.", FutureWarning)
-/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/pandas/core/arraylike.py:364: RuntimeWarning: divide by zero encountered in arctanh
-  result = getattr(ufunc, method)(*inputs, **kwargs)
-/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/pandas/core/arraylike.py:364: RuntimeWarning: divide by zero encountered in arctanh
-  result = getattr(ufunc, method)(*inputs, **kwargs)
-/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/datasets/__init__.py:96: FutureWarning: Fetchers from the nilearn.datasets module will be updated in version 0.9 to return python strings instead of bytes and Pandas dataframes instead of Numpy arrays.
-  "Numpy arrays.", FutureWarning)
-/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/datasets/__init__.py:96: FutureWarning: Fetchers from the nilearn.datasets module will be updated in version 0.9 to return python strings instead of bytes and Pandas dataframes instead of Numpy arrays.
-  "Numpy arrays.", FutureWarning)
 /home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/numpy/core/fromnumeric.py:3420: RuntimeWarning: Mean of empty slice.
   out=out, **kwargs)
 /home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/numpy/core/_methods.py:181: RuntimeWarning: invalid value encountered in true_divide
@@ -19,7 +9,7 @@ Traceback (most recent call last):
     run_ddmra_analyses(project_dir, participants_file, target_file_patterns, confounds_pattern)
   File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/05_ddmra.py", line 89, in run_ddmra_analyses
     qc_thresh=0.2,
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/ddmra/workflows.py", line 201, in run_analyses
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/ddmra/ddmra/workflows.py", line 210, in run_analyses
     smoothing_curves.loc[smoothing_curve_distances, "scrubbing"] = scrub_smoothing_curve
   File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/pandas/core/indexing.py", line 719, in __setitem__
     indexer = self._get_setitem_indexer(key)
