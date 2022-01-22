@@ -27,10 +27,11 @@ import sys
 
 import numpy as np
 import pandas as pd
+from ddmra import run_analyses
 
 sys.path.append("..")
 
-from utils import get_prefixes_mni, get_target_files, run_reduced_analyses  # noqa: E402
+from utils import get_prefixes_mni, get_target_files  # noqa: E402
 
 
 def run_ddmra_of_rpv(project_dir, participants_file, target_file_patterns):
@@ -59,8 +60,14 @@ def run_ddmra_of_rpv(project_dir, participants_file, target_file_patterns):
             filename = pattern.format(participant_id=participant_id, prefix=subj_prefix)
             target_files.append(filename)
 
-        run_reduced_analyses(
-            target_files, rpv_confounds, out_dir=filetype_out_dir, n_jobs=4
+        run_analyses(
+            target_files,
+            rpv_confounds,
+            out_dir=filetype_out_dir,
+            n_iters=10000,
+            n_jobs=4,
+            qc_thresh=0.2,
+            analyses=("qcrsfc", "highlow")
         )
 
 
@@ -100,8 +107,14 @@ def run_ddmra_of_mean_rv(
             filename = pattern.format(participant_id=participant_id, prefix=subj_prefix)
             target_files.append(filename)
 
-        run_reduced_analyses(
-            target_files, rv_confounds, out_dir=filetype_out_dir, n_jobs=4
+        run_analyses(
+            target_files,
+            rv_confounds,
+            out_dir=filetype_out_dir,
+            n_iters=10000,
+            n_jobs=4,
+            qc_thresh=0.2,
+            analyses=("qcrsfc", "highlow"),
         )
 
 
@@ -141,8 +154,14 @@ def run_ddmra_of_mean_rvt(
             filename = pattern.format(participant_id=participant_id, prefix=subj_prefix)
             target_files.append(filename)
 
-        run_reduced_analyses(
-            target_files, rvt_confounds, out_dir=filetype_out_dir, n_jobs=4
+        run_analyses(
+            target_files,
+            rvt_confounds,
+            out_dir=filetype_out_dir,
+            n_iters=10000,
+            n_jobs=4,
+            qc_thresh=0.2,
+            analyses=("qcrsfc", "highlow"),
         )
 
 
