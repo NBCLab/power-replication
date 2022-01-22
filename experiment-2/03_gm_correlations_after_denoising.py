@@ -41,6 +41,9 @@ def correlate_medn_with_oc(
     ALPHA = 0.05 / N_ANALYSES_IN_FAMILY
 
     participants_df = pd.read_table(participants_file)
+    participants_df = participants_df.loc[
+        participants_df["dset"].isin(["dset-camcan", "dset-cambridge", "dset-dupre"])
+    ]
     subjects_to_drop = get_bad_subjects_nonphysio()
     for sub_to_drop in subjects_to_drop:
         participants_df = participants_df.loc[
@@ -132,6 +135,9 @@ def correlate_medn_with_fitr2(
     ALPHA = 0.05 / N_ANALYSES_IN_FAMILY
 
     participants_df = pd.read_table(participants_file)
+    participants_df = participants_df.loc[
+        participants_df["dset"].isin(["dset-camcan", "dset-cambridge", "dset-dupre"])
+    ]
     subjects_to_drop = get_bad_subjects_nonphysio()
     for sub_to_drop in subjects_to_drop:
         participants_df = participants_df.loc[

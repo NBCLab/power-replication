@@ -44,6 +44,9 @@ def run_ddmra_analyses(
     out_dir = op.join(project_dir, "analyses/experiment02_group05_analysis01")
 
     participants_df = pd.read_table(participants_file)
+    participants_df = participants_df.loc[
+        participants_df["dset"].isin(["dset-camcan", "dset-cambridge", "dset-dupre"])
+    ]
     subjects_to_drop = get_bad_subjects_nonphysio()
     for sub_to_drop in subjects_to_drop:
         participants_df = participants_df.loc[

@@ -44,6 +44,9 @@ def plot_denoised_with_motion(
     os.makedirs(out_dir, exist_ok=True)
 
     participants_df = pd.read_table(participants_file)
+    participants_df = participants_df.loc[
+        participants_df["dset"].isin(["dset-camcan", "dset-cambridge", "dset-dupre"])
+    ]
     subjects_to_drop = get_bad_subjects_nonphysio()
     for sub_to_drop in subjects_to_drop:
         participants_df = participants_df.loc[
@@ -95,6 +98,9 @@ def correlate_variance_removed(
     ALPHA = 0.05
 
     participants_df = pd.read_table(participants_file)
+    participants_df = participants_df.loc[
+        participants_df["dset"].isin(["dset-camcan", "dset-cambridge", "dset-dupre"])
+    ]
     subjects_to_drop = get_bad_subjects_nonphysio()
     for sub_to_drop in subjects_to_drop:
         participants_df = participants_df.loc[

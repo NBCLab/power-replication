@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --account=iacc_nbc
 #SBATCH --qos=pq_nbc
-#SBATCH --partition=investor
+#SBATCH --partition=IB_16C_96G
 
 # Outputs ----------------------------------
 #SBATCH --output=/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-1/experiment_1.out
