@@ -7,5 +7,30 @@ z_corr_mats: (724, 34716)
 mean_qc: (724,)
 qcrsfc
 	QCRSFC values: (34716,)
-	Smoothing curve: (0,)
+	Smoothing curve: (11910,)
+	Distances: (11910,)
+high-low
+	High-low values: (34716,)
+	Smoothing curve: (11910,)
+	Distances: (11910,)
+scrubbing
+	Scrub values: (34716,)
+	Smoothing curve: (11910,)
+	Distances: (11910,)
+	MEDN
+z_corr_mats: (741, 34716)
+mean_qc: (741,)
+z_corr_mats: (724, 34716)
+mean_qc: (724,)
+qcrsfc
+	QCRSFC values: (34716,)
+	Smoothing curve: (11910,)
+	Distances: (11910,)
+high-low
+	High-low values: (34716,)
+	Smoothing curve: (11910,)
+	Distances: (11910,)
+scrubbing
+	Scrub values: (34716,)
+	Smoothing curve: (11910,)
 	Distances: (11910,)
