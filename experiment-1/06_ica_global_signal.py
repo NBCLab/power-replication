@@ -18,13 +18,16 @@ participant, and distribution of coefficients is compared to zero with one-sampl
 """
 import os
 import os.path as op
+import warnings
 
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-import seaborn as sns
-from nilearn import masking
-from scipy.stats import ttest_1samp
+warnings.simplefilter(action="ignore", category=FutureWarning)
+
+import matplotlib.pyplot as plt  # noqa: E402
+import numpy as np  # noqa: E402
+import pandas as pd  # noqa: E402
+import seaborn as sns  # noqa: E402
+from nilearn import masking  # noqa: E402
+from scipy.stats import ttest_1samp  # noqa: E402
 
 
 def plot_components_and_physio():
@@ -91,8 +94,12 @@ def correlate_ica_with_cortical_signal(
 
         comptable = pd.read_table(ctab_file, index_col="Component")
 
-        out_df.loc[subj_id, "total accepted"] = (comptable["classification"] != "rejected").sum()
-        out_df.loc[subj_id, "total rejected"] = (comptable["classification"] == "rejected").sum()
+        out_df.loc[subj_id, "total accepted"] = (
+            comptable["classification"] != "rejected"
+        ).sum()
+        out_df.loc[subj_id, "total rejected"] = (
+            comptable["classification"] == "rejected"
+        ).sum()
 
         ica_df = pd.read_table(ica_file)
         ica_df["OC"] = oc_data

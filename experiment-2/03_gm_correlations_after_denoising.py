@@ -11,13 +11,16 @@ Mean cortical signal from MEDN correlated with mean cortical signal from FIT-R2.
 import os
 import os.path as op
 import sys
+import warnings
 
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-import seaborn as sns
-from nilearn import masking
-from scipy.stats import ttest_1samp
+warnings.simplefilter(action="ignore", category=FutureWarning)
+
+import matplotlib.pyplot as plt  # noqa: E402
+import numpy as np  # noqa: E402
+import pandas as pd  # noqa: E402
+import seaborn as sns  # noqa: E402
+from nilearn import masking  # noqa: E402
+from scipy.stats import ttest_1samp  # noqa: E402
 
 sys.path.append("..")
 
@@ -48,8 +51,8 @@ def correlate_medn_with_oc(
     for sub_to_drop in subjects_to_drop:
         participants_df = participants_df.loc[
             ~(
-                (participants_df["dset"] == sub_to_drop[0]) &
-                (participants_df["participant_id"] == sub_to_drop[1])
+                (participants_df["dset"] == sub_to_drop[0])
+                & (participants_df["participant_id"] == sub_to_drop[1])
             )
         ]
 
@@ -82,7 +85,9 @@ def correlate_medn_with_oc(
     z_values = np.arctanh(participants_df["correlation"])
     # In case of perfect correlations, which is possible when no components are rejected,
     # replace with high correlation.
-    z_values[np.isinf(z_values)] = np.arctanh(0.999) * np.sign(z_values[np.isinf(z_values)])
+    z_values[np.isinf(z_values)] = np.arctanh(0.999) * np.sign(
+        z_values[np.isinf(z_values)]
+    )
 
     mean_z = np.mean(z_values)
     sd_z = np.std(z_values)
@@ -142,8 +147,8 @@ def correlate_medn_with_fitr2(
     for sub_to_drop in subjects_to_drop:
         participants_df = participants_df.loc[
             ~(
-                (participants_df["dset"] == sub_to_drop[0]) &
-                (participants_df["participant_id"] == sub_to_drop[1])
+                (participants_df["dset"] == sub_to_drop[0])
+                & (participants_df["participant_id"] == sub_to_drop[1])
             )
         ]
 
@@ -176,7 +181,9 @@ def correlate_medn_with_fitr2(
     z_values = np.arctanh(participants_df["correlation"])
     # In case of perfect correlations, which is possible when no components are rejected,
     # replace with high correlation.
-    z_values[np.isinf(z_values)] = np.arctanh(0.999) * np.sign(z_values[np.isinf(z_values)])
+    z_values[np.isinf(z_values)] = np.arctanh(0.999) * np.sign(
+        z_values[np.isinf(z_values)]
+    )
 
     mean_z = np.mean(z_values)
     sd_z = np.std(z_values)

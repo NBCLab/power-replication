@@ -14,11 +14,14 @@ Correlation of variance removed by GODEC and variance removed by GSR across part
 import os
 import os.path as op
 import sys
+import warnings
 
-import matplotlib.pyplot as plt
-import pandas as pd
-import seaborn as sns
-from nilearn import masking, plotting
+warnings.simplefilter(action="ignore", category=FutureWarning)
+
+import matplotlib.pyplot as plt  # noqa: E402
+import pandas as pd  # noqa: E402
+import seaborn as sns  # noqa: E402
+from nilearn import masking, plotting  # noqa: E402
 
 sys.path.append("..")
 
@@ -51,8 +54,8 @@ def plot_denoised_with_motion(
     for sub_to_drop in subjects_to_drop:
         participants_df = participants_df.loc[
             ~(
-                (participants_df["dset"] == sub_to_drop[0]) &
-                (participants_df["participant_id"] == sub_to_drop[1])
+                (participants_df["dset"] == sub_to_drop[0])
+                & (participants_df["participant_id"] == sub_to_drop[1])
             )
         ]
 
@@ -105,8 +108,8 @@ def correlate_variance_removed(
     for sub_to_drop in subjects_to_drop:
         participants_df = participants_df.loc[
             ~(
-                (participants_df["dset"] == sub_to_drop[0]) &
-                (participants_df["participant_id"] == sub_to_drop[1])
+                (participants_df["dset"] == sub_to_drop[0])
+                & (participants_df["participant_id"] == sub_to_drop[1])
             )
         ]
 
@@ -130,9 +133,9 @@ def correlate_variance_removed(
         medn_data = masking.apply_mask(medn_file, mask_file)
         godec_data = masking.apply_mask(godec_file, mask_file)
         gsr_data = masking.apply_mask(gsr_file, mask_file)
-        assert medn_data.shape == godec_data.shape == gsr_data.shape, (
-            f"{medn_data.shape}, {godec_data.shape}, {gsr_data.shape}"
-        )
+        assert (
+            medn_data.shape == godec_data.shape == gsr_data.shape
+        ), f"{medn_data.shape}, {godec_data.shape}, {gsr_data.shape}"
 
         godec_varex = calculate_variance_explained(medn_data, godec_data)
         gsr_varex = calculate_variance_explained(medn_data, gsr_data)
@@ -204,11 +207,12 @@ if __name__ == "__main__":
         "MEDN+aCompCor",
     ]
     target_file_patterns = {
-        t: op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS[t])
-        for t in TARGETS
+        t: op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS[t]) for t in TARGETS
     }
     medn_pattern = op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS["MEDN"])
-    godec_pattern = op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS["MEDN+GODEC (sparse)"])
+    godec_pattern = op.join(
+        in_dir, "derivatives", TARGET_FILE_PATTERNS["MEDN+GODEC (sparse)"]
+    )
     gsr_pattern = op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS["MEDN+GSR"])
 
     """plot_denoised_with_motion(

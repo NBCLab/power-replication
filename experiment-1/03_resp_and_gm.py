@@ -33,11 +33,14 @@ Plot respiration time series for deep breaths against mean signal from:
 import os
 import os.path as op
 import sys
+import warnings
 
-import numpy as np
-import pandas as pd
-import seaborn as sns
-from nilearn import masking
+warnings.simplefilter(action="ignore", category=FutureWarning)
+
+import numpy as np  # noqa: E402
+import pandas as pd  # noqa: E402
+import seaborn as sns  # noqa: E402
+from nilearn import masking  # noqa: E402
 
 sys.path.append("..")
 
@@ -163,8 +166,7 @@ if __name__ == "__main__":
         "MEDN+GSR",
     ]
     target_file_patterns = {
-        t: op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS[t])
-        for t in TARGETS
+        t: op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS[t]) for t in TARGETS
     }
 
     correlate_rpv_with_cortical_sd(

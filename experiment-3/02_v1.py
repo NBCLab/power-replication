@@ -12,16 +12,20 @@ Mean CNR from V1 ROI for:
 - MEDN+MIR
 """
 import json
+import warnings
 
-import matplotlib.pyplot as plt
-import nibabel as nib
-import numpy as np
-import pandas as pd
-import pingouin as pg
-import seaborn as sns
-from nilearn import image, masking
-from nilearn.glm.first_level import FirstLevelModel, make_first_level_design_matrix
-from scipy import stats
+warnings.simplefilter(action="ignore", category=FutureWarning)
+
+import matplotlib.pyplot as plt  # noqa: E402
+import nibabel as nib  # noqa: E402
+import numpy as np  # noqa: E402
+import pandas as pd  # noqa: E402
+import pingouin as pg  # noqa: E402
+import seaborn as sns  # noqa: E402
+from nilearn import image, masking  # noqa: E402
+from nilearn.glm.first_level import FirstLevelModel  # noqa: E402
+from nilearn.glm.first_level import make_first_level_design_matrix  # noqa: E402
+from scipy import stats  # noqa: E402
 
 
 def compare_cnr(
@@ -100,7 +104,9 @@ def compare_cnr(
 
             model = FirstLevelModel(
                 t_r=metadata["RepetitionTime"],
-                slice_time_ref=metadata["SliceTiming"],  # TODO: Set the real reference slice time
+                slice_time_ref=metadata[
+                    "SliceTiming"
+                ],  # TODO: Set the real reference slice time
                 hrf_model="spm",
                 drift_model="cosine",
                 high_pass=0.01,

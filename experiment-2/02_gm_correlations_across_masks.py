@@ -13,13 +13,16 @@ Mean cortical signal of MEDN correlated with signal of whole brain
 import os
 import os.path as op
 import sys
+import warnings
 
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-import seaborn as sns
-from nilearn import image, masking
-from scipy.stats import ttest_1samp
+warnings.simplefilter(action="ignore", category=FutureWarning)
+
+import matplotlib.pyplot as plt  # noqa: E402
+import numpy as np  # noqa: E402
+import pandas as pd  # noqa: E402
+import seaborn as sns  # noqa: E402
+from nilearn import image, masking  # noqa: E402
+from scipy.stats import ttest_1samp  # noqa: E402
 
 sys.path.append("..")
 
@@ -54,8 +57,8 @@ def correlate_cort_with_gm(
     for sub_to_drop in subjects_to_drop:
         participants_df = participants_df.loc[
             ~(
-                (participants_df["dset"] == sub_to_drop[0]) &
-                (participants_df["participant_id"] == sub_to_drop[1])
+                (participants_df["dset"] == sub_to_drop[0])
+                & (participants_df["participant_id"] == sub_to_drop[1])
             )
         ]
 
@@ -151,8 +154,8 @@ def correlate_cort_with_wb(
     for sub_to_drop in subjects_to_drop:
         participants_df = participants_df.loc[
             ~(
-                (participants_df["dset"] == sub_to_drop[0]) &
-                (participants_df["participant_id"] == sub_to_drop[1])
+                (participants_df["dset"] == sub_to_drop[0])
+                & (participants_df["participant_id"] == sub_to_drop[1])
             )
         ]
 

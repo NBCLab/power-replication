@@ -11,12 +11,15 @@ RV correlated with framewise displacement.
 import os
 import os.path as op
 import sys
+import warnings
 
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-import seaborn as sns
-from scipy.stats import ttest_1samp
+warnings.simplefilter(action="ignore", category=FutureWarning)
+
+import matplotlib.pyplot as plt  # noqa: E402
+import numpy as np  # noqa: E402
+import pandas as pd  # noqa: E402
+import seaborn as sns  # noqa: E402
+from scipy.stats import ttest_1samp  # noqa: E402
 
 sys.path.append("..")
 

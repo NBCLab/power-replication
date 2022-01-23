@@ -21,10 +21,13 @@ DDMRA analyses on the following inputs:
 import os
 import os.path as op
 import sys
+import warnings
 
-import numpy as np
-import pandas as pd
-from ddmra import run_analyses
+warnings.simplefilter(action="ignore", category=FutureWarning)
+
+import numpy as np  # noqa: E402
+import pandas as pd  # noqa: E402
+from ddmra import run_analyses  # noqa: E402
 
 sys.path.append("..")
 
@@ -52,8 +55,8 @@ def run_ddmra_analyses(
     for sub_to_drop in subjects_to_drop:
         participants_df = participants_df.loc[
             ~(
-                (participants_df["dset"] == sub_to_drop[0]) &
-                (participants_df["participant_id"] == sub_to_drop[1])
+                (participants_df["dset"] == sub_to_drop[0])
+                & (participants_df["participant_id"] == sub_to_drop[1])
             )
         ]
 
@@ -133,7 +136,11 @@ if __name__ == "__main__":
     #     for t in TARGETS
     # }
     target_file_pattern = {
-        selected_target: op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS[selected_target])
+        selected_target: op.join(
+            in_dir, "derivatives", TARGET_FILE_PATTERNS[selected_target]
+        )
     }
 
-    run_ddmra_analyses(project_dir, participants_file, target_file_pattern, confounds_pattern)
+    run_ddmra_analyses(
+        project_dir, participants_file, target_file_pattern, confounds_pattern
+    )

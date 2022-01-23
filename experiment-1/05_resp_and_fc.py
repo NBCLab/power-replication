@@ -24,10 +24,13 @@ with each of the following used as the quality measure:
 import os
 import os.path as op
 import sys
+import warnings
 
-import numpy as np
-import pandas as pd
-from ddmra import run_analyses
+warnings.simplefilter(action="ignore", category=FutureWarning)
+
+import numpy as np  # noqa: E402
+import pandas as pd  # noqa: E402
+from ddmra import run_analyses  # noqa: E402
 
 sys.path.append("..")
 
@@ -67,7 +70,7 @@ def run_ddmra_of_rpv(project_dir, participants_file, target_file_patterns):
             n_iters=10000,
             n_jobs=4,
             qc_thresh=0.2,
-            analyses=("qcrsfc", "highlow")
+            analyses=("qcrsfc", "highlow"),
         )
 
 
@@ -190,8 +193,7 @@ if __name__ == "__main__":
         "MEDN+GSR",
     ]
     target_file_patterns = {
-        t: op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS[t])
-        for t in TARGETS
+        t: op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS[t]) for t in TARGETS
     }
 
     # Moved to top because MEDN+Nuis-Reg was stalling.

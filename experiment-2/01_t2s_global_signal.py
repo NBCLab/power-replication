@@ -7,6 +7,9 @@ Carpet plots with motion line plots of:
 - FIT-S0
 - FIT-R2
 """
+import warnings
+
+warnings.simplefilter(action="ignore", category=FutureWarning)
 
 
 def plot_denoised_and_motion():
