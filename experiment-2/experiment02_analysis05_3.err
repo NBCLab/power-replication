@@ -1,0 +1,24 @@
+/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/datasets/__init__.py:96: FutureWarning: Fetchers from the nilearn.datasets module will be updated in version 0.9 to return python strings instead of bytes and Pandas dataframes instead of Numpy arrays.
+  "Numpy arrays.", FutureWarning)
+/home/data/nbc/misc-projects/Salo_PowerReplication/ddmra/ddmra/workflows.py:158: RuntimeWarning: divide by zero encountered in arctanh
+  z_corr_mats[i_subj, :] = np.arctanh(raw_corrs)
+/home/data/nbc/misc-projects/Salo_PowerReplication/ddmra/ddmra/workflows.py:158: RuntimeWarning: divide by zero encountered in arctanh
+  z_corr_mats[i_subj, :] = np.arctanh(raw_corrs)
+/home/data/nbc/misc-projects/Salo_PowerReplication/ddmra/ddmra/workflows.py:158: RuntimeWarning: divide by zero encountered in arctanh
+  z_corr_mats[i_subj, :] = np.arctanh(raw_corrs)
+/home/data/nbc/misc-projects/Salo_PowerReplication/ddmra/ddmra/workflows.py:158: RuntimeWarning: divide by zero encountered in arctanh
+  z_corr_mats[i_subj, :] = np.arctanh(raw_corrs)
+/home/data/nbc/misc-projects/Salo_PowerReplication/ddmra/ddmra/workflows.py:158: RuntimeWarning: divide by zero encountered in arctanh
+  z_corr_mats[i_subj, :] = np.arctanh(raw_corrs)
+/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/numpy/core/_methods.py:178: RuntimeWarning: invalid value encountered in reduce
+  ret = umr_sum(arr, axis, dtype, out, keepdims, where=where)
+/home/data/nbc/misc-projects/Salo_PowerReplication/ddmra/ddmra/utils.py:159: RuntimeWarning: invalid value encountered in subtract
+  X_intermediate = X - X_bar
+Traceback (most recent call last):
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/05_ddmra.py", line 139, in <module>
+    run_ddmra_analyses(project_dir, participants_file, target_file_pattern, confounds_pattern)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/05_ddmra.py", line 95, in run_ddmra_analyses
+    qc_thresh=0.2,
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/ddmra/ddmra/workflows.py", line 192, in run_analyses
+    assert np.array_equal(smoothing_curve_distances, qcrsfc_smoothing_curve_distances)
+AssertionError
