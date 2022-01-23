@@ -22,6 +22,7 @@ import os
 import os.path as op
 import sys
 
+import numpy as np
 import pandas as pd
 from ddmra import run_analyses
 
@@ -81,7 +82,9 @@ def run_ddmra_analyses(
                 dset=row["dset"], participant_id=participant_id, prefix=subj_prefix
             )
             confounds_df = pd.read_table(confounds_file)
-            fd_all.append(confounds_df["framewise_displacement"].values)
+            fd_arr = confounds_df["framewise_displacement"].values
+            fd_arr[np.isnan(fd_arr)] = 0
+            fd_all.append(fd_arr)
 
         run_analyses(
             target_files,

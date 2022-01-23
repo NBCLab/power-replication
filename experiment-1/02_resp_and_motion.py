@@ -50,6 +50,7 @@ def correlate_rpv_with_mean_fd(project_dir, participants_file, confounds_pattern
         assert op.isfile(confounds_file), f"{confounds_file} DNE"
 
         confounds_df = pd.read_table(confounds_file)
+        confounds_df.fillna(0, inplace=True)
         fd_arr = confounds_df["framewise_displacement"].values
         mean_fd = np.mean(fd_arr)
         participants_df.loc[i, "mean_fd"] = mean_fd
@@ -107,6 +108,7 @@ def correlate_rvt_with_fd(project_dir, participants_file, confounds_pattern):
         assert op.isfile(confounds_file), f"{confounds_file} DNE"
 
         confounds_df = pd.read_table(confounds_file)
+        confounds_df.fillna(0, inplace=True)
         corr = confounds_df["RVTRegression_RVT"].corr(
             confounds_df["framewise_displacement"]
         )
@@ -171,6 +173,7 @@ def correlate_rv_with_fd(project_dir, participants_file, confounds_pattern):
         assert op.isfile(confounds_file), f"{confounds_file} DNE"
 
         confounds_df = pd.read_table(confounds_file)
+        confounds_df.fillna(0, inplace=True)
         corr = confounds_df["RVRegression_RV"].corr(
             confounds_df["framewise_displacement"]
         )

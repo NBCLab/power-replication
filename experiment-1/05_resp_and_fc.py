@@ -177,11 +177,11 @@ if __name__ == "__main__":
     )
     TARGET_FILE_PATTERNS = get_target_files()
     TARGETS = [
+        "MEDN+Nuis-Reg",
         "OC",
         "MEDN",
         "MEDN Noise",
         "MEDN+GODEC (sparse)",
-        "MEDN+Nuis-Reg",
         "MEDN+RVT-Reg",
         "MEDN+RV-Reg",
         "MEDN+aCompCor",
