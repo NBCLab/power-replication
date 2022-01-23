@@ -177,7 +177,7 @@ if __name__ == "__main__":
     )
     TARGET_FILE_PATTERNS = get_target_files()
     TARGETS = [
-        "MEDN+Nuis-Reg",
+        "MEDN+Nuis-Reg",  # Moved to top because MEDN+Nuis-Reg was stalling.
         "OC",
         "MEDN",
         "MEDN Noise",
@@ -194,14 +194,15 @@ if __name__ == "__main__":
         for t in TARGETS
     }
 
-    run_ddmra_of_rpv(project_dir, participants_file, target_file_patterns)
-    run_ddmra_of_mean_rv(
+    # Moved to top because MEDN+Nuis-Reg was stalling.
+    run_ddmra_of_mean_rvt(
         project_dir,
         participants_file,
         confounds_pattern,
         target_file_patterns,
     )
-    run_ddmra_of_mean_rvt(
+    run_ddmra_of_rpv(project_dir, participants_file, target_file_patterns)
+    run_ddmra_of_mean_rv(
         project_dir,
         participants_file,
         confounds_pattern,
