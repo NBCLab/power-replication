@@ -98,6 +98,9 @@ def run_ddmra_analyses(
 
 if __name__ == "__main__":
     print("Experiment 2, Analysis Group 5")
+    selected_target = sys.argv[1]
+    selected_target = selected_target.replace("_", " ")
+
     project_dir = "/home/data/nbc/misc-projects/Salo_PowerReplication/"
     in_dir = op.join(project_dir, "{dset}")
     participants_file = op.join(project_dir, "participants.tsv")
@@ -122,9 +125,13 @@ if __name__ == "__main__":
         "MEDN+MIR",
         "MEDN+MIR Noise",
     ]
-    target_file_patterns = {
-        t: op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS[t])
-        for t in TARGETS
+    assert selected_target in TARGETS, f"{selected_target} not in {', '.join(TARGETS)}"
+    # target_file_patterns = {
+    #     t: op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS[t])
+    #     for t in TARGETS
+    # }
+    target_file_pattern = {
+        selected_target: op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS[selected_target])
     }
 
-    run_ddmra_analyses(project_dir, participants_file, target_file_patterns, confounds_pattern)
+    run_ddmra_analyses(project_dir, participants_file, target_file_pattern, confounds_pattern)
