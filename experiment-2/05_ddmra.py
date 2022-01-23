@@ -100,6 +100,8 @@ if __name__ == "__main__":
     print("Experiment 2, Analysis Group 5")
     selected_target = sys.argv[1]
     selected_target = selected_target.replace("_", " ")
+    selected_target = selected_target.replace("sparse", "(sparse)")
+    selected_target = selected_target.replace("lowrank", "(lowrank)")
 
     project_dir = "/home/data/nbc/misc-projects/Salo_PowerReplication/"
     in_dir = op.join(project_dir, "{dset}")

@@ -7,13 +7,13 @@
 #SBATCH --qos=pq_nbc
 #SBATCH --partition=IB_16C_96G
 # Outputs ----------------------------------
-#SBATCH --output=/home/data/nbc/misc-projects/Salo_PowerReplication/code/jobs/experiment02_analysis05_%a.out
-#SBATCH --error=/home/data/nbc/misc-projects/Salo_PowerReplication/code/jobs/experiment02_analysis05_%a.err
+#SBATCH --output=/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/experiment02_analysis05_%a.out
+#SBATCH --error=/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/experiment02_analysis05_%a.err
 # ------------------------------------------
 # USAGE information:
 # Use the -array= option.
 # Start with 0.
-# sbatch run_analysis_5.sbatch --array=0-12%10
+# sbatch --array=0-12%10 run_analysis_5.sbatch
 pwd; hostname; date
 set -e
 
@@ -26,7 +26,7 @@ CODE_DIR=${DATA_DIR}/${PROJECT}/code
 # Activate the project's miniconda environment
 source ${CODE_DIR}/activate_environment
 
-outputs=("OC" "MEDN" "MEDN_Noise" "MEDN+GODEC_(sparse)" "MEDN+GODEC_Noise_(lowrank)" "MEDN+GSR" "MEDN+GSR_Noise" "MEDN+dGSR" "MEDN+dGSR_Noise" "MEDN+aCompCor" "MEDN+aCompCor_Noise" "MEDN+MIR" "MEDN+MIR_Noise")
+outputs=("OC" "MEDN" "MEDN_Noise" "MEDN+GODEC_sparse" "MEDN+GODEC_Noise_lowrank" "MEDN+GSR" "MEDN+GSR_Noise" "MEDN+dGSR" "MEDN+dGSR_Noise" "MEDN+aCompCor" "MEDN+aCompCor_Noise" "MEDN+MIR" "MEDN+MIR_Noise")
 
 # Parse the participants.tsv file and extract one subject ID from the line corresponding
 # to this SLURM task.
