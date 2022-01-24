@@ -65,7 +65,7 @@ def correlate_medn_with_oc(
         medn_file = medn_pattern.format(
             dset=dset, participant_id=subj_id, prefix=subj_prefix
         )
-        oc_file = medn_pattern.format(
+        oc_file = oc_pattern.format(
             dset=dset, participant_id=subj_id, prefix=subj_prefix
         )
         mask_file = mask_pattern.format(dset=dset, participant_id=subj_id)
@@ -161,7 +161,7 @@ def correlate_medn_with_fitr2(
         medn_file = medn_pattern.format(
             dset=dset, participant_id=subj_id, prefix=subj_prefix
         )
-        fitr2_file = medn_pattern.format(
+        fitr2_file = fitr2_pattern.format(
             dset=dset, participant_id=subj_id, prefix=subj_prefix
         )
         mask_file = mask_pattern.format(dset=dset, participant_id=subj_id)
