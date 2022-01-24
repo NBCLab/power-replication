@@ -139,7 +139,7 @@ def correlate_cort_with_wb(
     -   Distribution of Pearson correlation coefficients
     -   Page 2, right column, first paragraph
     """
-    print("Experiment 2, Analysis Group 2, Analysis 1", flush=True)
+    print("Experiment 2, Analysis Group 2, Analysis 2", flush=True)
     out_dir = op.join(project_dir, "analyses", "experiment02_group02")
     os.makedirs(out_dir, exist_ok=True)
 
