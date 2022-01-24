@@ -255,8 +255,34 @@ def correlate_medn_with_oc(
             f"t({participants_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
         )
 
+    # However, one participant has a roughly perfect correlation because tedana didn't reject
+    # any components
+    out_df_no_outlier = out_df.loc[out_df["correlation"] < 0.999]
+    r_values_no_outlier = out_df_no_outlier["correlation"].values.astype(float)
+    z_values_no_outlier = np.arctanh(r_values_no_outlier)
+    mean_z_no_outlier = np.mean(z_values_no_outlier)
+    sd_z_no_outlier = np.std(z_values_no_outlier)
+
+    t_no_outlier, p_no_outlier = ttest_1samp(z_values, popmean=0, alternative="greater")
+    if p_no_outlier <= ALPHA:
+        print(
+            "\tCorrelations between the mean cortical signal from multi-echo denoised signal and "
+            "that of optimally combined data "
+            f"(M[Z] = {mean_z_no_outlier:.03f}, SD[Z] = {sd_z_no_outlier:.03f}) were "
+            "significantly higher than zero, "
+            f"t({out_df_no_outlier.shape[0] - 1}) = {t_no_outlier:.03f}, p = {p_no_outlier:.03f}."
+        )
+    else:
+        print(
+            "\tCorrelations between the mean cortical signal from multi-echo denoised signal and "
+            "that of optimally combined data "
+            f"(M[Z] = {mean_z_no_outlier:.03f}, SD[Z] = {sd_z_no_outlier:.03f}) were not "
+            "significantly higher than zero, "
+            f"t({out_df_no_outlier.shape[0] - 1}) = {t_no_outlier:.03f}, p = {p_no_outlier:.03f}."
+        )
+
     fig, ax = plt.subplots(figsize=(8, 8))
-    sns.histplot(data=z_values, ax=ax)
+    sns.histplot(data=z_values_no_outlier, ax=ax)
     ax.set_xlabel("Z-transformed correlation coefficient")
     fig.suptitle(
         "Distribution of correlations between mean cortical signal from MEDN and OC data"
