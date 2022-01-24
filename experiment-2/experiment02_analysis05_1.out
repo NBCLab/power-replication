@@ -1,7 +1,8 @@
 /home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2
-n074.panther.net
+n073.panther.net
 Sun Jan 23 15:19:12 EST 2022
-Commandline: python /home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/05_ddmra.py MEDN+GODEC_Noise_lowrank
+Commandline: python /home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/05_ddmra.py MEDN
 Experiment 2, Analysis Group 5
 Experiment 2, Analysis Group 5, Analysis 1
-	MEDN+GODEC Noise (lowrank)
+	MEDN
+Finished tasks 1 with exit code 

@@ -6,3 +6,5 @@
   result = getattr(ufunc, method)(*inputs, **kwargs)
 /home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/pandas/core/arraylike.py:364: RuntimeWarning: divide by zero encountered in arctanh
   result = getattr(ufunc, method)(*inputs, **kwargs)
+/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/datasets/__init__.py:96: FutureWarning: Fetchers from the nilearn.datasets module will be updated in version 0.9 to return python strings instead of bytes and Pandas dataframes instead of Numpy arrays.
+  "Numpy arrays.", FutureWarning)

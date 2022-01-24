@@ -1,1 +1,32 @@
-slurmstepd: error: *** JOB 5387367 ON n075 CANCELLED AT 2022-01-23T15:15:58 ***
+/home/data/nbc/misc-projects/Salo_PowerReplication/ddmra/ddmra/utils.py:308: RuntimeWarning: divide by zero encountered in arctanh
+  z_arr = np.arctanh(r_arr)
+/home/data/nbc/misc-projects/Salo_PowerReplication/ddmra/ddmra/utils.py:308: RuntimeWarning: divide by zero encountered in arctanh
+  z_arr = np.arctanh(r_arr)
+/home/data/nbc/misc-projects/Salo_PowerReplication/ddmra/ddmra/utils.py:308: RuntimeWarning: divide by zero encountered in arctanh
+  z_arr = np.arctanh(r_arr)
+/home/data/nbc/misc-projects/Salo_PowerReplication/ddmra/ddmra/utils.py:308: RuntimeWarning: divide by zero encountered in arctanh
+  z_arr = np.arctanh(r_arr)
+/home/data/nbc/misc-projects/Salo_PowerReplication/ddmra/ddmra/utils.py:308: RuntimeWarning: divide by zero encountered in arctanh
+  z_arr = np.arctanh(r_arr)
+/home/data/nbc/misc-projects/Salo_PowerReplication/ddmra/ddmra/utils.py:308: RuntimeWarning: divide by zero encountered in arctanh
+  z_arr = np.arctanh(r_arr)
+/home/data/nbc/misc-projects/Salo_PowerReplication/ddmra/ddmra/utils.py:308: RuntimeWarning: divide by zero encountered in arctanh
+  z_arr = np.arctanh(r_arr)
+/home/data/nbc/misc-projects/Salo_PowerReplication/ddmra/ddmra/utils.py:308: RuntimeWarning: divide by zero encountered in arctanh
+  z_arr = np.arctanh(r_arr)
+/home/data/nbc/misc-projects/Salo_PowerReplication/ddmra/ddmra/utils.py:308: RuntimeWarning: divide by zero encountered in arctanh
+  z_arr = np.arctanh(r_arr)
+/home/data/nbc/misc-projects/Salo_PowerReplication/ddmra/ddmra/utils.py:308: RuntimeWarning: divide by zero encountered in arctanh
+  z_arr = np.arctanh(r_arr)
+/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/numpy/lib/function_base.py:2642: RuntimeWarning: invalid value encountered in true_divide
+  c /= stddev[:, None]
+/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/numpy/lib/function_base.py:2643: RuntimeWarning: invalid value encountered in true_divide
+  c /= stddev[None, :]
+Traceback (most recent call last):
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/05_ddmra.py", line 145, in <module>
+    project_dir, participants_file, target_file_pattern, confounds_pattern
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/05_ddmra.py", line 98, in run_ddmra_analyses
+    qc_thresh=0.2,
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/ddmra/ddmra/workflows.py", line 220, in run_analyses
+    assert np.array_equal(smoothing_curve_distances, scrub_smoothing_curve_distances)
+AssertionError
