@@ -27,6 +27,8 @@ Traceback (most recent call last):
     project_dir, participants_file, target_file_pattern, confounds_pattern
   File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/05_ddmra.py", line 98, in run_ddmra_analyses
     qc_thresh=0.2,
-  File "/home/data/nbc/misc-projects/Salo_PowerReplication/ddmra/ddmra/workflows.py", line 225, in run_analyses
-    f"{smoothing_curve_distances} != {scrub_smoothing_curve_distances}"
-AssertionError: [ 19.313  19.339  19.391 ... 142.976 143.01  143.059] != []
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/ddmra/ddmra/workflows.py", line 217, in run_analyses
+    qc, ts_all, edge_sorting_idx, qc_thresh, perm=False
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/ddmra/ddmra/analysis.py", line 107, in scrubbing_analysis
+    mean_delta_z = mean_delta_z[:, edge_sorting_idx]
+IndexError: too many indices for array: array is 1-dimensional, but 2 were indexed
