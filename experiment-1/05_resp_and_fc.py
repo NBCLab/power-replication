@@ -170,6 +170,11 @@ def run_ddmra_of_mean_rvt(
 
 if __name__ == "__main__":
     print("Experiment 1, Analysis Group 5")
+    selected_target = sys.argv[1]
+    selected_target = selected_target.replace("_", " ")
+    selected_target = selected_target.replace("sparse", "(sparse)")
+    selected_target = selected_target.replace("lowrank", "(lowrank)")
+
     project_dir = "/home/data/nbc/misc-projects/Salo_PowerReplication/"
     in_dir = op.join(project_dir, "dset-dupre/")
     participants_file = op.join(in_dir, "participants.tsv")
@@ -178,6 +183,7 @@ if __name__ == "__main__":
         "derivatives/power/{participant_id}/func",
         "{participant_id}_task-rest_run-1_desc-confounds_timeseries.tsv",
     )
+
     TARGET_FILE_PATTERNS = get_target_files()
     TARGETS = [
         "MEDN+Nuis-Reg",  # Moved to top because MEDN+Nuis-Reg was stalling.
@@ -192,8 +198,11 @@ if __name__ == "__main__":
         "MEDN+MIR",
         "MEDN+GSR",
     ]
-    target_file_patterns = {
-        t: op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS[t]) for t in TARGETS
+    assert selected_target in TARGETS, f"{selected_target} not in {', '.join(TARGETS)}"
+    target_file_pattern = {
+        selected_target: op.join(
+            in_dir, "derivatives", TARGET_FILE_PATTERNS[selected_target]
+        )
     }
 
     # Moved to top because MEDN+Nuis-Reg was stalling.
@@ -201,12 +210,12 @@ if __name__ == "__main__":
         project_dir,
         participants_file,
         confounds_pattern,
-        target_file_patterns,
+        target_file_pattern,
     )
-    run_ddmra_of_rpv(project_dir, participants_file, target_file_patterns)
+    run_ddmra_of_rpv(project_dir, participants_file, target_file_pattern)
     run_ddmra_of_mean_rv(
         project_dir,
         participants_file,
         confounds_pattern,
-        target_file_patterns,
+        target_file_pattern,
     )
