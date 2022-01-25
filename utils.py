@@ -82,6 +82,8 @@ def _plot_components_and_physio(
 
     # Determine the colormap
     temp_clf_palette = [clf_palette[clf_xformer_inv[c]] for c in np.unique(classification_ints)]
+    # The colormap needs >1 color so I add one to the end just in case. It's bright blue.
+    temp_clf_palette = temp_clf_palette + ["#0000FF"]
     clf_cmap = mpl.colors.LinearSegmentedColormap.from_list(
         "Classification", temp_clf_palette, len(temp_clf_palette)
     )
