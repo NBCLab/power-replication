@@ -1,26 +1,4 @@
 /home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2
 n072.panther.net
-Mon Jan 24 14:59:29 EST 2022
+Mon Jan 24 23:12:51 EST 2022
 Commandline: python /home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/05_ddmra.py MEDN+GODEC_Noise_lowrank
-Experiment 2, Analysis Group 5
-Experiment 2, Analysis Group 5, Analysis 1
-	MEDN+GODEC Noise (lowrank)
-delta_zs: (741, 34716)
-584 of 741 subjects retained in scrubbing analysis
-delta_zs: (584, 34716)
-delta_zs: [[-9.74097604e-03  1.83224836e-02 -2.64164483e-03 ... -1.93102545e-02
-  -5.40373569e-03 -1.27626085e-02]
- [-1.34474489e-01 -1.05532358e-01 -1.05317205e-01 ... -1.36279030e-02
-   2.95906343e-02  8.40962317e-02]
- [ 1.33028576e-03  5.47378937e-03 -8.39406275e-02 ... -1.85979708e-02
-  -8.91984551e-02 -7.20777571e-02]
- ...
- [ 1.26974297e-02 -4.88553430e-02 -2.85897122e-02 ... -3.13225392e-02
-  -8.97773602e-02 -9.43648124e-02]
- [ 4.59606673e-04  3.84601829e-05 -4.94180637e-04 ... -6.81912115e-04
-   4.34937661e-04 -4.05532331e-03]
- [ 5.08606070e-03  2.38030914e-03 -2.66515930e-03 ...  7.41047150e-04
-  -1.97306258e-03  1.12308887e-03]]
-mean_delta_z: (34716,)
-mean_delta_z: [-0.0023975  -0.00587171 -0.00783708 ... -0.00492914 -0.00577342
- -0.00052247]

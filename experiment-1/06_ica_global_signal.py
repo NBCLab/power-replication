@@ -263,7 +263,7 @@ def correlate_medn_with_oc(
     mean_z_no_outlier = np.mean(z_values_no_outlier)
     sd_z_no_outlier = np.std(z_values_no_outlier)
 
-    t_no_outlier, p_no_outlier = ttest_1samp(z_values, popmean=0, alternative="greater")
+    t_no_outlier, p_no_outlier = ttest_1samp(z_values_no_outlier, popmean=0, alternative="greater")
     if p_no_outlier <= ALPHA:
         print(
             "\tCorrelations between the mean cortical signal from multi-echo denoised signal and "
