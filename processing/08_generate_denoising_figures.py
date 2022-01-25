@@ -207,6 +207,15 @@ TARGET_FILES = {
 }
 
 
+def crop_physio_data(physio_arr, samplerate, t_r, nss_count, n_vols):
+    """Select portion of physio that corresponds to the fMRI scan."""
+    sec_to_drop = nss_count * t_r
+    data_start = int(sec_to_drop * samplerate)
+    data_end = int((n_vols + nss_count) * t_r * samplerate)
+    physio_arr = physio_arr[data_start, data_end]
+    return physio_arr
+
+
 def _plot_timeseries(df, x_arr, fig, ax):
     assert df.shape[0] == x_arr.size, f"{df.shape[0]} != {x_arr.shape}"
 
@@ -426,9 +435,89 @@ def plot_two_part_carpet(out_file, seg_file, t_r, config, sub, prefix):
     fig.savefig(out_file)
 
 
-def plot_three_part_carpet_with_physio():
+def plot_three_part_carpet_with_physio(out_file, seg_file, t_r, config, sub, prefix):
     """Based on Figure S5, for DuPre dataset only."""
-    ...
+    import json
+
+    card_file = "{prefix}_desc-cardiac_physio.tsv.gz"
+    card_data = np.load(card_file)
+    card_metadata = "{prefix}_desc-cardiac_physio.json"
+    with open(card_metadata, "r") as fo:
+        card_samplerate = json.load(fo)["SamplingFrequency"]
+    card_data = crop_physio_data(card_data, card_samplerate, t_r, nss_count, n_vols)
+
+    resp_file = "{prefix}_desc-respiration_physio.tsv.gz"
+    resp_data = np.load(resp_file)
+    resp_metadata = "{prefix}_desc-respiration_physio.json"
+    with open(resp_metadata, "r") as fo:
+        resp_samplerate = json.load(fo)["SamplingFrequency"]
+    resp_data = crop_physio_data(resp_data, resp_samplerate, t_r, nss_count, n_vols)
+    physio_df = pd.DataFrame(
+        columns=["Heart rate", "Resp. Belt"],
+        data=np.stack((card_data, resp_data), axis=1)
+    )
+
+    # Load other data
+    timeseries = config["timeseries"]
+    confounds_file = TARGET_FILES["confounds"].format(sub=sub, prefix=prefix)
+    carpet_config = config["carpet"]
+    target_files = [
+        TARGET_FILES[f["ref"]].format(sub=sub, prefix=prefix) for f in carpet_config
+    ]
+    titles = [f["title"] for f in carpet_config]
+
+    # Get confounds
+    confounds_df = pd.read_table(confounds_file)
+    new_columns = [TIMESERIES_RENAMER.get(k, k) for k in timeseries]
+    confounds_df = confounds_df.rename(columns=TIMESERIES_RENAMER)
+    confounds_df = confounds_df[new_columns]
+
+    x_arr = np.linspace(0, (confounds_df.shape[0] - 1) * t_r, confounds_df.shape[0])
+
+    fig, axes = plt.subplots(
+        figsize=(16, 17.6), nrows=5, gridspec_kw={"height_ratios": [1, 1, 3, 3, 3]}
+    )
+
+    _plot_carpet(seg_file, target_files[0], titles[0], fig, axes[2])
+    _plot_carpet(seg_file, target_files[1], titles[1], fig, axes[3])
+    display = _plot_carpet(seg_file, target_files[2], titles[2], fig, axes[4])
+
+    last_carpet_ax = display.axes[1]
+    width_ratio = last_carpet_ax.get_subplotspec().get_gridspec().get_width_ratios()
+
+    # First timeseries plot: confounds
+    gs = mgs.GridSpecFromSubplotSpec(
+        1,
+        2,
+        subplot_spec=axes[0],
+        width_ratios=width_ratio,
+        wspace=0.0,
+    )
+    ax0 = plt.subplot(gs[1])
+    _plot_timeseries(confounds_df, x_arr, fig, ax0)
+
+    # Second timeseries plot: physio
+    gs = mgs.GridSpecFromSubplotSpec(
+        1,
+        2,
+        subplot_spec=axes[1],
+        width_ratios=width_ratio,
+        wspace=0.0,
+    )
+    ax1 = plt.subplot(gs[1])
+    _plot_timeseries(physio_df, x_arr, fig, ax1)
+
+    # Add x-axis labels
+    display.axes[-3].xaxis.set_visible(True)
+    display.axes[-3].set_xlabel("Time (min)", fontsize=14, labelpad=-10)
+    display.axes[-3].set_xticks([0, len(x_arr)])
+    display.axes[-3].set_xticklabels(
+        [0, f"{int(x_arr[-1] // 60)}:{str(int(x_arr[-1] % 60)).zfill(2)}"],
+    )
+    display.axes[-3].tick_params(axis="x", which="both", length=0, labelsize=12)
+    display.axes[-3].spines["bottom"].set_position(("outward", 0))
+
+    fig.savefig(out_file)
 
 
 def plot_many_carpets(out_file, seg_file, config):
@@ -493,22 +582,14 @@ if __name__ == "__main__":
             full_file_pattern = op.join(
                 deriv_dir, target_file.format(sub=sub, prefix=prefix)
             )
+            # Only plot RV[T] for DuPre.
+            if ("RV" in target_file) and (dataset != "dset-dupre"):
+                continue
+
             matching_files = sorted(glob(full_file_pattern))
             if len(matching_files) == 0:
                 print(f"Dataset {dataset} subject {sub} missing {full_file_pattern}")
                 bad_subs.append((dataset, sub))
-
-        if dataset == "dset-dupre":
-            for target_file in PHYSIO_TARGET_FILES:
-                full_file_pattern = op.join(
-                    deriv_dir, target_file.format(sub=sub, prefix=prefix)
-                )
-                matching_files = sorted(glob(full_file_pattern))
-                if len(matching_files) == 0:
-                    print(
-                        f"Dataset {dataset} subject {sub} missing {full_file_pattern}"
-                    )
-                    bad_subs.append((dataset, sub))
 
     bad_subs = sorted(list(set(bad_subs)))
     print(bad_subs)

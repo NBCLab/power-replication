@@ -15,13 +15,16 @@ ICA components correlated with mean cortical signal of OC dataset.
 Mean cortical signal from MEDN is correlated with mean cortical signal from OC for each
 participant, and distribution of coefficients is compared to zero with one-sampled t-test.
 """
+import json
 import os
 import os.path as op
+import sys
 import warnings
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
 import matplotlib.pyplot as plt  # noqa: E402
+import nibabel as nib  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 import seaborn as sns  # noqa: E402
@@ -29,11 +32,83 @@ from ddmra.utils import r2z  # noqa: E402
 from nilearn import masking  # noqa: E402
 from scipy.stats import ttest_1samp, ttest_rel  # noqa: E402
 
+sys.path.append("..")
 
-def plot_components_and_physio():
+from utils import _plot_components_and_physio, crop_physio_data  # noqa: E402
+
+
+def plot_components_and_physio(
+    project_dir,
+    participants_file,
+    nss_file,
+    ica_pattern,
+    ctab_pattern,
+    oc_pattern,
+    dseg_pattern,
+    confounds_pattern,
+    physio_pattern,
+    physio_metadata_pattern,
+):
     """Generate plots for analysis 1."""
     print("Experiment 1, Analysis Group 6, Analysis 1", flush=True)
-    ...
+    out_dir = op.join(project_dir, "analyses", "experiment01_group06", "analysis01")
+    os.makedirs(out_dir, exist_ok=True)
+
+    participants_df = pd.read_table(participants_file)
+    nss_df = pd.read_table(nss_file, index_col="participant_id")
+    n_subs_all = participants_df.shape[0]
+    # Limit to participants with good data
+    participants_df = participants_df.loc[participants_df["exclude"] != 1]
+    print(f"{participants_df.shape[0]}/{n_subs_all} participants retained.")
+
+    for i_run, participant_row in participants_df.iterrows():
+        subj_id = participant_row["participant_id"]
+        nss = nss_df.loc[subj_id, "nss_count"]
+
+        out_file = op.join(out_dir, f"{subj_id}.svg")
+
+        dseg_file = dseg_pattern.format(participant_id=subj_id)
+        oc_file = oc_pattern.format(participant_id=subj_id)
+        confounds_file = confounds_pattern.format(participant_id=subj_id)
+        ica_file = ica_pattern.format(participant_id=subj_id)
+        ctab_file = ctab_pattern.format(participant_id=subj_id)
+        physio_file = physio_pattern.format(participant_id=subj_id)
+        physio_metadata = physio_metadata_pattern.format(participant_id=subj_id)
+
+        # Load and process the data
+        metadata_file = oc_file.replace(".nii.gz", ".json")
+        with open(metadata_file) as fo:
+            t_r = json.load(fo)["RepetitionTime"]
+
+        with open(physio_metadata, "r") as fo:
+            phys_meta = json.load(fo)
+            physio_samplerate = phys_meta["SamplingFrequency"]
+            physio_types = phys_meta["Columns"]
+
+        # TODO: Use instantaneous heart rate at original resolution.
+        n_vols = nib.load(oc_file).shape[3]
+        physio_data = np.loadtxt(physio_file)
+        physio_data = crop_physio_data(physio_data, physio_samplerate, t_r, nss, n_vols)
+        physio_df = pd.DataFrame(columns=physio_types, data=physio_data)
+
+        confounds_df = pd.read_table(confounds_file)
+
+        ica_df = pd.read_table(ica_file)
+        components_arr = ica_df.values.T
+        comptable = pd.read_table(ctab_file, index_col="Component")
+        classifications = comptable["classification"].tolist()
+
+        _plot_components_and_physio(
+            oc_file,
+            dseg_file,
+            confounds_df,
+            physio_df,
+            components_arr,
+            classifications,
+            t_r,
+            physio_samplerate,
+            out_file,
+        )
 
 
 def correlate_ica_with_cortical_signal(
@@ -357,10 +432,21 @@ if __name__ == "__main__":
     project_dir = "/home/data/nbc/misc-projects/Salo_PowerReplication/"
     in_dir = op.join(project_dir, "dset-dupre/")
     participants_file = op.join(in_dir, "participants.tsv")
+    nss_file = op.join(in_dir, "derivatives", "power", "nss_removed.tsv")
     mask_pattern = op.join(
         in_dir,
         "derivatives/power/{participant_id}/anat",
         "{participant_id}_space-scanner_res-bold_label-CGM_mask.nii.gz",
+    )
+    dseg_pattern = op.join(
+        in_dir,
+        "derivatives/power/{participant_id}/anat",
+        "{participant_id}_space-scanner_res-bold_label-totalMaskWithCSF_dseg.nii.gz",
+    )
+    confounds_pattern = op.join(
+        in_dir,
+        "derivatives/power/{participant_id}/func",
+        "{participant_id}_task-rest_run-1_desc-confounds_timeseries.tsv",
     )
     medn_pattern = op.join(
         in_dir,
@@ -382,8 +468,27 @@ if __name__ == "__main__":
         "derivatives/tedana/{participant_id}/func",
         "{participant_id}_task-rest_run-1_desc-tedana_metrics.tsv",
     )
+    physio_pattern = op.join(
+        in_dir,
+        "{participant_id}/func/{participant_id}_task-rest_run-01_physio.tsv.gz"
+    )
+    physio_metadata_pattern = op.join(
+        in_dir,
+        "{participant_id}/{participant_id}_task-rest_physio.json"
+    )
 
-    # plot_components_and_physio()
+    plot_components_and_physio(
+        project_dir,
+        participants_file,
+        nss_file,
+        ica_pattern,
+        ctab_pattern,
+        oc_pattern,
+        dseg_pattern,
+        confounds_pattern,
+        physio_pattern,
+        physio_metadata_pattern,
+    )
     correlate_ica_with_cortical_signal(
         project_dir,
         participants_file,
