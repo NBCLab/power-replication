@@ -57,8 +57,8 @@ def plot_components_and_physio(
     participants_df = pd.read_table(participants_file)
     nss_df = pd.read_table(nss_file, index_col="participant_id")
     n_subs_all = participants_df.shape[0]
-    # Limit to participants with good data
-    participants_df = participants_df.loc[participants_df["exclude"] != 1]
+    # Limit to participants with RPV value
+    participants_df = participants_df.dropna(subset=["rpv"])
     print(f"{participants_df.shape[0]}/{n_subs_all} participants retained.")
 
     for i_run, participant_row in participants_df.iterrows():
