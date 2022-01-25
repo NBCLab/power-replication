@@ -1,12 +1,52 @@
-/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-1/06_ica_global_signal.py:129: RuntimeWarning: invalid value encountered in long_scalars
-  np.sum(rej_corrs > 0.3) / rej_corrs.size
-/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-1/06_ica_global_signal.py:139: RuntimeWarning: invalid value encountered in long_scalars
-  np.sum(rej_corrs > 0.5) / rej_corrs.size
-/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-1/06_ica_global_signal.py:144: RuntimeWarning: Mean of empty slice
-  out_df.loc[subj_id, "rejected mean z"] = np.nanmean(np.arctanh(rej_corrs))
-/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-1/06_ica_global_signal.py:125: RuntimeWarning: invalid value encountered in long_scalars
-  np.sum(acc_corrs > 0.3) / acc_corrs.size
-/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-1/06_ica_global_signal.py:135: RuntimeWarning: invalid value encountered in long_scalars
-  np.sum(acc_corrs > 0.5) / acc_corrs.size
-/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-1/06_ica_global_signal.py:143: RuntimeWarning: Mean of empty slice
-  out_df.loc[subj_id, "accepted mean z"] = np.nanmean(np.arctanh(acc_corrs))
+Traceback (most recent call last):
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-1/06_ica_global_signal.py", line 490, in <module>
+    physio_metadata_pattern,
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-1/06_ica_global_signal.py", line 110, in plot_components_and_physio
+    out_file,
+  File "../utils.py", line 230, in _plot_components_and_physio
+    fig.savefig(out_file)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/matplotlib/figure.py", line 3005, in savefig
+    self.canvas.print_figure(fname, **kwargs)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/matplotlib/backend_bases.py", line 2261, in print_figure
+    **kwargs)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/matplotlib/backends/backend_svg.py", line 1333, in print_svg
+    self._print_svg(filename, fh, **kwargs)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/matplotlib/backend_bases.py", line 1669, in wrapper
+    return func(*args, **kwargs)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/matplotlib/_api/deprecation.py", line 431, in wrapper
+    return func(*inner_args, **inner_kwargs)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/matplotlib/backends/backend_svg.py", line 1360, in _print_svg
+    self.figure.draw(renderer)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/matplotlib/artist.py", line 74, in draw_wrapper
+    result = draw(artist, renderer, *args, **kwargs)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/matplotlib/artist.py", line 51, in draw_wrapper
+    return draw(artist, renderer, *args, **kwargs)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/matplotlib/figure.py", line 2781, in draw
+    renderer, self, artists, self.suppressComposite)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/matplotlib/image.py", line 132, in _draw_list_compositing_images
+    a.draw(renderer)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/matplotlib/artist.py", line 51, in draw_wrapper
+    return draw(artist, renderer, *args, **kwargs)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/matplotlib/_api/deprecation.py", line 431, in wrapper
+    return func(*inner_args, **inner_kwargs)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/matplotlib/axes/_base.py", line 2921, in draw
+    mimage._draw_list_compositing_images(renderer, self, artists)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/matplotlib/image.py", line 157, in _draw_list_compositing_images
+    a.draw(renderer)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/matplotlib/artist.py", line 51, in draw_wrapper
+    return draw(artist, renderer, *args, **kwargs)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/matplotlib/image.py", line 635, in draw
+    im, l, b, trans = self.make_image(renderer, unsampled=True)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/matplotlib/image.py", line 927, in make_image
+    magnification, unsampled=unsampled)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/matplotlib/image.py", line 571, in _make_image
+    self._imcache = self.to_rgba(A, bytes=True, norm=(A.ndim == 2))
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/matplotlib/cm.py", line 360, in to_rgba
+    rgba = self.cmap(x, alpha=alpha, bytes=bytes)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/matplotlib/colors.py", line 612, in __call__
+    self._init()
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/matplotlib/colors.py", line 899, in _init
+    self.N, self._segmentdata['red'], self._gamma)
+  File "/home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/matplotlib/colors.py", line 516, in _create_lookup_table
+    "data mapping points must start with x=0 and end with x=1")
+ValueError: data mapping points must start with x=0 and end with x=1

@@ -45,11 +45,5 @@ sub-26 has bad cardiac data. Skipping.
 	HRV and standard deviation of mean cortical FIT-R2 signal were not found to be statistically significantly correlated, r(25) = 0.19, p = 0.169
 	HRV and standard deviation of mean cortical MEDN signal were not found to be statistically significantly correlated, r(25) = 0.24, p = 0.117
 Experiment 1, Analysis Group 6
-Experiment 1, Analysis Group 6, Analysis 2
+Experiment 1, Analysis Group 6, Analysis 1
 30/31 participants retained.
-	Correlations between the mean cortical signal from optimally combined data and accepted ICA component time series (M[Z] = 0.014, SD[Z] = 0.124) were not significantly higher than zero, t(28) = 0.584, p = 0.282.
-	Correlations between the mean cortical signal from optimally combined data and rejected ICA component time series (M[Z] = -0.022, SD[Z] = 0.148) were not significantly higher than zero, t(28) = -0.769, p = 0.776.
-Experiment 1, Analysis Group 6, Analysis 3
-30/31 participants retained.
-	Correlations between the mean cortical signal from multi-echo denoised signal and that of optimally combined data (M[Z] = 1.371, SD[Z] = 3.193) were significantly higher than zero, t(29) = 2.312, p = 0.014.
-	Correlations between the mean cortical signal from multi-echo denoised signal and that of optimally combined data (M[Z] = 0.785, SD[Z] = 0.494) were significantly higher than zero, t(28) = 8.405, p = 0.000.
