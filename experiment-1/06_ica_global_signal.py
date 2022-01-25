@@ -441,7 +441,7 @@ if __name__ == "__main__":
     dseg_pattern = op.join(
         in_dir,
         "derivatives/power/{participant_id}/anat",
-        "{participant_id}_space-scanner_res-bold_label-totalMaskWithCSF_dseg.nii.gz",
+        "{participant_id}_space-scanner_res-bold_desc-totalMaskWithCSF_dseg.nii.gz",
     )
     confounds_pattern = op.join(
         in_dir,
