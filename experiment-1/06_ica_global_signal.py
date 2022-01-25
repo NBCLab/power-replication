@@ -12,7 +12,6 @@ ICA components correlated with mean cortical signal of OC dataset.
     calculated for each participant, and distributions of correlation coefficients were compared
     to zero and each other with t-tests.
 
-
 Mean cortical signal from MEDN is correlated with mean cortical signal from OC for each
 participant, and distribution of coefficients is compared to zero with one-sampled t-test.
 """
@@ -26,8 +25,9 @@ import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 import seaborn as sns  # noqa: E402
+from ddmra.utils import r2z  # noqa: E402
 from nilearn import masking  # noqa: E402
-from scipy.stats import ttest_1samp  # noqa: E402
+from scipy.stats import ttest_1samp, ttest_rel  # noqa: E402
 
 
 def plot_components_and_physio():
@@ -51,6 +51,7 @@ def correlate_ica_with_cortical_signal(
     type with r > 0.5 and r > 0.3.
     Also record the mean correlation coefficient (after z-transform) for each type.
     Compare the z-transformed coefficients to zero with t-tests.
+    And to each other.
     """
     print("Experiment 1, Analysis Group 6, Analysis 2", flush=True)
     out_dir = op.join(project_dir, "analyses", "experiment01_group06")
@@ -67,16 +68,22 @@ def correlate_ica_with_cortical_signal(
         columns=[
             "total accepted",
             "total rejected",
+            "total ignored",
             "accepted count, r > 0.3",
             "accepted proportion, r > 0.3",
             "rejected count, r > 0.3",
             "rejected proportion, r > 0.3",
+            "ignored count, r > 0.3",
+            "ignored proportion, r > 0.3",
             "accepted count, r > 0.5",
             "accepted proportion, r > 0.5",
             "rejected count, r > 0.5",
             "rejected proportion, r > 0.5",
+            "ignored count, r > 0.5",
+            "ignored proportion, r > 0.5",
             "accepted mean z",
             "rejected mean z",
+            "ignored mean z",
         ],
     )
 
@@ -95,10 +102,13 @@ def correlate_ica_with_cortical_signal(
         comptable = pd.read_table(ctab_file, index_col="Component")
 
         out_df.loc[subj_id, "total accepted"] = (
-            comptable["classification"] != "rejected"
+            comptable["classification"] == "accepted"
         ).sum()
         out_df.loc[subj_id, "total rejected"] = (
             comptable["classification"] == "rejected"
+        ).sum()
+        out_df.loc[subj_id, "total ignored"] = (
+            comptable["classification"] == "ignored"
         ).sum()
 
         ica_df = pd.read_table(ica_file)
@@ -106,18 +116,21 @@ def correlate_ica_with_cortical_signal(
 
         correlations = ica_df.corr()["OC"]
 
-        acc_corrs, rej_corrs = [], []
+        acc_corrs, rej_corrs, ign_corrs = [], [], []
         for comp in comptable.index:
             row = comptable.loc[comp]
             corr = correlations[comp]
             classification = row["classification"]
             if classification == "rejected":
                 rej_corrs.append(corr)
-            elif classification != "rejected":
+            elif classification == "accepted":
                 acc_corrs.append(corr)
+            else:
+                ign_corrs.append(corr)
 
         acc_corrs = np.array(acc_corrs)
         rej_corrs = np.array(rej_corrs)
+        ign_corrs = np.array(ign_corrs)
 
         # Proportion and count of r > 0.3 for each classification
         out_df.loc[subj_id, "accepted count, r > 0.3"] = np.sum(acc_corrs > 0.3)
@@ -127,6 +140,10 @@ def correlate_ica_with_cortical_signal(
         out_df.loc[subj_id, "rejected count, r > 0.3"] = np.sum(rej_corrs > 0.3)
         out_df.loc[subj_id, "rejected proportion, r > 0.3"] = (
             np.sum(rej_corrs > 0.3) / rej_corrs.size
+        )
+        out_df.loc[subj_id, "ignored count, r > 0.3"] = np.sum(ign_corrs > 0.3)
+        out_df.loc[subj_id, "ignored proportion, r > 0.3"] = (
+            np.sum(ign_corrs > 0.3) / ign_corrs.size
         )
 
         # Proportion and count of r > 0.5 for each classification
@@ -138,10 +155,17 @@ def correlate_ica_with_cortical_signal(
         out_df.loc[subj_id, "rejected proportion, r > 0.5"] = (
             np.sum(rej_corrs > 0.5) / rej_corrs.size
         )
+        out_df.loc[subj_id, "ignored count, r > 0.5"] = np.sum(ign_corrs > 0.5)
+        out_df.loc[subj_id, "ignored proportion, r > 0.5"] = (
+            np.sum(ign_corrs > 0.5) / ign_corrs.size
+        )
 
         # Mean z-transformed correlations
-        out_df.loc[subj_id, "accepted mean z"] = np.nanmean(np.arctanh(acc_corrs))
-        out_df.loc[subj_id, "rejected mean z"] = np.nanmean(np.arctanh(rej_corrs))
+        # I used ddmra's r2z function because it crops extreme correlations that would
+        # evaluate to NaNs.
+        out_df.loc[subj_id, "accepted mean z"] = np.mean(r2z(acc_corrs))
+        out_df.loc[subj_id, "rejected mean z"] = np.mean(r2z(rej_corrs))
+        out_df.loc[subj_id, "ignored mean z"] = np.mean(r2z(ign_corrs))
 
     for clf in ("accepted", "rejected"):
         col = f"{clf} mean z"
@@ -154,23 +178,23 @@ def correlate_ica_with_cortical_signal(
         t, p = ttest_1samp(z_values, popmean=0, alternative="greater")
         if p <= ALPHA:
             print(
-                "\tCorrelations between the mean cortical signal from optimally combined data and "
-                f"{clf} ICA component time series "
+                "\tAveraged correlations between the mean cortical signal from optimally combined "
+                f"data and {clf} ICA component time series "
                 f"(M[Z] = {mean_z:.03f}, SD[Z] = {sd_z:.03f}) were significantly higher than "
                 "zero, "
                 f"t({temp_out_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
             )
         else:
             print(
-                "\tCorrelations between the mean cortical signal from optimally combined data and "
-                f"{clf} ICA component time series "
+                "\tAveraged correlations between the mean cortical signal from optimally combined "
+                f"data and {clf} ICA component time series "
                 f"(M[Z] = {mean_z:.03f}, SD[Z] = {sd_z:.03f}) were not significantly higher than "
                 "zero, "
                 f"t({temp_out_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
             )
 
         fig, ax = plt.subplots(figsize=(8, 8))
-        sns.histplot(data=z_values, ax=ax)
+        sns.histplot(data=z_values, ax=ax, bins=15)
         ax.set_xlabel("Z-transformed correlation coefficient")
         fig.suptitle(
             f"Distribution of correlations between mean cortical OC data and {clf} ICA components"
