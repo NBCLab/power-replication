@@ -201,6 +201,38 @@ def correlate_ica_with_cortical_signal(
         )
         fig.savefig(op.join(out_dir, f"analysis_02_{clf}.png"), dpi=400)
 
+    # Compare accepted and rejected to each other
+    col = "accepted mean z"
+    # First, we drop any subjects with no rejected or no accepted components
+    paired_ttest_df = out_df.dropna(subset=["accepted mean z", "rejected mean z"])
+    t, p = ttest_rel(
+        a=paired_ttest_df["accepted mean z"].values,
+        b=paired_ttest_df["rejected mean z"].values,
+        alternative="greater",
+    )
+    if p <= ALPHA:
+        print(
+            "\tCorrelations between the mean cortical signal from optimally combined data and "
+            "accepted ICA component time series "
+            f"(M[Z] = {paired_ttest_df['accepted mean z'].mean():.03f}, "
+            f"SD[Z] = {paired_ttest_df['accepted mean z'].std():.03f}) "
+            "were significantly higher than those of rejected components "
+            f"(M[Z] = {paired_ttest_df['rejected mean z'].mean():.03f}, "
+            f"SD[Z] = {paired_ttest_df['rejected mean z'].std():.03f}), "
+            f"t({paired_ttest_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
+        )
+    else:
+        print(
+            "\tCorrelations between the mean cortical signal from optimally combined data and "
+            "accepted ICA component time series "
+            f"(M[Z] = {paired_ttest_df['accepted mean z'].mean():.03f}, "
+            f"SD[Z] = {paired_ttest_df['accepted mean z'].std():.03f}) "
+            "were not significantly higher than those of rejected components "
+            f"(M[Z] = {paired_ttest_df['rejected mean z'].mean():.03f}, "
+            f"SD[Z] = {paired_ttest_df['rejected mean z'].std():.03f}), "
+            f"t({paired_ttest_df.shape[0] - 1}) = {t:.03f}, p = {p:.03f}."
+        )
+
     out_df.to_csv(
         op.join(out_dir, "analysis_02_results.tsv"),
         sep="\t",
