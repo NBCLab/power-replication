@@ -1,39 +1,4 @@
 /home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2
-n086.panther.net
-Tue Jan 25 21:14:40 EST 2022
+n074.panther.net
+Tue Jan 25 21:30:33 EST 2022
 Commandline: python /home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/05_ddmra.py MEDN+GODEC_Noise_lowrank
-Experiment 2, Analysis Group 5
-Experiment 2, Analysis Group 5, Analysis 1
-	MEDN+GODEC Noise (lowrank)
-['/home/data/nbc/misc-projects/Salo_PowerReplication/dset-camcan/derivatives/godec/sub-CC721052/func/sub-CC721052_task-movie_space-MNI152NLin6Asym_desc-GODEC_rank-4_lowrankts.nii.gz', '/home/data/nbc/misc-projects/Salo_PowerReplication/dset-camcan/derivatives/godec/sub-CC721107/func/sub-CC721107_task-movie_space-MNI152NLin6Asym_desc-GODEC_rank-4_lowrankts.nii.gz', '/home/data/nbc/misc-projects/Salo_PowerReplication/dset-camcan/derivatives/godec/sub-CC721114/func/sub-CC721114_task-movie_space-MNI152NLin6Asym_desc-GODEC_rank-4_lowrankts.nii.gz', '/home/data/nbc/misc-projects/Salo_PowerReplication/dset-camcan/derivatives/godec/sub-CC721224/func/sub-CC721224_task-movie_space-MNI152NLin6Asym_desc-GODEC_rank-4_lowrankts.nii.gz', '/home/data/nbc/misc-projects/Salo_PowerReplication/dset-camcan/derivatives/godec/sub-CC721291/func/sub-CC721291_task-movie_space-MNI152NLin6Asym_desc-GODEC_rank-4_lowrankts.nii.gz', '/home/data/nbc/misc-projects/Salo_PowerReplication/dset-camcan/derivatives/godec/sub-CC721292/func/sub-CC721292_task-movie_space-MNI152NLin6Asym_desc-GODEC_rank-4_lowrankts.nii.gz', '/home/data/nbc/misc-projects/Salo_PowerReplication/dset-camcan/derivatives/godec/sub-CC721374/func/sub-CC721374_task-movie_space-MNI152NLin6Asym_desc-GODEC_rank-4_lowrankts.nii.gz', '/home/data/nbc/misc-projects/Salo_PowerReplication/dset-camcan/derivatives/godec/sub-CC721377/func/sub-CC721377_task-movie_space-MNI152NLin6Asym_desc-GODEC_rank-4_lowrankts.nii.gz', '/home/data/nbc/misc-projects/Salo_PowerReplication/dset-camcan/derivatives/godec/sub-CC721392/func/sub-CC721392_task-movie_space-MNI152NLin6Asym_desc-GODEC_rank-4_lowrankts.nii.gz', '/home/data/nbc/misc-projects/Salo_PowerReplication/dset-camcan/derivatives/godec/sub-CC721418/func/sub-CC721418_task-movie_space-MNI152NLin6Asym_desc-GODEC_rank-4_lowrankts.nii.gz', '/home/data/nbc/misc-projects/Salo_PowerReplication/dset-camcan/derivatives/godec/sub-CC721434/func/sub-CC721434_task-movie_space-MNI152NLin6Asym_desc-GODEC_rank-4_lowrankts.nii.gz', '/home/data/nbc/misc-projects/Salo_PowerReplication/dset-camcan/derivatives/godec/sub-CC721504/func/sub-CC721504_task-movie_space-MNI152NLin6Asym_desc-GODEC_rank-4_lowrankts.nii.gz', '/home/data/nbc/misc-projects/Salo_PowerReplication/dset-camcan/derivatives/godec/sub-CC721519/func/sub-CC721519_task-movie_space-MNI152NLin6Asym_desc-GODEC_rank-4_lowrankts.nii.gz', '/home/data/nbc/misc-projects/Salo_PowerReplication/dset-camcan/derivatives/godec/sub-CC721532/func/sub-CC721532_task-movie_space-MNI152NLin6Asym_desc-GODEC_rank-4_lowrankts.nii.gz', '/home/data/nbc/misc-projects/Salo_PowerReplication/dset-camcan/derivatives/godec/sub-CC721585/func/sub-CC721585_task-movie_space-MNI152NLin6Asym_desc-GODEC_rank-4_lowrankts.nii.gz', '/home/data/nbc/misc-projects/Salo_PowerReplication/dset-camcan/derivatives/godec/sub-CC721618/func/sub-CC721618_task-movie_space-MNI152NLin6Asym_desc-GODEC_rank-4_lowrankts.nii.gz', '/home/data/nbc/misc-projects/Salo_PowerReplication/dset-camcan/derivatives/godec/sub-CC721648/func/sub-CC721648_task-movie_space-MNI152NLin6Asym_desc-GODEC_rank-4_lowrankts.nii.gz', '/home/data/nbc/misc-projects/Salo_PowerReplication/dset-camcan/derivatives/godec/sub-CC721704/func/sub-CC721704_task-movie_space-MNI152NLin6Asym_desc-GODEC_rank-4_lowrankts.nii.gz', '/home/data/nbc/misc-projects/Salo_PowerReplication/dset-camcan/derivatives/godec/sub-CC721707/func/sub-CC721707_task-movie_space-MNI152NLin6Asym_desc-GODEC_rank-4_lowrankts.nii.gz', '/home/data/nbc/misc-projects/Salo_PowerReplication/dset-camcan/derivatives/godec/sub-CC721729/func/sub-CC721729_task-movie_space-MNI152NLin6Asym_desc-GODEC_rank-4_lowrankts.nii.gz']
-delta_zs: (20, 34716)
-Subject 10 has NaNs in scrubbed_corrs.
-Subject 10 has NaNs in scrubbed_zs.
-Subject 10 has NaNs in scrubbed_zs.
-14 of 20 subjects retained in scrubbing analysis
-delta_zs: (14, 34716)
-delta_zs: [[ 7.51707975e-03 -1.04545187e-01 -6.92147044e-02 ... -1.45074066e-01
-  -3.38526155e-02  5.54258292e-03]
- [ 9.73696157e-02  4.67570780e-02  1.13692011e-01 ...  1.04612749e-02
-  -5.54977812e-02  2.68551135e-02]
- [-1.67465626e-01  3.40379903e-02  7.86977382e-02 ... -8.20914472e-02
-   8.33158921e-02  4.77987361e-02]
- ...
- [ 5.94731184e-02 -3.82408261e-01 -3.27002805e-01 ... -1.30581951e-01
-  -3.15121037e-04  9.55992447e-03]
- [-6.24598907e-02 -5.66119421e-02 -2.19636704e-01 ...  1.16376504e-01
-  -3.24201908e-01  3.35594077e-01]
- [-5.45450602e-01 -5.48408612e-02 -1.57512917e-02 ...  7.00929055e-01
-  -2.19570234e-01 -2.62761012e-01]]
-mean_delta_z: (34716,)
-mean_delta_z: [-0.04019965 -0.04117148 -0.08095197 ...  0.01068257 -0.05162143
- -0.03307747]
-mean_delta_z after sorting: (34716,)
-mean_delta_z after sorting: [-0.01248641 -0.02726547  0.09345527 ...  0.04882171  0.04530225
-  0.05423762]
-scrub_smoothing_curve: (34716,)
-scrub_smoothing_curve: [nan nan nan ... nan nan nan]
-scrub_smoothing_curve: [nan nan nan ... nan nan nan]
-scrub_smoothing_curve: (0,)
-scrub_smoothing_curve: []
-scrub_smoothing_curve: []
