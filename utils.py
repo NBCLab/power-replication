@@ -74,6 +74,8 @@ def _plot_three_carpets_and_confounds(
     )
     confounds_ax = plt.subplot(confounds_gs[1])
     fd_arr = confounds_df["FD"].values
+    # In case there are no non-steady state volumes, replace the NaNs with zero.
+    fd_arr[np.isnan(fd_arr)] = 0
     confounds_df = confounds_df[[c for c in confounds_df.columns if c != "FD"]]
 
     # Plot FD on the right
