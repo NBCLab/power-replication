@@ -7,7 +7,8 @@ import matplotlib.pyplot as plt
 import nibabel as nib
 import numpy as np
 from matplotlib import gridspec as mgs  # noqa: E402
-from nilearn import image, masking, plotting
+from nilearn import plotting
+from nilearn.signal import clean
 from scipy import stats
 
 LGR = logging.getLogger("utils")
@@ -79,6 +80,8 @@ def _plot_components_and_physio(
     order = np.argsort(classification_ints)
     classification_ints = classification_ints[order]
     components_arr = components_arr[:, order]
+    # Detrend the component time series to better identify banding
+    components_arr = clean(components_arr.T, t_r=t_r, detrend=True, standardize="zscore").T
 
     # Determine the colormap
     temp_clf_palette = [clf_palette[clf_xformer_inv[c]] for c in np.unique(classification_ints)]
