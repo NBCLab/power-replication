@@ -94,7 +94,7 @@ def plot_components_and_physio(
         confounds_df = pd.read_table(confounds_file)
 
         ica_df = pd.read_table(ica_file)
-        components_arr = ica_df.values.T
+        components_arr = ica_df.values
         comptable = pd.read_table(ctab_file, index_col="Component")
         classifications = comptable["classification"].tolist()
 

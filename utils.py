@@ -245,22 +245,14 @@ def _plot_carpet(dseg, bold, title, fig, ax):
     ]
     cmap = mpl.colors.LinearSegmentedColormap.from_list("Power", palette, len(palette))
 
-    mask_img = image.math_img("img > 0", img=dseg)
-    bold_data = masking.apply_mask(bold, mask_img)
-    modes = stats.mode(bold_data, axis=0)  # voxelwise mode
-    modes = np.squeeze(modes[0])
-    scalars = 1000 - modes
-    bold_mode1000 = bold_data + scalars[None, :]
-    bold_mode1000 = masking.unmask(bold_mode1000, mask_img)
-
     dseg_vals = nib.load(dseg).get_fdata()
     n_gm_voxels = np.sum(np.logical_and(dseg_vals <= 3, dseg_vals > 0)) + 1
     n_brain_voxels = np.sum(dseg_vals > 0)
 
     display = plotting.plot_carpet(
-        bold_mode1000,
+        bold,
         mask_img=dseg,
-        detrend=False,
+        detrend=True,
         figure=fig,
         axes=ax,
         cmap=cmap,
