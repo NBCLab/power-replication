@@ -59,6 +59,7 @@ def run_ddmra_analyses(
                 & (participants_df["participant_id"] == sub_to_drop[1])
             )
         ]
+    participants_df = participants_df.iloc[680:700]
 
     for filetype, pattern in target_file_patterns.items():
         print(f"\t{filetype}", flush=True)
@@ -96,6 +97,7 @@ def run_ddmra_analyses(
             n_iters=10000,
             n_jobs=4,
             qc_thresh=0.2,
+            analyses=("scrubbing",),
         )
 
 
