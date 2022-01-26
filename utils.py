@@ -14,6 +14,131 @@ from scipy import stats
 LGR = logging.getLogger("utils")
 
 
+def _plot_three_carpets_and_confounds(
+    oc_file,
+    fitr2_file,
+    fits0_file,
+    dseg_file,
+    confounds_df,
+    t_r,
+    out_file,
+):
+    """Stuff."""
+    # Get confounds
+    confound_names = {
+        "trans_x": "X",
+        "trans_y": "Y",
+        "trans_z": "Z",
+        "rot_x": "P",
+        "rot_y": "R",
+        "rot_z": "Ya",
+        "framewise_displacement": "FD",
+    }
+    palette = {
+        "X": "#ea2807",
+        "Y": "#66ff6b",
+        "Z": "#2e35fd",
+        "P": "#5ffffc",
+        "R": "#fe4fff",
+        "Ya": "#e9e65d",
+        "FD": "#fe2a32",
+        "Heart rate": "#a6fe96",
+        "Resp. belt": "#625afd",
+    }
+
+    confounds_df = confounds_df[confound_names.keys()]
+    confounds_df = confounds_df.rename(columns=confound_names)
+
+    x_arr = np.linspace(0, (confounds_df.shape[0] - 1) * t_r, confounds_df.shape[0])
+
+    fig, axes = plt.subplots(
+        figsize=(16, 14),
+        nrows=4,
+        gridspec_kw={"height_ratios": [1, 3, 3, 3]},
+    )
+
+    _plot_carpet(dseg_file, oc_file, "Optimally Combined", fig, axes[1])
+    _plot_carpet(dseg_file, fitr2_file, "FIT-R2", fig, axes[2])
+    display = _plot_carpet(dseg_file, fits0_file, "FIT-S0", fig, axes[3])
+
+    last_carpet_ax = display.axes[-1]
+    width_ratio = last_carpet_ax.get_subplotspec().get_gridspec().get_width_ratios()
+
+    # First timeseries plot: confounds
+    confounds_gs = mgs.GridSpecFromSubplotSpec(
+        1,
+        2,
+        subplot_spec=axes[0],
+        width_ratios=width_ratio,
+        wspace=0.0,
+    )
+    confounds_ax = plt.subplot(confounds_gs[1])
+    fd_arr = confounds_df["FD"].values
+    confounds_df = confounds_df[[c for c in confounds_df.columns if c != "FD"]]
+
+    # Plot FD on the right
+    confounds_ax_right = confounds_ax.twinx()
+    confounds_ax_right.plot(x_arr, fd_arr, color=palette["FD"], label="FD", linewidth=2)
+    confounds_ax_right.set_ylim(np.floor(np.min(fd_arr)), np.ceil(np.max(fd_arr)))
+    confounds_ax_right.set_yticks((np.floor(np.min(fd_arr)), np.ceil(np.max(fd_arr))))
+    confounds_ax_right.tick_params(axis="y", which="both", colors=palette["FD"])
+    confounds_ax_right.set_ylabel(
+        "FD\n(mm)",
+        color=palette["FD"],
+        rotation=270,
+        labelpad=30,
+        fontsize=14,
+    )
+    confounds_ax_right.legend()
+    confounds_ax_right.tick_params(axis="y", which="both", length=0)
+
+    # Plot everything else on the left
+    all_min, all_max = 0, 0
+    for i_col, label in enumerate(confounds_df.columns):
+        arr = confounds_df[label].values
+        confounds_ax.plot(x_arr, arr, color=palette[label], label=label)
+        all_min = np.minimum(all_min, np.min(arr))
+        all_max = np.maximum(all_max, np.max(arr))
+
+    confounds_ax.set_ylim(np.floor(all_min), np.ceil(all_max))
+    confounds_ax.set_yticks((np.floor(all_min), np.ceil(all_max)))
+    confounds_ax.set_xlim(x_arr[0], x_arr[-1])
+    confounds_ax.tick_params(axis="y", which="both", length=0)
+    confounds_ax.xaxis.set_visible(False)
+    confounds_ax.set_ylabel("Position\n(mm)", fontsize=14)
+    confounds_ax.legend(ncol=3)
+    confounds_ax.set_title("Head position & motion", fontsize=16)
+    # Add subject/dset info to the top ax
+    confounds_ax.text(
+        -0.06,
+        1.1,
+        op.splitext(op.basename(out_file))[0].replace("_", " "),
+        transform=confounds_ax.transAxes,
+        size=16,
+    )
+
+    # Add x-axis labels to bottom ax
+    # First, find the last carpet plot
+    sel_ax = None
+    for i_ax, temp in enumerate(display.axes):
+        if temp.get_title() == "FIT-S0":
+            sel_ax = i_ax
+
+    if sel_ax is None:
+        raise Exception(display.axes)
+
+    display.axes[sel_ax].xaxis.set_visible(True)
+    display.axes[sel_ax].set_xlabel("Time (min)", fontsize=14, labelpad=-10)
+    display.axes[sel_ax].set_xticks([0, len(x_arr)])
+    display.axes[sel_ax].set_xticklabels(
+        [0, f"{int(x_arr[-1] // 60)}:{str(int(x_arr[-1] % 60)).zfill(2)}"],
+    )
+    display.axes[sel_ax].tick_params(axis="x", which="both", length=0, labelsize=12)
+    display.axes[sel_ax].spines["bottom"].set_position(("outward", 0))
+
+    fig.savefig(out_file)
+
+
 def _plot_components_and_physio(
     oc_file,
     dseg_file,
