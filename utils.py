@@ -500,6 +500,7 @@ def get_target_files():
         "TE30": "power/{participant_id}/func/{prefix}_desc-TE30_bold.nii.gz",
         "OC": "tedana/{participant_id}/func/{prefix}_desc-optcom_bold.nii.gz",
         "MEDN": "tedana/{participant_id}/func/{prefix}_desc-optcomDenoised_bold.nii.gz",
+        "MEDN Noise": "tedana/{participant_id}/func/{prefix}_desc-optcomDenoised_errorts.nii.gz",
         "MEDN+MIR": "tedana/{participant_id}/func/{prefix}_desc-optcomMIRDenoised_bold.nii.gz",
         "MEDN+MIR Noise": (
             "tedana/{participant_id}/func/{prefix}_desc-optcomMIRDenoised_errorts.nii.gz"
@@ -529,7 +530,6 @@ def get_target_files():
         "MEDN+Nuis-Reg": (
             "nuisance-regressions/{participant_id}/func/{prefix}_desc-NuisReg_bold.nii.gz"
         ),
-        "MEDN Noise": "tedana/{participant_id}/func/{prefix}_desc-optcomDenoised_errorts.nii.gz",
         "MEDN+RV-Reg": (
             "nuisance-regressions/{participant_id}/func/{prefix}_desc-RVReg_bold.nii.gz"
         ),

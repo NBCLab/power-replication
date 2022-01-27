@@ -51,6 +51,7 @@ def run_ddmra_analyses(
     participants_df = participants_df.loc[
         participants_df["dset"].isin(["dset-camcan", "dset-cambridge", "dset-dupre"])
     ]
+    participants_df = participants_df.loc[participants_df["dset"].isin(["dset-cambridge"])]
     subjects_to_drop = get_bad_subjects_nonphysio()
     for sub_to_drop in subjects_to_drop:
         participants_df = participants_df.loc[

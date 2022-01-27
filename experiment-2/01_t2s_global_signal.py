@@ -89,7 +89,7 @@ def plot_denoised_and_motion(
 
 
 if __name__ == "__main__":
-    print("Experiment 2, Analysis Group 2")
+    print("Experiment 2, Analysis Group 1")
     project_dir = "/home/data/nbc/misc-projects/Salo_PowerReplication/"
     participants_file = op.join(project_dir, "participants.tsv")
     in_dir = op.join(project_dir, "{dset}")
