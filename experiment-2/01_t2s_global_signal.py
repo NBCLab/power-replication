@@ -19,7 +19,7 @@ import pandas as pd  # noqa: E402
 
 sys.path.append("..")
 
-from utils import _plot_three_carpets_and_confounds  # noqa: E402
+from utils import _plot_oc_and_fit  # noqa: E402
 from utils import get_bad_subjects_nonphysio  # noqa: E402
 from utils import get_prefixes  # noqa: E402
 from utils import get_target_files  # noqa: E402
@@ -75,7 +75,7 @@ def plot_denoised_and_motion(
 
         confounds_df = pd.read_table(confounds_file)
 
-        _plot_three_carpets_and_confounds(
+        _plot_oc_and_fit(
             oc_file,
             fitr2_file,
             fits0_file,
