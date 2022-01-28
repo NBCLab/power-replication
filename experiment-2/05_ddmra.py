@@ -45,13 +45,13 @@ def run_ddmra_analyses(
 ):
     """Run DDMRA analyses on each of the required derivatives, across datasets."""
     print("Experiment 2, Analysis Group 5, Analysis 1", flush=True)
-    out_dir = op.join(project_dir, "analyses/experiment02_group05_analysis01")
+    out_dir = op.join(project_dir, "analyses/experiment02_group05_analysis01_camcan")
 
     participants_df = pd.read_table(participants_file)
     participants_df = participants_df.loc[
         participants_df["dset"].isin(["dset-camcan", "dset-cambridge", "dset-dupre"])
     ]
-    participants_df = participants_df.loc[participants_df["dset"].isin(["dset-cambridge"])]
+    participants_df = participants_df.loc[participants_df["dset"].isin(["dset-camcan"])]
     subjects_to_drop = get_bad_subjects_nonphysio()
     for sub_to_drop in subjects_to_drop:
         participants_df = participants_df.loc[
