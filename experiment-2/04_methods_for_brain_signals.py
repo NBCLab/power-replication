@@ -87,7 +87,7 @@ def plot_denoised_with_motion(
 
             # MEDN is the first image for each
             # Get the repetition time from the metadata file
-            metadata_file = filegroup_filenames["MEDN"].replace(".nii.gz", ".json")
+            metadata_file = filegroup_filenames[0].replace(".nii.gz", ".json")
             with open(metadata_file) as fo:
                 t_r = json.load(fo)["RepetitionTime"]
 
