@@ -66,7 +66,6 @@ def plot_denoised_with_motion(
         dset = participant_row["dset"]
         dset_prefix = get_prefixes()[dset]
         subj_prefix = dset_prefix.format(participant_id=subj_id)
-        out_file = op.join(out_dir, f"{dset}_{subj_id}.svg")
 
         confounds_file = confounds_pattern.format(
             dset=dset, participant_id=subj_id, prefix=subj_prefix
@@ -77,6 +76,7 @@ def plot_denoised_with_motion(
         for filegroup_name, group_file_patterns in target_file_patterns.items():
             filetype_dir = op.join(out_dir, filegroup_name)
             os.makedirs(filetype_dir, exist_ok=True)
+            out_file = op.join(filetype_dir, f"{dset}_{subj_id}.svg")
 
             filegroup_filenames = [
                 group_file_pattern.format(
