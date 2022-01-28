@@ -65,7 +65,7 @@ def run_ddmra_analyses(
         print(f"\t{filetype}", flush=True)
         filetype_out_dir = op.join(out_dir, filetype.replace(" ", "_"))
         os.makedirs(filetype_out_dir, exist_ok=True)
-        target_files, fd_all = [], []
+        target_files, fd_all, keep_subjects = [], [], []
         for i, row in participants_df.iterrows():
             dset_prefix_mni = get_prefixes_mni()[row["dset"]]
             dset_prefix = get_prefixes()[row["dset"]]
@@ -89,6 +89,15 @@ def run_ddmra_analyses(
             fd_arr = confounds_df["framewise_displacement"].values
             fd_arr[np.isnan(fd_arr)] = 0
             fd_all.append(fd_arr)
+            if np.mean(fd_arr) <= 0.3:
+                keep_subjects.append(i)
+
+        fd_all = [fd_all[i_subj] for i_subj in keep_subjects]
+        target_files = [target_files[i_subj] for i_subj in keep_subjects]
+        print(
+            f"\t\tKeeping {len(keep_subjects)}/{participants_df.shape[0]} participants "
+            "with mean FD <= 0.3mm."
+        )
 
         run_analyses(
             target_files,
