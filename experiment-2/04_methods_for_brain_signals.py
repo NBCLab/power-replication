@@ -43,7 +43,7 @@ def plot_denoised_with_motion(
 ):
     """Generate carpet plots with associated line plots for denoising derivatives."""
     print("Experiment 2, Analysis Group 4, Analysis 1", flush=True)
-    out_dir = op.join(project_dir, "analyses", "experiment02_group04", "analysis_01")
+    out_dir = op.join(project_dir, "analyses", "experiment02_group04", "analysis01")
     os.makedirs(out_dir, exist_ok=True)
 
     participants_df = pd.read_table(participants_file)
@@ -61,7 +61,7 @@ def plot_denoised_with_motion(
         ]
     print(f"{participants_df.shape[0]}/{n_subs_all} participants retained.")
 
-    for i_run, participant_row in participants_df.iloc[:1].iterrows()[:1]:
+    for i_run, participant_row in participants_df.iloc[:1].iterrows():
         subj_id = participant_row["participant_id"]
         dset = participant_row["dset"]
         dset_prefix = get_prefixes()[dset]
