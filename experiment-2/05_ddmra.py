@@ -46,6 +46,7 @@ def run_ddmra_analyses(
     """Run DDMRA analyses on each of the required derivatives, across datasets."""
     print("Experiment 2, Analysis Group 5, Analysis 1", flush=True)
     out_dir = op.join(project_dir, "analyses/experiment02_group05_analysis01")
+    out_dir_low_fd = op.join(project_dir, "analyses/experiment02_group05_analysis01_low_fd")
 
     participants_df = pd.read_table(participants_file)
     participants_df = participants_df.loc[
@@ -65,6 +66,9 @@ def run_ddmra_analyses(
         print(f"\t{filetype}", flush=True)
         filetype_out_dir = op.join(out_dir, filetype.replace(" ", "_"))
         os.makedirs(filetype_out_dir, exist_ok=True)
+        filetype_out_dir_low_fd = op.join(out_dir_low_fd, filetype.replace(" ", "_"))
+        os.makedirs(filetype_out_dir_low_fd, exist_ok=True)
+
         target_files, fd_all, keep_subjects = [], [], []
         for i, row in participants_df.iterrows():
             dset_prefix_mni = get_prefixes_mni()[row["dset"]]
@@ -89,20 +93,29 @@ def run_ddmra_analyses(
             fd_arr = confounds_df["framewise_displacement"].values
             fd_arr[np.isnan(fd_arr)] = 0
             fd_all.append(fd_arr)
-            if np.mean(fd_arr) <= 0.3:
+            if np.mean(fd_arr) < 0.2:
                 keep_subjects.append(i)
-
-        fd_all = [fd_all[i_subj] for i_subj in keep_subjects]
-        target_files = [target_files[i_subj] for i_subj in keep_subjects]
-        print(
-            f"\t\tKeeping {len(keep_subjects)}/{participants_df.shape[0]} participants "
-            "with mean FD <= 0.3mm."
-        )
 
         run_analyses(
             target_files,
             fd_all,
             out_dir=filetype_out_dir,
+            n_iters=10000,
+            n_jobs=4,
+            qc_thresh=0.2,
+        )
+
+        fd_all_low_fd = [fd_all[i_subj] for i_subj in keep_subjects]
+        target_files_low_fd = [target_files[i_subj] for i_subj in keep_subjects]
+        print(
+            f"\t\tKeeping {len(keep_subjects)}/{participants_df.shape[0]} participants "
+            "with mean FD < 0.2mm."
+        )
+
+        run_analyses(
+            target_files_low_fd,
+            fd_all_low_fd,
+            out_dir=filetype_out_dir_low_fd,
             n_iters=10000,
             n_jobs=4,
             qc_thresh=0.2,
