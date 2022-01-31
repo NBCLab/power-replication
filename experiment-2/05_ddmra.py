@@ -59,6 +59,7 @@ def run_ddmra_analyses(
                 & (participants_df["participant_id"] == sub_to_drop[1])
             )
         ]
+    participants_df = participants_df.reset_index(drop=True)
 
     for filetype, pattern in target_file_patterns.items():
         print(f"\t{filetype}", flush=True)

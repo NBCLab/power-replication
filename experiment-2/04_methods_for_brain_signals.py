@@ -61,7 +61,7 @@ def plot_denoised_with_motion(
         ]
     print(f"{participants_df.shape[0]}/{n_subs_all} participants retained.")
 
-    for i_run, participant_row in participants_df.iloc[:1].iterrows():
+    for i_run, participant_row in participants_df.iterrows():
         subj_id = participant_row["participant_id"]
         dset = participant_row["dset"]
         dset_prefix = get_prefixes()[dset]
