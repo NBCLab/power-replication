@@ -77,6 +77,9 @@ def plot_denoised_with_motion(
             filetype_dir = op.join(out_dir, filegroup_name)
             os.makedirs(filetype_dir, exist_ok=True)
             out_file = op.join(filetype_dir, f"{dset}_{subj_id}.svg")
+            # First run was killed on HPC, so skip existing subjects.
+            if op.isfile(out_file):
+                continue
 
             filegroup_filenames = [
                 group_file_pattern.format(
