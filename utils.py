@@ -142,7 +142,6 @@ def _plot_denoised_and_confounds(
     display.axes[sel_ax].spines["bottom"].set_position(("outward", 0))
 
     fig.savefig(out_file)
-    fig.close()
 
 
 def _plot_oc_and_fit(
