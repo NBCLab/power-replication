@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import nibabel as nib
 import numpy as np
 from matplotlib import gridspec as mgs  # noqa: E402
-from nilearn import plotting
+from nilearn import image, plotting
 from nilearn.signal import clean
 from scipy import stats
 
@@ -509,8 +509,13 @@ def _plot_carpet(dseg, bold, title, fig, ax):
     n_gm_voxels = np.sum(np.logical_and(dseg_vals <= 3, dseg_vals > 0)) + 1
     n_brain_voxels = np.sum(dseg_vals > 0)
 
+    # Per Power 2017, the BOLD data should be smoothed within each tissue type.
+    # We can't really do that with nilearn, so we will smooth with a 4mm kernel over the whole
+    # image.
+    smooth_bold = image.smooth_img(bold, fwhm=4)
+
     display = plotting.plot_carpet(
-        bold,
+        smooth_bold,
         mask_img=dseg,
         detrend=True,
         figure=fig,
