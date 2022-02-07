@@ -103,6 +103,7 @@ def run_ddmra_analyses(
             n_iters=10000,
             n_jobs=4,
             qc_thresh=0.2,
+            verbose=True,
         )
 
         fd_all_low_fd = [fd_all[i_subj] for i_subj in keep_subjects]
@@ -119,6 +120,7 @@ def run_ddmra_analyses(
             n_iters=10000,
             n_jobs=4,
             qc_thresh=0.2,
+            verbose=True,
         )
 
 
