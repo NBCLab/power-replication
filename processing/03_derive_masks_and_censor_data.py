@@ -212,7 +212,7 @@ def create_masks(project_dir, dset):
         )
 
         # Combine masks with different values for carpet plots
-        seg_arr = np.zeros(cort_img.shape)
+        seg_arr = np.zeros(cort_img.shape, dtype=int)
         cort_arr = cort_img.get_fdata()
         seg_arr[cort_arr == 1] = 1
         subcort_arr = subcort_img.get_fdata()
