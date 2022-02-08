@@ -93,10 +93,18 @@ def create_masks(project_dir, dset):
             f"--o {temp_cereb_file} --match 8 --match 47"
         )
         assert op.isfile(temp_cereb_file)
+        temp_stem_file = op.join(anat_out_dir, "stem.nii.gz")
+        run_command(
+            f"mri_binarize --i {aseg_boldres_t1wspace} "
+            f"--o {temp_stem_file} --match 16"
+        )
+        assert op.isfile(temp_stem_file)
+
         cort_img = image.math_img(
-            "gm_img - subcort_and_cereb_img",
+            "(gm_img - subcort_and_cereb_img) - stem_img",
             gm_img=temp_gm_file,
             subcort_and_cereb_img=temp_subcort_and_cereb_file,
+            stem_img=temp_stem_file,
         )
         subcort_img = image.math_img(
             "subcort_and_cereb_img - cereb_img",
@@ -283,6 +291,7 @@ def create_masks(project_dir, dset):
             temp_gm_file,
             temp_subcort_and_cereb_file,
             temp_cereb_file,
+            temp_stem_file,
         ]:
             os.remove(temp_file)
 
