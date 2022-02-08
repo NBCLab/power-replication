@@ -12,210 +12,7 @@ import pandas as pd
 from nilearn import image
 from scipy.ndimage.morphology import binary_erosion
 
-# Renumbering for aparc+aseg from
-# https://github.com/afni/afni/blob/25e77d564f2c67ff480fa99a7b8e48ec2d9a89fc/src/scripts_install/%40SUMA_renumber_FS
-RENUMBER_VALUES = (
-    (0, 0),
-    (2, 1),
-    (3, 2),
-    (4, 3),
-    (5, 4),
-    (7, 5),
-    (8, 6),
-    (10, 7),
-    (11, 8),
-    (12, 9),
-    (13, 10),
-    (14, 11),
-    (15, 12),
-    (16, 13),
-    (17, 14),
-    (18, 15),
-    (24, 16),
-    (26, 17),
-    (28, 18),
-    (30, 19),
-    (31, 20),
-    (41, 21),
-    (42, 22),
-    (43, 23),
-    (44, 24),
-    (46, 25),
-    (47, 26),
-    (49, 27),
-    (50, 28),
-    (51, 29),
-    (52, 30),
-    (53, 31),
-    (54, 32),
-    (58, 33),
-    (60, 34),
-    (62, 35),
-    (63, 36),
-    (72, 37),
-    (77, 38),
-    (80, 39),
-    (85, 40),
-    (251, 41),
-    (252, 42),
-    (253, 43),
-    (254, 44),
-    (255, 45),
-    (1000, 46),
-    (1001, 47),
-    (1002, 48),
-    (1003, 49),
-    (1005, 50),
-    (1006, 51),
-    (1007, 52),
-    (1008, 53),
-    (1009, 54),
-    (1010, 55),
-    (1011, 56),
-    (1012, 57),
-    (1013, 58),
-    (1014, 59),
-    (1015, 60),
-    (1016, 61),
-    (1017, 62),
-    (1018, 63),
-    (1019, 64),
-    (1020, 65),
-    (1021, 66),
-    (1022, 67),
-    (1023, 68),
-    (1024, 69),
-    (1025, 70),
-    (1026, 71),
-    (1027, 72),
-    (1028, 73),
-    (1029, 74),
-    (1030, 75),
-    (1031, 76),
-    (1032, 77),
-    (1033, 78),
-    (1034, 79),
-    (1035, 80),
-    (2000, 81),
-    (2001, 82),
-    (2002, 83),
-    (2003, 84),
-    (2005, 85),
-    (2006, 86),
-    (2007, 87),
-    (2008, 88),
-    (2009, 89),
-    (2010, 90),
-    (2011, 91),
-    (2012, 92),
-    (2013, 93),
-    (2014, 94),
-    (2015, 95),
-    (2016, 96),
-    (2017, 97),
-    (2018, 98),
-    (2019, 99),
-    (2020, 100),
-    (2021, 101),
-    (2022, 102),
-    (2023, 103),
-    (2024, 104),
-    (2025, 105),
-    (2026, 106),
-    (2027, 107),
-    (2028, 108),
-    (2029, 109),
-    (2030, 110),
-    (2031, 111),
-    (2032, 112),
-    (2033, 113),
-    (2034, 114),
-    (2035, 115),
-    (29, 220),
-    (61, 221),
-)
-
-CORTICAL_LABELS = [
-    2,
-    14,
-    15,
-    22,
-    31,
-    32,
-    47,
-    48,
-    49,
-    50,
-    51,
-    52,
-    53,
-    54,
-    55,
-    56,
-    57,
-    58,
-    59,
-    60,
-    61,
-    62,
-    63,
-    64,
-    65,
-    66,
-    67,
-    68,
-    69,
-    70,
-    71,
-    72,
-    73,
-    74,
-    75,
-    76,
-    77,
-    78,
-    79,
-    80,
-    82,
-    83,
-    84,
-    85,
-    86,
-    87,
-    88,
-    89,
-    90,
-    91,
-    92,
-    93,
-    94,
-    95,
-    96,
-    97,
-    98,
-    99,
-    100,
-    101,
-    102,
-    103,
-    104,
-    105,
-    106,
-    107,
-    108,
-    109,
-    110,
-    111,
-    112,
-    113,
-    114,
-    115,
-]
-# NOTE: I removed brain-stem (13)
-SUBCORTICAL_LABELS = [7, 8, 9, 10, 17, 18, 27, 28, 29, 30, 33, 34]
-CEREBELLUM_LABELS = [6, 26]
-WM_LABELS = [1, 5, 21, 25, 38, 41, 42, 43, 44, 45]
-CSF_LABELS = [3, 4, 11, 12, 16, 20, 23, 24, 36, 37]
+from processing_utils import run_command
 
 
 def create_masks(project_dir, dset):
@@ -247,60 +44,66 @@ def create_masks(project_dir, dset):
             os.mkdir(anat_out_dir)
 
         # Create GM, WM, and CSF masks
-        # WM and CSF masks must be created from the high resolution Freesurfer aparc+aseg file
+        # WM and CSF masks must be created from the high resolution Freesurfer aseg file
         # Then they must be eroded
-        aparcaseg_t1wres_t1wspace = op.join(
+        aseg_t1wres_t1wspace = op.join(
             subj_fmriprep_dir,
             "anat",
-            f"{subject}_desc-aparcaseg_dseg.nii.gz",
+            f"{subject}_desc-aseg_dseg.nii.gz",
         )
 
-        # Load the T1w-res aparc+aseg image and renumber it
-        aparcaseg_t1wres_t1wspace_img = nib.load(aparcaseg_t1wres_t1wspace)
-        aparcaseg_t1wres_t1wspace_data = aparcaseg_t1wres_t1wspace_img.get_fdata()
-        aparcaseg_t1wres_t1wspace_renum_data = np.zeros_like(
-            aparcaseg_t1wres_t1wspace_data
+        temp_wm_file = op.join(anat_out_dir, "wm.nii.gz")
+        run_command(
+            f"mri_binarize --i {aseg_t1wres_t1wspace} --o {temp_wm_file} --all-wm"
         )
-        for before, after in RENUMBER_VALUES:
-            aparcaseg_t1wres_t1wspace_renum_data[
-                aparcaseg_t1wres_t1wspace_data == before
-            ] = after
-
-        aparcaseg_t1wres_t1wspace_renum_img = nib.Nifti1Image(
-            aparcaseg_t1wres_t1wspace_renum_data,
-            aparcaseg_t1wres_t1wspace_img.affine,
-            header=aparcaseg_t1wres_t1wspace_img.header,
+        assert op.isfile(temp_wm_file)
+        temp_csf_file = op.join(anat_out_dir, "csf.nii.gz")
+        run_command(
+            f"mri_binarize --i {aseg_t1wres_t1wspace} --o {temp_csf_file} --ventricles"
         )
+        assert op.isfile(temp_csf_file)
 
-        # Find the BOLD-res aparc+aseg
-        aparcaseg_boldres_t1wspace = sorted(
+        # Find the BOLD-res aseg
+        aseg_boldres_t1wspace = sorted(
             glob(
                 op.join(
                     subj_fmriprep_dir,
                     "func",
-                    f"{subject}_task-*_space-T1w_desc-aparcaseg_dseg.nii.gz",
+                    f"{subject}_task-*_space-T1w_desc-aseg_dseg.nii.gz",
                 )
             )
         )
-        assert len(aparcaseg_boldres_t1wspace) == 1, aparcaseg_boldres_t1wspace
-        aparcaseg_boldres_t1wspace = aparcaseg_boldres_t1wspace[0]
+        assert len(aseg_boldres_t1wspace) == 1, aseg_boldres_t1wspace
+        aseg_boldres_t1wspace = aseg_boldres_t1wspace[0]
 
-        # Load the BOLD-res aparc+aseg image and renumber it
-        aparcaseg_boldres_t1wspace_img = nib.load(aparcaseg_boldres_t1wspace)
-        aparcaseg_boldres_t1wspace_data = aparcaseg_boldres_t1wspace_img.get_fdata()
-        aparcaseg_boldres_t1wspace_renum_data = np.zeros_like(
-            aparcaseg_boldres_t1wspace_data
+        temp_gm_file = op.join(anat_out_dir, "gm.nii.gz")
+        run_command(
+            f"mri_binarize --i {aseg_boldres_t1wspace} --o {temp_gm_file} --gm"
         )
-        for before, after in RENUMBER_VALUES:
-            aparcaseg_boldres_t1wspace_renum_data[
-                aparcaseg_boldres_t1wspace_data == before
-            ] = after
-
-        aparcaseg_boldres_t1wspace_renum_img = nib.Nifti1Image(
-            aparcaseg_boldres_t1wspace_renum_data,
-            aparcaseg_boldres_t1wspace_img.affine,
-            header=aparcaseg_boldres_t1wspace_img.header,
+        assert op.isfile(temp_gm_file)
+        temp_subcort_and_cereb_file = op.join(anat_out_dir, "subcort_and_cereb.nii.gz")
+        run_command(
+            f"mri_binarize --i {aseg_boldres_t1wspace} "
+            f"--o {temp_subcort_and_cereb_file} --subcort-gm"
         )
+        assert op.isfile(temp_subcort_and_cereb_file)
+        temp_cereb_file = op.join(anat_out_dir, "cereb.nii.gz")
+        run_command(
+            f"mri_binarize --i {aseg_boldres_t1wspace} "
+            f"--o {temp_cereb_file} --match 8 --match 47"
+        )
+        assert op.isfile(temp_cereb_file)
+        cort_img = image.math_img(
+            "gm_img - subcort_and_cereb_img",
+            gm_img=temp_gm_file,
+            subcort_and_cereb_img=temp_subcort_and_cereb_file,
+        )
+        subcort_img = image.math_img(
+            "subcort_and_cereb_img - cereb_img",
+            subcort_and_cereb_img=temp_subcort_and_cereb_file,
+            cereb_img=temp_cereb_file,
+        )
+        cereb_img = nib.load(temp_cereb_file)
 
         # Load T1w-space-to-BOLD-space transform
         xfm_files = sorted(
@@ -329,20 +132,6 @@ def create_masks(project_dir, dset):
         assert len(scanner_files) >= 3
         scanner_file = scanner_files[0]
 
-        # Create GM masks in T1w space, BOLD resolution
-        cort_img = image.math_img(
-            f"np.isin(img, {CORTICAL_LABELS}).astype(int)",
-            img=aparcaseg_boldres_t1wspace,
-        )
-        subcort_img = image.math_img(
-            f"np.isin(img, {SUBCORTICAL_LABELS}).astype(int)",
-            img=aparcaseg_boldres_t1wspace,
-        )
-        cereb_img = image.math_img(
-            f"np.isin(img, {CEREBELLUM_LABELS}).astype(int)",
-            img=aparcaseg_boldres_t1wspace,
-        )
-
         # Save cortical mask to file
         # NOTE: Used for most analyses of "global signal"
         cort_img.to_filename(
@@ -352,17 +141,8 @@ def create_masks(project_dir, dset):
             )
         )
 
-        # Create T1w-space, T1w-resolution WM and CSF masks
-        wm_img = image.math_img(
-            f"np.isin(img, {WM_LABELS}).astype(int)",
-            img=aparcaseg_t1wres_t1wspace_renum_img,
-        )
-        csf_img = image.math_img(
-            f"np.isin(img, {CSF_LABELS}).astype(int)",
-            img=aparcaseg_t1wres_t1wspace_renum_img,
-        )
-
         # Erode WM mask
+        wm_img = nib.load(temp_wm_file)
         wm_ero0 = wm_img.get_fdata()
         wm_ero2 = binary_erosion(wm_ero0, iterations=2)
         wm_ero4 = binary_erosion(wm_ero0, iterations=4)
@@ -383,21 +163,22 @@ def create_masks(project_dir, dset):
         # Resample WM masks to functional resolution with NN interp
         res_wm_ero02 = image.resample_to_img(
             wm_ero02,
-            aparcaseg_boldres_t1wspace_renum_img,
+            aseg_boldres_t1wspace,
             interpolation="nearest",
         )
         res_wm_ero24 = image.resample_to_img(
             wm_ero24,
-            aparcaseg_boldres_t1wspace_renum_img,
+            aseg_boldres_t1wspace,
             interpolation="nearest",
         )
         res_wm_ero4 = image.resample_to_img(
             wm_ero4,
-            aparcaseg_boldres_t1wspace_renum_img,
+            aseg_boldres_t1wspace,
             interpolation="nearest",
         )
 
         # Erode CSF masks
+        csf_img = nib.load(temp_csf_file)
         csf_ero0 = csf_img.get_fdata()
         csf_ero2 = binary_erosion(csf_ero0, iterations=2)
 
@@ -413,12 +194,12 @@ def create_masks(project_dir, dset):
         # Resample CSF masks to functional resolution with NN interp
         res_csf_ero02 = image.resample_to_img(
             csf_ero02,
-            aparcaseg_boldres_t1wspace_renum_img,
+            aseg_boldres_t1wspace,
             interpolation="nearest",
         )
         res_csf_ero2 = image.resample_to_img(
             csf_ero2,
-            aparcaseg_boldres_t1wspace_renum_img,
+            aseg_boldres_t1wspace,
             interpolation="nearest",
         )
 
@@ -495,6 +276,15 @@ def create_masks(project_dir, dset):
                 order=0,
             )
             output_img_boldres_boldspace.to_filename(output_file_boldres_boldspace)
+
+        for temp_file in [
+            temp_wm_file,
+            temp_csf_file,
+            temp_gm_file,
+            temp_subcort_and_cereb_file,
+            temp_cereb_file,
+        ]:
+            os.remove(temp_file)
 
 
 def remove_nss_vols(project_dir, dset):
@@ -858,6 +648,6 @@ if __name__ == "__main__":
     for dset in dsets:
         print(f"\t{dset}", flush=True)
         create_masks(project_dir, dset)
-        remove_nss_vols(project_dir, dset)
-        compile_metadata(project_dir, dset)
-        create_top_level_files(project_dir, dset)
+        # remove_nss_vols(project_dir, dset)
+        # compile_metadata(project_dir, dset)
+        # create_top_level_files(project_dir, dset)
