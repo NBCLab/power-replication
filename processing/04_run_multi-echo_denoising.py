@@ -180,6 +180,7 @@ def run_tedana(project_dir, dset, subject):
         echo_times,
         fittype="curvefit",
         gscontrol="mir",
+        tedpca="aic",  # least aggressive maPCA option
         maxit=500,
         maxrestart=100,
         mask=mask_img,  # The docs say str, but workflows should work fine with an img
