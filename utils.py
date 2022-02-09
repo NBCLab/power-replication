@@ -338,10 +338,14 @@ def _plot_components_and_physio(
     classification_ints = classification_ints[order]
     components_arr = components_arr[:, order]
     # Detrend the component time series to better identify banding
-    components_arr = clean(components_arr.T, t_r=t_r, detrend=True, standardize="zscore").T
+    components_arr = clean(
+        components_arr.T, t_r=t_r, detrend=True, standardize="zscore"
+    ).T
 
     # Determine the colormap
-    temp_clf_palette = [clf_palette[clf_xformer_inv[c]] for c in np.unique(classification_ints)]
+    temp_clf_palette = [
+        clf_palette[clf_xformer_inv[c]] for c in np.unique(classification_ints)
+    ]
     # The colormap needs >1 color so I add one to the end just in case. It's bright blue.
     temp_clf_palette = temp_clf_palette + ["#0000FF"]
     clf_cmap = mpl.colors.LinearSegmentedColormap.from_list(
@@ -572,7 +576,7 @@ def calculate_variance_explained(full_data, reduced_data):
     red_dm = reduced_data - np.mean(reduced_data, axis=0, keepdims=True)
 
     # get variance explained by the reduced data
-    varexpl = 1 - ((full_dm - red_dm) ** 2.0).sum() / (full_dm ** 2.0).sum()
+    varexpl = 1 - ((full_dm - red_dm) ** 2.0).sum() / (full_dm**2.0).sum()
     return varexpl
 
 
@@ -677,10 +681,16 @@ def get_target_files():
 
 def get_bad_subjects_nonphysio():
     BAD_SUBJECTS = (
-        ("dset-camcan", "sub-CC110187"),  # SVD failure in tedana
-        ("dset-camcan", "sub-CC110411"),  # SVD failure in tedana
-        ("dset-camcan", "sub-CC310142"),  # SVD failure in tedana
-        ("dset-camcan", "sub-CC420587"),  # SVD failure in tedana
-        ("dset-camcan", "sub-CC620026"),  # SVD failure in tedana
+        ("dset-camcan", "sub-CC110187"),
+        ("dset-camcan", "sub-CC110411"),
+        ("dset-camcan", "sub-CC221107"),
+        ("dset-camcan", "sub-CC221648"),
+        ("dset-camcan", "sub-CC221733"),
+        ("dset-camcan", "sub-CC310142"),
+        ("dset-camcan", "sub-CC310397"),
+        ("dset-camcan", "sub-CC410325"),
+        ("dset-camcan", "sub-CC420587"),
+        ("dset-camcan", "sub-CC420589"),
+        ("dset-camcan", "sub-CC620026"),
     )
     return BAD_SUBJECTS
