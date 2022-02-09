@@ -55,6 +55,18 @@ def compile_nuisance_regressors(
         csf_mask=csf_img,
         brain_mask=mask_file,
     )
+    if np.sum(csf_img.get_fdata()) == 0:
+        print(
+            "WARNING: Deepest CSF is missing for this subject. Using available CSF instead!",
+            flush=True,
+        )
+        csf_img = image.math_img("img == 7", img=seg_file)
+        csf_img = image.math_img(
+            "csf_mask * brain_mask",
+            csf_mask=csf_img,
+            brain_mask=mask_file,
+        )
+
     csf_data = masking.apply_mask(medn_file, csf_img)
 
     confounds_df["NuisanceRegression_WhiteMatter"] = np.mean(wm_data, axis=1)
