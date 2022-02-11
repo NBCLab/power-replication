@@ -278,12 +278,18 @@ def run_dgsr(medn_file, mask_file, confounds_file, out_dir):
     cmd = (
         f"rapidtide --denoising --datatstep {t_r} "
         f"--motionfile {confounds_file} --denoising --spatialfilt -1 "
+        f"--corrmask {mask_file} --globalmeaninclude {mask_file} "
         f"{medn_file} {op.join(out_dir, prefix)}"
     )
     run_command(cmd)
 
     # Per the rapidtide documentation, the lfofilterCleaned data have mean included.
-    dgsr_noise_img = image.math_img("img1 - img2", img1=medn_file, img2=dgsr_file)
+    dgsr_noise_img = image.math_img(
+        "(img1 - img2) * mask_img",
+        img1=medn_file,
+        img2=dgsr_file,
+        mask_img=mask_file,
+    )
     dgsr_noise_img.to_filename(dgsr_noise_file)
 
     # Create json files with Sources and Description fields
@@ -733,8 +739,8 @@ def main(project_dir, dset, subject):
     ] + dgsr_dset_desc["GeneratedBy"]
 
     os.makedirs(nuis_dir, exist_ok=True)
-    with open(op.join(nuis_dir, "dataset_description.json"), "w") as fo:
-        json.dump(nuis_dset_desc, fo, sort_keys=True, indent=4)
+    # with open(op.join(nuis_dir, "dataset_description.json"), "w") as fo:
+    #     json.dump(nuis_dset_desc, fo, sort_keys=True, indent=4)
 
     os.makedirs(dgsr_dir, exist_ok=True)
     with open(op.join(dgsr_dir, "dataset_description.json"), "w") as fo:
@@ -763,17 +769,17 @@ def main(project_dir, dset, subject):
     # ###################
     # Nuisance Regression
     # ###################
-    run_nuisance(medn_file, mask_file, confounds_file, nuis_subj_dir)
+    # run_nuisance(medn_file, mask_file, confounds_file, nuis_subj_dir)
 
     # ########
     # aCompCor
     # ########
-    run_acompcor(medn_file, mask_file, confounds_file, nuis_subj_dir)
+    # run_acompcor(medn_file, mask_file, confounds_file, nuis_subj_dir)
 
     # ###
     # GSR
     # ###
-    run_gsr(medn_file, mask_file, confounds_file, nuis_subj_dir)
+    # run_gsr(medn_file, mask_file, confounds_file, nuis_subj_dir)
 
     # ####
     # dGSR
@@ -790,11 +796,11 @@ def main(project_dir, dset, subject):
     # GODEC
     # #####
     godec_subj_dir = op.join(godec_dir, subject, "func")
-    os.makedirs(godec_subj_dir, exist_ok=True)
-    run_godec(medn_file, mask_file, godec_subj_dir)
+    # os.makedirs(godec_subj_dir, exist_ok=True)
+    # run_godec(medn_file, mask_file, godec_subj_dir)
 
     # Clean up dataset description files
-    if subject == first_subject:
+    if (subject == first_subject) and not True:
         with open(op.join(godec_subj_dir, "dataset_description.json"), "r") as fo:
             godec_dset_desc = json.load(fo)
 
@@ -803,14 +809,15 @@ def main(project_dir, dset, subject):
         with open(op.join(godec_dir, "dataset_description.json"), "w") as fo:
             json.dump(godec_dset_desc, fo, sort_keys=True, indent=4)
 
-    os.remove(op.join(godec_subj_dir, "dataset_description.json"))
+    # os.remove(op.join(godec_subj_dir, "dataset_description.json"))
 
     # ################
     # Physio Denoising
     # ################
     if dset == "dset-dupre":
-        run_rvtreg(medn_file, mask_file, confounds_file, nuis_subj_dir)
-        run_rvreg(medn_file, mask_file, confounds_file, nuis_subj_dir)
+        # run_rvtreg(medn_file, mask_file, confounds_file, nuis_subj_dir)
+        # run_rvreg(medn_file, mask_file, confounds_file, nuis_subj_dir)
+        pass
 
 
 def _get_parser():

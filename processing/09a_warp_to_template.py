@@ -113,6 +113,8 @@ def main(project_dir, dset, subject):
     if dset == "dset-dupre":
         target_files += PHYSIO_TARGET_FILES
 
+    # Limit to rapidtide for re-run
+    target_files = [tf for tf in target_files if "rapidtide" in tf]
     for native_space_target_file in target_files:
         temp_name = native_space_target_file.format(sub=subject, prefix=prefix)
         if "space-scanner" in temp_name:
