@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=E2A5
+#SBATCH --job-name=E1A5
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
