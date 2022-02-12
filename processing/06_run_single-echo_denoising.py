@@ -281,14 +281,13 @@ def run_dgsr(medn_file, mask_file, confounds_file, out_dir):
         f"--corrmask {mask_file} --globalmeaninclude {mask_file} "
         f"{medn_file} {op.join(out_dir, prefix)}"
     )
-    run_command(cmd)
+    # run_command(cmd)
 
     # Per the rapidtide documentation, the lfofilterCleaned data have mean included.
     dgsr_noise_img = image.math_img(
-        "(img1 - img2) * mask_img",
+        "img1 - img2",
         img1=medn_file,
         img2=dgsr_file,
-        mask_img=mask_file,
     )
     dgsr_noise_img.to_filename(dgsr_noise_file)
 
@@ -786,8 +785,8 @@ def main(project_dir, dset, subject):
     # ####
     dgsr_subj_dir = op.join(dgsr_dir, subject, "func")
     # rapidtide will break if the files already exist
-    if os.path.isdir(dgsr_subj_dir):
-        rmtree(dgsr_subj_dir)
+    # if os.path.isdir(dgsr_subj_dir):
+    #     rmtree(dgsr_subj_dir)
 
     os.makedirs(dgsr_subj_dir, exist_ok=True)
     run_dgsr(medn_file, mask_file, confounds_file, dgsr_subj_dir)
