@@ -2762,3 +2762,4 @@
   warnings.warn("Casting data from %s to %s" % (data.dtype.name, aux))
 /home/data/nbc/misc-projects/Salo_PowerReplication/code/conda_env/lib/python3.7/site-packages/nilearn/image/resampling.py:531: UserWarning: Casting data from int32 to float32
   warnings.warn("Casting data from %s to %s" % (data.dtype.name, aux))
+slurmstepd: error: *** JOB 5440629 ON n060 CANCELLED AT 2022-02-14T15:39:28 ***
