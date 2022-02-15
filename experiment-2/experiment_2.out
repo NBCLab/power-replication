@@ -1,6 +1,3 @@
-Experiment 2, Analysis Group 1
-735/779 participants retained.
-Done.
 Experiment 2, Analysis Group 2
 Experiment 2, Analysis Group 2, Analysis 1
 	Correlations between the mean multi-echo denoised signal extracted from the cortical ribbon and that extracted from all gray matter (M[Z] = 2.565, SD[Z] = 0.617) were significantly higher than zero, t(734) = 112.690, p = 0.000.
@@ -12,4 +9,5 @@ Experiment 2, Analysis Group 3, Analysis 1
 Experiment 2, Analysis Group 3, Analysis 2
 	Correlations between the mean cortical ribbon signal from the multi-echo denoised data and the FIT-R2 data (M[Z] = 0.442, SD[Z] = 0.443) were significantly higher than zero, t(734) = 27.019, p = 0.000.
 Experiment 2, Analysis Group 4
-Experiment 2, Analysis Group 4, Analysis 1
+Experiment 2, Analysis Group 4, Analysis 2
+	Variance removed by GODEC and GSR were found to be positively and statistically significantly correlated, r(733) = 0.98, p = 0.000
