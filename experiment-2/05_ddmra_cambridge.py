@@ -99,6 +99,8 @@ def run_ddmra_analyses(
             n_jobs=4,
             qc_thresh=0.2,
             verbose=True,
+            pca_threshold=None,
+            outlier_threshold=None,
         )
 
 

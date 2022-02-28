@@ -46,7 +46,7 @@ def run_ddmra_analyses(
     """Run DDMRA analyses on each of the required derivatives, across datasets."""
     print("Experiment 2, Analysis Group 5, Analysis 1", flush=True)
     out_dir = op.join(project_dir, "analyses/experiment02_group05_analysis01")
-    out_dir_low_fd = op.join(project_dir, "analyses/experiment02_group05_analysis01_low_fd")
+    out_dir_outlier = op.join(project_dir, "analyses/experiment02_group05_analysis01_no_outliers")
 
     participants_df = pd.read_table(participants_file)
     participants_df = participants_df.loc[
@@ -66,10 +66,10 @@ def run_ddmra_analyses(
         print(f"\t{filetype}", flush=True)
         filetype_out_dir = op.join(out_dir, filetype.replace(" ", "_"))
         os.makedirs(filetype_out_dir, exist_ok=True)
-        filetype_out_dir_low_fd = op.join(out_dir_low_fd, filetype.replace(" ", "_"))
-        os.makedirs(filetype_out_dir_low_fd, exist_ok=True)
+        filetype_out_dir_outlier = op.join(out_dir_outlier, filetype.replace(" ", "_"))
+        os.makedirs(filetype_out_dir_outlier, exist_ok=True)
 
-        target_files, fd_all, keep_subjects = [], [], []
+        target_files, fd_all = [], []
         for i, row in participants_df.iterrows():
             dset_prefix_mni = get_prefixes_mni()[row["dset"]]
             dset_prefix = get_prefixes()[row["dset"]]
@@ -93,8 +93,6 @@ def run_ddmra_analyses(
             fd_arr = confounds_df["framewise_displacement"].values
             fd_arr[np.isnan(fd_arr)] = 0
             fd_all.append(fd_arr)
-            if np.mean(fd_arr) < 0.2:
-                keep_subjects.append(i)
 
         run_analyses(
             target_files,
@@ -104,23 +102,20 @@ def run_ddmra_analyses(
             n_jobs=4,
             qc_thresh=0.2,
             verbose=True,
-        )
-
-        fd_all_low_fd = [fd_all[i_subj] for i_subj in keep_subjects]
-        target_files_low_fd = [target_files[i_subj] for i_subj in keep_subjects]
-        print(
-            f"\t\tKeeping {len(keep_subjects)}/{participants_df.shape[0]} participants "
-            "with mean FD < 0.2mm."
+            pca_threshold=None,
+            outlier_threshold=None,
         )
 
         run_analyses(
-            target_files_low_fd,
-            fd_all_low_fd,
-            out_dir=filetype_out_dir_low_fd,
+            target_files,
+            fd_all,
+            out_dir=filetype_out_dir_outlier,
             n_iters=10000,
             n_jobs=4,
             qc_thresh=0.2,
             verbose=True,
+            pca_threshold=0.95,
+            outlier_threshold=0.001,
         )
 
 
@@ -156,10 +151,6 @@ if __name__ == "__main__":
         "MEDN+MIR Noise",
     ]
     assert selected_target in TARGETS, f"{selected_target} not in {', '.join(TARGETS)}"
-    # target_file_patterns = {
-    #     t: op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS[t])
-    #     for t in TARGETS
-    # }
     target_file_pattern = {
         selected_target: op.join(
             in_dir, "derivatives", TARGET_FILE_PATTERNS[selected_target]
