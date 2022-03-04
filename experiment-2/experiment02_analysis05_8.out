@@ -1,9 +1,8 @@
 /home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2
-n060.panther.net
-Sun Feb 13 11:14:39 EST 2022
+n086.panther.net
+Mon Feb 28 11:28:46 EST 2022
 Commandline: python /home/data/nbc/misc-projects/Salo_PowerReplication/code/experiment-2/05_ddmra.py MEDN+dGSR_Noise
 Experiment 2, Analysis Group 5
 Experiment 2, Analysis Group 5, Analysis 1
 	MEDN+dGSR Noise
-		Keeping 569/735 participants with mean FD < 0.2mm.
 Finished tasks 8 with exit code 
