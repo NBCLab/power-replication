@@ -47,6 +47,7 @@ def run_ddmra_analyses(
     print("Experiment 2, Analysis Group 5, Analysis 1", flush=True)
     out_dir = op.join(project_dir, "analyses/experiment02_group05_analysis01")
     out_dir_outlier = op.join(project_dir, "analyses/experiment02_group05_analysis01_no_outliers")
+    out_dir_low_fd = op.join(project_dir, "analyses/experiment02_group05_analysis01_low_fd")
 
     participants_df = pd.read_table(participants_file)
     participants_df = participants_df.loc[
@@ -68,8 +69,11 @@ def run_ddmra_analyses(
         os.makedirs(filetype_out_dir, exist_ok=True)
         filetype_out_dir_outlier = op.join(out_dir_outlier, filetype.replace(" ", "_"))
         os.makedirs(filetype_out_dir_outlier, exist_ok=True)
+        filetype_out_dir_low_fd = op.join(out_dir_low_fd, filetype.replace(" ", "_"))
+        os.makedirs(filetype_out_dir_low_fd, exist_ok=True)
 
         target_files, fd_all = [], []
+        target_files_low_fd, fd_all_low_fd = [], []
         for i, row in participants_df.iterrows():
             dset_prefix_mni = get_prefixes_mni()[row["dset"]]
             dset_prefix = get_prefixes()[row["dset"]]
@@ -94,10 +98,26 @@ def run_ddmra_analyses(
             fd_arr[np.isnan(fd_arr)] = 0
             fd_all.append(fd_arr)
 
+            if np.mean(fd_arr) <= 0.2:
+                target_files_low_fd.append(filename)
+                fd_all_low_fd.append(fd_all)
+
         run_analyses(
             target_files,
             fd_all,
             out_dir=filetype_out_dir,
+            n_iters=10000,
+            n_jobs=4,
+            qc_thresh=0.2,
+            verbose=True,
+            pca_threshold=None,
+            outlier_threshold=None,
+        )
+
+        run_analyses(
+            target_files_low_fd,
+            fd_all_low_fd,
+            out_dir=filetype_out_dir_low_fd,
             n_iters=10000,
             n_jobs=4,
             qc_thresh=0.2,

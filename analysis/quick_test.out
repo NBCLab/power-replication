@@ -1,0 +1,130 @@
+MEDN
+    qcrsfc
+	Intercept (rank=0/10000, p=1.0)
+	Slope (rank=854/10000, p=0.0854)
+    highlow
+	Intercept (rank=8/10000, p=0.9992)
+	Slope (rank=4/10000, p=0.0004)
+    scrubbing
+	Intercept (rank=10000/10000, p=0.0)
+	Slope (rank=0/10000, p=0.0)
+MEDN+GODEC_(sparse)
+    qcrsfc
+	Intercept (rank=10000/10000, p=0.0)
+	Slope (rank=112/10000, p=0.0112)
+    highlow
+	Intercept (rank=10000/10000, p=0.0)
+	Slope (rank=72/10000, p=0.0072)
+    scrubbing
+	Intercept (rank=10000/10000, p=0.0)
+	Slope (rank=0/10000, p=0.0)
+MEDN+GODEC_Noise_(lowrank)
+    qcrsfc
+	Intercept (rank=0/10000, p=1.0)
+	Slope (rank=10000/10000, p=1.0)
+    highlow
+	Intercept (rank=0/10000, p=1.0)
+	Slope (rank=10000/10000, p=1.0)
+    scrubbing
+	Intercept (rank=0/10000, p=1.0)
+	Slope (rank=10000/10000, p=1.0)
+MEDN+GSR
+    qcrsfc
+	Intercept (rank=5444/10000, p=0.4556)
+	Slope (rank=7504/10000, p=0.7504)
+    highlow
+	Intercept (rank=749/10000, p=0.9251)
+	Slope (rank=8996/10000, p=0.8996)
+    scrubbing
+	Intercept (rank=10000/10000, p=0.0)
+	Slope (rank=0/10000, p=0.0)
+MEDN+GSR_Noise
+    qcrsfc
+	Intercept (rank=0/10000, p=1.0)
+	Slope (rank=10000/10000, p=1.0)
+    highlow
+	Intercept (rank=0/10000, p=1.0)
+	Slope (rank=9968/10000, p=0.9968)
+    scrubbing
+	Intercept (rank=0/10000, p=1.0)
+	Slope (rank=10000/10000, p=1.0)
+MEDN+MIR
+    qcrsfc
+	Intercept (rank=9377/10000, p=0.06230000000000002)
+	Slope (rank=17/10000, p=0.0017)
+    highlow
+	Intercept (rank=10000/10000, p=0.0)
+	Slope (rank=0/10000, p=0.0)
+    scrubbing
+	Intercept (rank=10000/10000, p=0.0)
+	Slope (rank=0/10000, p=0.0)
+MEDN+MIR_Noise
+    qcrsfc
+	Intercept (rank=0/10000, p=1.0)
+	Slope (rank=9846/10000, p=0.9846)
+    highlow
+	Intercept (rank=0/10000, p=1.0)
+	Slope (rank=9999/10000, p=0.9999)
+    scrubbing
+	Intercept (rank=10000/10000, p=0.0)
+	Slope (rank=10000/10000, p=1.0)
+MEDN+aCompCor
+    qcrsfc
+	Intercept (rank=10000/10000, p=0.0)
+	Slope (rank=20/10000, p=0.002)
+    highlow
+	Intercept (rank=10000/10000, p=0.0)
+	Slope (rank=481/10000, p=0.0481)
+    scrubbing
+	Intercept (rank=10000/10000, p=0.0)
+	Slope (rank=0/10000, p=0.0)
+MEDN+aCompCor_Noise
+    qcrsfc
+	Intercept (rank=0/10000, p=1.0)
+	Slope (rank=9999/10000, p=0.9999)
+    highlow
+	Intercept (rank=0/10000, p=1.0)
+	Slope (rank=9844/10000, p=0.9844)
+    scrubbing
+	Intercept (rank=0/10000, p=1.0)
+	Slope (rank=10000/10000, p=1.0)
+MEDN+dGSR
+    qcrsfc
+	Intercept (rank=344/10000, p=0.9656)
+	Slope (rank=532/10000, p=0.0532)
+    highlow
+	Intercept (rank=4694/10000, p=0.5306)
+	Slope (rank=21/10000, p=0.0021)
+    scrubbing
+	Intercept (rank=10000/10000, p=0.0)
+	Slope (rank=0/10000, p=0.0)
+MEDN+dGSR_Noise
+    qcrsfc
+	Intercept (rank=0/10000, p=1.0)
+	Slope (rank=9883/10000, p=0.9883)
+    highlow
+	Intercept (rank=0/10000, p=1.0)
+	Slope (rank=1188/10000, p=0.1188)
+    scrubbing
+	Intercept (rank=0/10000, p=1.0)
+	Slope (rank=10000/10000, p=1.0)
+MEDN_Noise
+    qcrsfc
+	Intercept (rank=0/10000, p=1.0)
+	Slope (rank=8212/10000, p=0.8212)
+    highlow
+	Intercept (rank=0/10000, p=1.0)
+	Slope (rank=9980/10000, p=0.998)
+    scrubbing
+	Intercept (rank=10000/10000, p=0.0)
+	Slope (rank=9986/10000, p=0.9986)
+OC
+    qcrsfc
+	Intercept (rank=0/10000, p=1.0)
+	Slope (rank=1663/10000, p=0.1663)
+    highlow
+	Intercept (rank=0/10000, p=1.0)
+	Slope (rank=3485/10000, p=0.3485)
+    scrubbing
+	Intercept (rank=10000/10000, p=0.0)
+	Slope (rank=0/10000, p=0.0)
