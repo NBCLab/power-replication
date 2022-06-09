@@ -16,13 +16,13 @@ import warnings
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
-import matplotlib.pyplot as plt  # noqa: E402
-import numpy as np  # noqa: E402
-import pandas as pd  # noqa: E402
-import pingouin as pg  # noqa: E402
-import seaborn as sns  # noqa: E402
-from nilearn import image, masking  # noqa: E402
-from nilearn.glm.first_level import FirstLevelModel  # noqa: E402
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import pingouin as pg
+import seaborn as sns
+from nilearn import image, masking
+from nilearn.glm.first_level import FirstLevelModel
 
 
 def compare_cnr(
@@ -33,6 +33,10 @@ def compare_cnr(
     events_file_pattern,
 ):
     participants_df = pd.read_table(participants_file)
+    participants_df = participants_df.loc[participants_df["dset"] == "dset-cohen"]
+    dset_prefix = get_prefixes()["dset-cohen"]
+    dset_prefix_mni = get_prefixes_mni()["dset-cohen"]
+
     n_subjects_total = participants_df.shape[0]
     participants_df = participants_df.loc[participants_df["exclude"] == 0]
     print(f"Retaining {participants_df.shape[0]}/{n_subjects_total} subjects.")
@@ -43,15 +47,19 @@ def compare_cnr(
 
     for i_run, participant_row in participants_df.iterrows():
         subj_id = participant_row["participant_id"]
-        metadata_file = metadata_file_pattern.format(participant_id=subj_id)
+        subj_prefix = dset_prefix.format(participant_id=subj_id)
+        subj_prefix_mni = dset_prefix_mni.format(participant_id=subj_id)
+        metadata_file = metadata_file_pattern.format(prefix=subj_prefix)
         with open(metadata_file, "r") as fo:
             metadata = json.load(fo)
 
-        events_file = events_file_pattern.format(participant_id=subj_id)
+        t_r = metadata["RepetitionTime"]
+
+        events_file = events_file_pattern.format(prefix=subj_prefix)
         events_df = pd.read_table(events_file)
 
         for denoising_method, target_file_pattern in target_file_patterns.items():
-            target_file = target_file_pattern.format(participant_id=subj_id)
+            target_file = target_file_pattern.format(prefix=subj_prefix_mni)
 
             # Fit the GLM
             # Each finger tapping block was convolved with a double gamma hemodynamic response
@@ -96,7 +104,7 @@ def compare_cnr(
 
             # Extract ROI values
             for roi_name, roi_file_pattern in roi_file_patterns.items():
-                roi_file = roi_file_pattern.format(participant_id=subj_id)
+                roi_file = roi_file_pattern.format(dset_prefix_mni=subj_prefix_mni)
                 cnr_arr = masking.apply_mask(cnr_img, roi_file)
                 cnr_val = np.mean(cnr_arr)
                 cnr_results_df.append([subj_id, roi_name, denoising_method, cnr_val])
@@ -126,3 +134,46 @@ def compare_cnr(
     # Assess significance of interactions and main effects,
     # then perform post-hoc analyses as necessary.
     ...
+
+
+if __name__ == "__main__":
+    print("Experiment 3, Analysis Group 1")
+    project_dir = "/home/data/nbc/misc-projects/Salo_PowerReplication/"
+    in_dir = op.join(project_dir, "{dset}")
+    participants_file = op.join(project_dir, "participants.tsv")
+
+    roi_file_patterns = {
+        "left": op.join(
+            in_dir,
+            "derivatives/power/{participant_id}/anat/{prefix_mni}_desc-leftFinger_mask.nii.gz",
+        ),
+        "right": op.join(
+            in_dir,
+            "derivatives/power/{participant_id}/anat/{prefix_mni}_desc-rightFinger_mask.nii.gz",
+        ),
+    }
+    metadata_file_pattern = op.join(in_dir, "{participant_id}/func/{prefix}_bold.json")
+    events_file_pattern = op.join(in_dir, "{participant_id}/func/{prefix}_events.tsv")
+
+    TARGET_FILE_PATTERNS = get_target_files()
+    TARGETS = [
+        "OC",
+        "MEDN",
+        "MEDN+GODEC (sparse)",
+        "MEDN+GSR",
+        "MEDN+aCompCor",
+        "MEDN+dGSR",
+        "MEDN+MIR",
+    ]
+    target_file_patterns = {
+        target: op.join(
+            in_dir, "derivatives", TARGET_FILE_PATTERNS[target]
+        ) for target in TARGETS
+    }
+    compare_cnr(
+        participants_file,
+        target_file_patterns,
+        roi_file_patterns,
+        metadata_file_pattern,
+        events_file_pattern,
+    )
