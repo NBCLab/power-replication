@@ -10,21 +10,34 @@ Mean CNR from V1 ROI for:
 - MEDN+aCompCor
 - MEDN+dGSR
 - MEDN+MIR
+
+NOTE: Check out the following link for more information on STC:
+https://reproducibility.stanford.edu/slice-timing-correction-in-fmriprep-and-linear-modeling/.
+If you're using nilearn (which is used within fitlins to estimate the model) and you would like to
+ensure that the model and data are aligned, you can simply shift the values in the frame_times by
++TR/2.
 """
 import json
+import os.path as op
+import sys
 import warnings
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
-import matplotlib.pyplot as plt
-import nibabel as nib
-import numpy as np
-import pandas as pd
-import pingouin as pg
-import seaborn as sns
-from nilearn import image, masking
-from nilearn.glm.first_level import FirstLevelModel, make_first_level_design_matrix
-from scipy import stats
+import matplotlib.pyplot as plt  # noqa: E402
+import nibabel as nib  # noqa: E402
+import numpy as np  # noqa: E402
+import pandas as pd  # noqa: E402
+import pingouin as pg  # noqa: E402
+import seaborn as sns  # noqa: E402
+from nilearn import image, masking  # noqa: E402
+from nilearn.glm.first_level import FirstLevelModel  # noqa: E402
+from nilearn.glm.first_level import make_first_level_design_matrix  # noqa: E402
+from scipy import stats  # noqa: E402
+
+sys.path.append("..")
+
+from utils import get_prefixes, get_prefixes_mni, get_target_files  # noqa: E402
 
 
 def compare_cnr(
@@ -107,11 +120,10 @@ def compare_cnr(
                 axis=1,
             )
 
+            # TODO: Set the real reference slice time
             model = FirstLevelModel(
                 t_r=metadata["RepetitionTime"],
-                slice_time_ref=metadata[
-                    "SliceTiming"
-                ],  # TODO: Set the real reference slice time
+                slice_time_ref=metadata["SliceTiming"],
                 hrf_model="spm",
                 drift_model="cosine",
                 high_pass=0.01,
@@ -151,9 +163,7 @@ def compare_cnr(
             mode = stats.mode(voxelwise_peak_lags)
             modal_peak_lag = mode.mode[0]
             perc = (mode.count[0] / voxelwise_peak_lags.size) * 100
-            print(
-                f"Peak lag across voxels is {modal_peak_lag} ({perc}% of voxels in ROI)."
-            )
+            print(f"Peak lag across voxels is {modal_peak_lag} ({perc}% of voxels in ROI).")
 
             # Select the appropriate FIR delays
             if modal_peak_lag == 0:
@@ -193,9 +203,7 @@ def compare_cnr(
             cnr_imgs = []
             for i_delay, cope_img in enumerate(cope_imgs):
                 varcope_img = varcope_imgs[i_delay]
-                cnr_img = image.math_img(
-                    "cope / varcope", cope=cope_img, varcope=varcope_img
-                )
+                cnr_img = image.math_img("cope / varcope", cope=cope_img, varcope=varcope_img)
                 cnr_imgs.append(cnr_img)
 
             mean_cnr_img = image.mean_img(cnr_imgs)
@@ -256,9 +264,7 @@ if __name__ == "__main__":
         "MEDN+MIR",
     ]
     target_file_patterns = {
-        target: op.join(
-            in_dir, "derivatives", TARGET_FILE_PATTERNS[target]
-        ) for target in TARGETS
+        target: op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS[target]) for target in TARGETS
     }
     compare_cnr(
         participants_file,

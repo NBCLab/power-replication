@@ -10,19 +10,31 @@ Mean CNR from left and right finger ROIs for:
 - MEDN+aCompCor
 - MEDN+dGSR
 - MEDN+MIR
+
+NOTE: Check out the following link for more information on STC:
+https://reproducibility.stanford.edu/slice-timing-correction-in-fmriprep-and-linear-modeling/.
+If you're using nilearn (which is used within fitlins to estimate the model) and you would like to
+ensure that the model and data are aligned, you can simply shift the values in the frame_times by
++TR/2.
 """
 import json
+import os.path as op
+import sys
 import warnings
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-import pingouin as pg
-import seaborn as sns
-from nilearn import image, masking
-from nilearn.glm.first_level import FirstLevelModel
+import matplotlib.pyplot as plt  # noqa: E402
+import numpy as np  # noqa: E402
+import pandas as pd  # noqa: E402
+import pingouin as pg  # noqa: E402
+import seaborn as sns  # noqa: E402
+from nilearn import image, masking  # noqa: E402
+from nilearn.glm.first_level import FirstLevelModel  # noqa: E402
+
+sys.path.append("..")
+
+from utils import get_prefixes, get_prefixes_mni, get_target_files  # noqa: E402
 
 
 def compare_cnr(
@@ -42,7 +54,7 @@ def compare_cnr(
     print(f"Retaining {participants_df.shape[0]}/{n_subjects_total} subjects.")
 
     cnr_results_df = pd.DataFrame(
-        columns=["participant_id", "roi", "denoising_method", "cnr"]
+        columns=["participant_id", "roi", "denoising_method", "cnr"],
     )
 
     for i_run, participant_row in participants_df.iterrows():
@@ -54,6 +66,7 @@ def compare_cnr(
             metadata = json.load(fo)
 
         t_r = metadata["RepetitionTime"]
+        del t_r
 
         events_file = events_file_pattern.format(prefix=subj_prefix)
         events_df = pd.read_table(events_file)
@@ -70,11 +83,11 @@ def compare_cnr(
             # was applied as part of the general linear model.
             # The contrast and variance images associated with the finger tapping condition were
             # then used for each participant in subsequent analyses.
+
+            # TODO: Set the real reference slice time
             model = FirstLevelModel(
                 t_r=metadata["RepetitionTime"],
-                slice_time_ref=metadata[
-                    "SliceTiming"
-                ],  # TODO: Set the real reference slice time
+                slice_time_ref=metadata["SliceTiming"],
                 hrf_model="spm",
                 drift_model="cosine",
                 high_pass=0.01,
@@ -88,7 +101,9 @@ def compare_cnr(
 
             # Grab the appropriate outputs
             outputs = model.compute_contrast(
-                "fingertapping", stat_type="t", output_type="all"
+                "fingertapping",
+                stat_type="t",
+                output_type="all",
             )
             cope_img = outputs["effect_size"]
             varcope_img = outputs["effect_variance"]
@@ -99,7 +114,9 @@ def compare_cnr(
             # averaged over the ROI, in a similar manner to Lombardo et al. (2016) [27],
             # but applied at the subject level instead of the group level.
             cnr_img = image.math_img(
-                "cope / varcope", cope=cope_img, varcope=varcope_img
+                "cope / varcope",
+                cope=cope_img,
+                varcope=varcope_img,
             )
 
             # Extract ROI values
@@ -166,9 +183,7 @@ if __name__ == "__main__":
         "MEDN+MIR",
     ]
     target_file_patterns = {
-        target: op.join(
-            in_dir, "derivatives", TARGET_FILE_PATTERNS[target]
-        ) for target in TARGETS
+        target: op.join(in_dir, "derivatives", TARGET_FILE_PATTERNS[target]) for target in TARGETS
     }
     compare_cnr(
         participants_file,
