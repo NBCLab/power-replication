@@ -16,6 +16,7 @@ https://reproducibility.stanford.edu/slice-timing-correction-in-fmriprep-and-lin
 If you're using nilearn (which is used within fitlins to estimate the model) and you would like to
 ensure that the model and data are aligned, you can simply shift the values in the frame_times by
 +TR/2.
+- My solution is to set the slice_time_ref to 0.5, which is the middle of the TR.
 """
 import json
 import os.path as op
@@ -120,10 +121,9 @@ def compare_cnr(
                 axis=1,
             )
 
-            # TODO: Set the real reference slice time
             model = FirstLevelModel(
                 t_r=metadata["RepetitionTime"],
-                slice_time_ref=metadata["SliceTiming"],
+                slice_time_ref=0.5,  # ref slice time is 50% through TR
                 hrf_model="spm",
                 drift_model="cosine",
                 high_pass=0.01,
