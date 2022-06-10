@@ -35,7 +35,7 @@ from nilearn.glm.first_level import FirstLevelModel  # noqa: E402
 
 sys.path.append("..")
 
-from utils import get_prefixes, get_prefixes_mni, get_target_files  # noqa: E402
+from utils import get_prefixes, get_target_files  # noqa: E402
 
 
 def compare_cnr(
@@ -48,7 +48,6 @@ def compare_cnr(
     participants_df = pd.read_table(participants_file)
     participants_df = participants_df.loc[participants_df["dset"] == "dset-cohen"]
     dset_prefix = get_prefixes()["dset-cohen"]
-    dset_prefix_mni = get_prefixes_mni()["dset-cohen"]
 
     n_subjects_total = participants_df.shape[0]
     participants_df = participants_df.loc[participants_df["exclude"] == 0]
@@ -61,7 +60,6 @@ def compare_cnr(
     for i_run, participant_row in participants_df.iterrows():
         subj_id = participant_row["participant_id"]
         subj_prefix = dset_prefix.format(participant_id=subj_id)
-        subj_prefix_mni = dset_prefix_mni.format(participant_id=subj_id)
         metadata_file = metadata_file_pattern.format(prefix=subj_prefix)
         with open(metadata_file, "r") as fo:
             metadata = json.load(fo)
@@ -73,7 +71,7 @@ def compare_cnr(
         events_df = pd.read_table(events_file)
 
         for denoising_method, target_file_pattern in target_file_patterns.items():
-            target_file = target_file_pattern.format(prefix=subj_prefix_mni)
+            target_file = target_file_pattern.format(prefix=subj_prefix)
 
             # Fit the GLM
             # Each finger tapping block was convolved with a double gamma hemodynamic response
@@ -120,7 +118,7 @@ def compare_cnr(
 
             # Extract ROI values
             for roi_name, roi_file_pattern in roi_file_patterns.items():
-                roi_file = roi_file_pattern.format(dset_prefix_mni=subj_prefix_mni)
+                roi_file = roi_file_pattern.format(participant_id=subj_id, prefix=subj_prefix)
                 cnr_arr = masking.apply_mask(cnr_img, roi_file)
                 cnr_val = np.mean(cnr_arr)
                 cnr_results_df.append([subj_id, roi_name, denoising_method, cnr_val])
@@ -161,11 +159,11 @@ if __name__ == "__main__":
     roi_file_patterns = {
         "left": op.join(
             in_dir,
-            "derivatives/power/{participant_id}/anat/{prefix_mni}_desc-leftFinger_mask.nii.gz",
+            "derivatives/power/{participant_id}/anat/{prefix}_desc-leftFinger_mask.nii.gz",
         ),
         "right": op.join(
             in_dir,
-            "derivatives/power/{participant_id}/anat/{prefix_mni}_desc-rightFinger_mask.nii.gz",
+            "derivatives/power/{participant_id}/anat/{prefix}_desc-rightFinger_mask.nii.gz",
         ),
     }
     metadata_file_pattern = op.join(in_dir, "{participant_id}/func/{prefix}_bold.json")
