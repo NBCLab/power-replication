@@ -29,7 +29,6 @@ import matplotlib.pyplot as plt  # noqa: E402
 import nibabel as nib  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
-import pingouin as pg  # noqa: E402
 import seaborn as sns  # noqa: E402
 from nilearn import image, masking  # noqa: E402
 from nilearn.glm.first_level import FirstLevelModel  # noqa: E402
@@ -218,24 +217,6 @@ def compare_cnr(
     fig, ax = plt.subplots(figsize=(10, 10))
     sns.boxplot(x="denoising_method", y="cnr", data=cnr_results_df, ax=ax)
     fig.savefig("analysis02_v1_cnr.png", dpi=400)
-
-    # Perform analysis
-    # The group-level distributions of contrast-to-noise values were compared across denoising
-    # approaches with an ANOVA in order to determine if any denoising strategies improved or
-    # reduced the ability of the model to detect task-related BOLD activity.
-    # Post-hoc analyses were performed to identify subsequent patterns in performance.
-    res = pg.rm_anova(
-        dv="cnr",
-        within="denoising_method",
-        subject="participant_id",
-        data=cnr_results_df,
-        detailed=True,
-    )
-    print(res)
-
-    # Assess significance of interactions and main effect of denoising method,
-    # then perform post-hoc analyses as necessary.
-    ...
 
 
 if __name__ == "__main__":
